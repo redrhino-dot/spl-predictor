@@ -364,85 +364,35 @@ function showStatus(el, msg, type) {
    SECTION 3 — PROJECTED STANDINGS
    ============================================================ */
 function renderProjectedStandings() {
-  const container = document.getElementById('projected-standings');
-  if (!container) return;
+  const tbody = document.getElementById('projected-body');
+  if (!tbody) return;
 
   const gwKey    = String(CONFIG.currentGameweek);
   const fixtures = fixturesData.fixtures || [];
-  const preds    = predictionsData.gameweeks?.[gwKey]?.predictions || {};
-  const opening  = CONFIG.openingStandings || {};
+  const preds    = predictionsData?.gameweeks?.[gwKey]?.predictions || {};
+  const liveMap  = buildLiveMap();
 
   const rows = CONFIG.participants.map(name => {
-    const myPreds = preds[name] || [];
-    let gwPoints  = 0;
-    const earned  = [];
-
-    for (const fixture of fixtures) {
-      if (fixture.home_score === null || fixture.away_score === null) continue;
-      if (fixture.status !== 'FT' && fixture.status !== 'AET' && fixture.status !== 'PEN') continue;
-
-      const pred = myPreds.find(p => String(p.fixture_id) === String(fixture.id));
-      if (!pred) continue;
-
-      const actualHome = fixture.home_score;
-      const actualAway = fixture.away_score;
-      const predHome   = pred.home_score;
-      const predAway   = pred.away_score;
-
-      // Exact score
-      if (predHome === actualHome && predAway === actualAway) {
-        gwPoints += 3;
-        earned.push(`${fixture.home_team.split(' ')[0]} 3`);
-        continue;
-      }
-      // Correct result
-      const actualResult = Math.sign(actualHome - actualAway);
-      const predResult   = Math.sign(predHome   - predAway);
-      if (actualResult === predResult) {
-        gwPoints += 1;
-        earned.push(`${fixture.home_team.split(' ')[0]} 1`);
-      }
-    }
-
-    const openingPts  = opening[name] || 0;
-    const projected   = openingPts + gwPoints;
-    return { name, openingPts, gwPoints, projected, earned };
+    const entry      = CONFIG.openingStandings.find(s => s.name === name) || {};
+    const openingPts = entry.points || 0;
+    const gwPoints   = computeEarned(name, fixtures, preds, liveMap);
+    const notation   = buildPointsNotation(name, fixtures, preds, liveMap);
+    const projected  = openingPts + gwPoints;
+    return { name, openingPts, gwPoints, notation, projected };
   });
 
   rows.sort((a, b) => b.projected - a.projected);
 
-  container.innerHTML = `
-    <h2 class="section-title">PROJECTED CLOSING STANDINGS</h2>
-    <div class="table-wrapper">
-      <table class="standings-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>PARTICIPANT</th>
-            <th>OPENING PTS</th>
-            <th>POINTS EARNED</th>
-            <th>PROJECTED TOTAL</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map((r, i) => `
-            <tr>
-              <td>${i + 1}</td>
-              <td>${r.name}</td>
-              <td>${r.openingPts}</td>
-              <td class="points-earned">${r.earned.length
-                ? r.earned.map(e => `<span class="earned-tag">${e}</span>`).join(' ')
-                : '<span class="no-points">—</span>'
-              }</td>
-              <td><strong>${r.projected}</strong></td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-  `;
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${displayName(r.name)}</td>
+      <td>${r.openingPts}</td>
+      <td class="notation-cell">${r.gwPoints > 0 ? r.notation : '–'}</td>
+      <td><strong>${r.projected}</strong></td>
+    </tr>
+  `).join('');
 }
-
 
 /* ============================================================
    BLOCK ENDING TABLE
