@@ -1,0 +1,508 @@
+/* ============================================================
+   ROOT & RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:       #0b1a2e;
+  --navy-mid:   #132440;
+  --navy-light: #1c3259;
+  --green:      #00a84f;
+  --green-dark: #007a3a;
+  --white:      #f0f4f8;
+  --muted:      #8a9bbf;
+  --border:     #2a3f63;
+  --card-bg:    #111f38;
+
+  --pred-green:  #1a4d2e;
+  --pred-green-text: #4ade80;
+  --pred-yellow: #3d3000;
+  --pred-yellow-text: #fbbf24;
+  --pred-red:    #4d1a1a;
+  --pred-red-text: #f87171;
+  --pred-grey:   #1e2d45;
+  --pred-grey-text: #8a9bbf;
+
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--font);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header {
+  background: var(--navy-mid);
+  border-bottom: 3px solid var(--green);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.flag { font-size: 1.6rem; }
+
+h1 {
+  font-size: clamp(1rem, 3.5vw, 1.35rem);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+nav { display: flex; gap: 0.5rem; }
+
+.nav-btn {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--muted);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover { border-color: var(--green); color: var(--white); }
+
+.nav-btn.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tab-content { display: none; flex-direction: column; gap: 1.5rem; }
+.tab-content.active { display: flex; }
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  overflow: hidden;
+}
+
+.card h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  min-width: 340px;
+}
+
+.data-table th {
+  background: var(--navy-light);
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--border);
+}
+
+.data-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.no-data {
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  padding: 1.5rem !important;
+}
+
+/* Fixtures table column widths */
+.fixtures-table th:nth-child(1),
+.fixtures-table td:nth-child(1),
+.fixtures-table th:nth-child(4),
+.fixtures-table td:nth-child(4) { min-width: 120px; }
+
+.fixtures-table th:nth-child(2),
+.fixtures-table td:nth-child(2) { min-width: 110px; white-space: nowrap; }
+
+.fixtures-table th:nth-child(3),
+.fixtures-table td:nth-child(3) { min-width: 80px; text-align: center; }
+
+.fixtures-table th:nth-child(n+5),
+.fixtures-table td:nth-child(n+5) { min-width: 80px; text-align: center; }
+
+.team-name { font-weight: 500; }
+
+/* ============================================================
+   SCORE CELLS
+   ============================================================ */
+.score-cell { text-align: center; }
+
+.score-vs {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.score-live {
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.score-final {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.elapsed {
+  display: block;
+  font-size: 0.7rem;
+  color: #f59e0b;
+  margin-top: 1px;
+}
+
+/* ============================================================
+   PREDICTION CELLS
+   ============================================================ */
+.pred-cell {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 4px;
+  white-space: nowrap;
+  position: relative;
+}
+
+.pred-hidden { color: var(--muted); font-weight: 400; }
+.pred-pending { color: var(--muted); }
+.pred-none { color: var(--muted); font-style: italic; }
+
+.pred-exact {
+  background: var(--pred-green);
+  color: var(--pred-green-text);
+  padding: 2px 6px;
+}
+.pred-correct {
+  background: var(--pred-yellow);
+  color: var(--pred-yellow-text);
+  padding: 2px 6px;
+}
+.pred-wrong {
+  background: var(--pred-red);
+  color: var(--pred-red-text);
+  padding: 2px 6px;
+}
+
+.pts-label {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.85;
+  margin-top: 1px;
+}
+
+/* ============================================================
+   STANDINGS — EARNED
+   ============================================================ */
+.earned-positive { color: var(--green); font-weight: 700; }
+
+/* ============================================================
+   LAST UPDATED
+   ============================================================ */
+.last-updated {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ============================================================
+   PREDICTION PANEL
+   ============================================================ */
+.prediction-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.prediction-panel h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.pred-header-controls {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.pred-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pred-control-group label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+select, input[type="password"], input[type="number"] {
+  background: var(--navy);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: var(--font);
+  transition: border-color 0.2s;
+}
+
+select:focus, input:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+select { min-width: 160px; cursor: pointer; }
+
+input[type="password"] { width: 130px; }
+
+/* Prediction Form Rows */
+.pred-form-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.pred-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0.75rem;
+  background: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: opacity 0.2s;
+}
+
+.pred-row-disabled {
+  opacity: 0.55;
+  background: var(--navy-mid);
+}
+
+.pred-team {
+  font-size: 0.85rem;
+  font-weight: 500;
+  flex: 1;
+  min-width: 100px;
+}
+
+.pred-home { text-align: right; }
+.pred-away { text-align: left; }
+
+.pred-score-input {
+  width: 52px;
+  text-align: center;
+  padding: 0.35rem 0.4rem;
+}
+
+.pred-score-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pred-separator {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pred-locked {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+/* Submit row */
+.pred-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  padding: 0.55rem 1.4rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover { background: var(--green-dark); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-admin {
+  background: #3a1f5c;
+  color: #d8b4fe;
+  border: 1px solid #7c3aed;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-admin:hover { background: #4c2878; }
+
+/* Status messages */
+.pred-status {
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 5px;
+}
+
+.status-success { background: var(--pred-green); color: var(--pred-green-text); }
+.status-error   { background: var(--pred-red);   color: var(--pred-red-text); }
+.status-warning { background: var(--pred-yellow); color: var(--pred-yellow-text); }
+.status-info    { color: var(--muted); }
+
+/* ============================================================
+   NOTATION CELL
+   ============================================================ */
+.notation-cell {
+  font-size: 0.82rem;
+  color: var(--green);
+  font-weight: 500;
+}
+
+/* ============================================================
+   ARCHIVE
+   ============================================================ */
+.archive-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.archive-controls label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.archive-controls select { min-width: 220px; }
+
+#archive-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.archive-sub-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .header-inner { padding: 0.6rem 0.75rem; }
+  h1 { font-size: 0.95rem; }
+  .card { padding: 1rem 0.75rem; }
+  .pred-header-controls { flex-direction: column; gap: 0.75rem; }
+  .pred-row { gap: 0.4rem; }
+  .pred-team { min-width: 80px; font-size: 0.78rem; }
+  .pred-score-input { width: 44px; }
+  .data-table th, .data-table td { padding: 0.45rem 0.55rem; }
+}
+
+/* Remove number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
