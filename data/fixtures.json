@@ -1,5 +1,39 @@
 {
-  "updated": "2026-04-11T18:06:22.667567Z",
-  "round": null,
-  "fixtures": []
+  "updated": "2026-04-11T18:33:39.380372+00:00",
+  "round": "41",
+  "fixtures": [
+    {
+      "id": 2275123,
+      "round": "41",
+      "kickoff": "2026-04-03T14:00:00Z",
+      "status": "FT",
+      "home_team": "Stockport County",
+      "away_team": "Wycombe Wanderers",
+      "home_score": 3,
+      "away_score": 0,
+      "elapsed": null
+    },
+    {
+      "id": 2275122,
+      "round": "41",
+      "kickoff": "2026-04-03T14:00:00Z",
+      "status": "FT",
+      "home_team": "Rotherham United",
+      "away_team": "Stevenage",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": null
+    },
+    {
+      "id": 2275121,
+      "round": "41",
+      "kickoff": "2026-04-03T14:00:00Z",
+      "status": "FT",
+      "home_team": "Plymouth Argyle",
+      "away_team": "Bolton Wanderers",
+      "home_score": 1,
+      "away_score": 2,
+      "elapsed": null
+    }
+  ]
 }
