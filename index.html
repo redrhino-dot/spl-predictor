@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scottish Premiership Predictor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <span class="flag">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
+        <h1>Scottish Premiership Predictor</h1>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-tab="main">Current GW</button>
+        <button class="nav-btn" data-tab="archive">Archive</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- MAIN TAB -->
+    <div id="tab-main" class="tab-content active">
+
+      <!-- Section 1: Opening Standings -->
+      <section class="card">
+        <h2>Opening Standings — <span id="gw-label"></span></h2>
+        <table class="data-table" id="opening-standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Participant</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+          <tbody id="opening-standings-body"></tbody>
+        </table>
+      </section>
+
+      <!-- Section 2: Predictions + Live Results -->
+      <section class="card">
+        <h2>Predictions &amp; Live Results</h2>
+        <div id="last-updated" class="last-updated"></div>
+        <div class="table-scroll">
+          <table class="data-table fixtures-table" id="fixtures-table">
+            <thead>
+              <tr>
+                <th>Home Team</th>
+                <th>KO Time</th>
+                <th>Score</th>
+                <th>Away Team</th>
+                <th>Graham</th>
+                <th>Jon</th>
+                <th>Kris</th>
+                <th>Doug</th>
+              </tr>
+            </thead>
+            <tbody id="fixtures-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Prediction Entry Panel -->
+        <div class="prediction-panel">
+          <h3>Submit / Update My Predictions</h3>
+          <div class="pred-header-controls">
+            <div class="pred-control-group">
+              <label for="pred-participant">Participant</label>
+              <select id="pred-participant">
+                <option value="">— Select —</option>
+              </select>
+            </div>
+            <div class="pred-control-group">
+              <label for="pred-pin">PIN</label>
+              <input type="password" id="pred-pin" maxlength="4" placeholder="4-digit PIN" autocomplete="off" />
+            </div>
+          </div>
+          <div id="pred-form-rows" class="pred-form-rows"></div>
+          <div class="pred-actions">
+            <button id="pred-submit-btn" class="btn-primary">Submit Predictions</button>
+            <span id="pred-status" class="pred-status"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Projected Closing Standings -->
+      <section class="card">
+        <h2>Projected Closing Standings</h2>
+        <table class="data-table" id="projected-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Participant</th>
+              <th>Opening</th>
+              <th>+GW</th>
+              <th>Projected Total</th>
+            </tr>
+          </thead>
+          <tbody id="projected-body"></tbody>
+        </table>
+      </section>
+
+      <!-- Fixture Block Ending Table (all matches complete) -->
+      <section class="card" id="block-ending-section" style="display:none;">
+        <h2>Gameweek Final Summary</h2>
+        <table class="data-table" id="block-ending-table">
+          <thead>
+            <tr>
+              <th>Participant</th>
+              <th>Opening Pts</th>
+              <th>Points Earned</th>
+              <th>Closing Pts</th>
+            </tr>
+          </thead>
+          <tbody id="block-ending-body"></tbody>
+        </table>
+        <div id="archive-btn-container" style="display:none; margin-top:1rem;">
+          <button id="archive-gw-btn" class="btn-admin">📦 Archive Current Gameweek</button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ARCHIVE TAB -->
+    <div id="tab-archive" class="tab-content">
+      <section class="card">
+        <h2>Archive</h2>
+        <div class="archive-controls">
+          <label for="archive-select">Select Gameweek</label>
+          <select id="archive-select">
+            <option value="">— Select a completed gameweek —</option>
+          </select>
+        </div>
+        <div id="archive-content"></div>
+      </section>
+    </div>
+
+  </main>
+
+  <script src="data/config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
