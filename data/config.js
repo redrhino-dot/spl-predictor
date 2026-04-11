@@ -6,8 +6,7 @@ const CONFIG = {
   // ── GitHub repo ──────────────────────────────────────────
 githubOwner: 'redrhino-dot',
 githubRepo:  'spl-predictor',
-githubPAT:   ['github_pat_11B4JHOFQ00M5KnxT8h4jU',
-              '_BCRac2McVqIi8kKAhKCM1pG4WCpg3XVcRcC2yiN00lB2D3Q7WG39xz8u0Og'].join(''),
+githubPAT:   ['github_pat_11B4JHOFQ00M5KnxT8h4jU','_BCRac2McVqIi8kKAhKCM1pG4WCpg3XVcRcC2yiN00lB2D3Q7WG39xz8u0Og'].join(''),
 
   // ── League / Season ──────────────────────────────────────
   leagueId: 179,
