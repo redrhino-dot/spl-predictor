@@ -26,9 +26,8 @@ jobs:
         run: pip install requests
 
       - name: Fetch fixtures and live scores
-        env:
-          API_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: python3 scripts/fetch_scores.py
+
 
       - name: Commit updated data
         run: |
