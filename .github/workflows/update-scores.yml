@@ -6,7 +6,7 @@ on:
     branches: [main]
   workflow_dispatch:
 jobs:
-  fetch-
+  fetch-data:
     runs-on: ubuntu-latest
     permissions:
       contents: write
