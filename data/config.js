@@ -29,12 +29,12 @@ githubPAT:   ['github_pat_11B4JHOFQ0iAZkwDAvkquK',
   },
 
   // ── Standings at START of GW33 ───────────────────────────
-  openingStandings: [
-    { name: 'Graham', points: 134 },
-    { name: 'Jon',    points: 130 },
-    { name: 'Kris',   points: 125 },
-    { name: 'Doug',   points: 107 },
-  ],
+openingStandings: [
+  { name: 'Graham', points: 139 },
+  { name: 'Jon',    points: 132 },
+  { name: 'Kris',   points: 130 },
+  { name: 'Doug',   points: 110 },
+],
 
   // ── Team alias map: colloquial → api-football name ───────
   teamAliases: {
