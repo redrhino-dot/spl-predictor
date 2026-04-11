@@ -1,174 +1,188 @@
-import json, os, re, sys
+import json, os, re, sys, requests
 from datetime import datetime, timezone
-from playwright.sync_api import sync_playwright
+from bs4 import BeautifulSoup
 
-FIXTURES_URL = 'https://www.flashscore.co.uk/football/scotland/premiership/fixtures/'
-RESULTS_URL  = 'https://www.flashscore.co.uk/football/scotland/premiership/results/'
+FIXTURES_URL = 'https://www.bbc.co.uk/sport/football/scottish-premiership/scores-fixtures'
+RESULTS_URL  = 'https://www.bbc.co.uk/sport/football/scottish-premiership/results'
+
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-GB,en;q=0.5',
+}
+
+STATUS_MAP = {
+    'ft': 'FT', 'fulltime': 'FT', 'full-time': 'FT',
+    'ht': 'HT', 'half-time': 'HT', 'halftime': 'HT',
+    'live': 'LIVE', 'inprogress': 'LIVE',
+    'ns': 'NS', 'fixture': 'NS',
+    'postponed': 'PST', 'cancelled': 'CANC', 'aet': 'AET', 'pen': 'PEN',
+}
+
+def parse_status(s):
+    if not s:
+        return 'NS'
+    s = s.lower().replace(' ', '').replace('-', '')
+    for k, v in STATUS_MAP.items():
+        if k in s:
+            return v
+    if re.search(r'\d+', s):
+        mins = int(re.search(r'(\d+)', s).group(1))
+        return '2H' if mins > 45 else '1H'
+    return 'NS'
+
+def scrape_bbc(url):
+    print(f'Fetching {url}')
+    r = requests.get(url, headers=HEADERS, timeout=20)
+    r.raise_for_status()
+    soup = BeautifulSoup(r.text, 'html.parser')
+
+    # BBC Sport embeds data as JSON in a script tag
+    for script in soup.find_all('script'):
+        if script.string and 'matchData' in (script.string or ''):
+            match = re.search(r'"matchData"\s*:\s*(\\[.*?\\])\s*[,}]', script.string, re.DOTALL)
+            if match:
+                try:
+                    return json.loads(match.group(1))
+                except Exception:
+                    pass
+
+    # Fallback: parse HTML match elements directly
+    matches = []
+    for el in soup.select('[data-reactid], .sp-c-fixture, article'):
+        home_el  = el.select_one('[class*="home"] [class*="team-name"], [class*="fixture__team--home"]')
+        away_el  = el.select_one('[class*="away"] [class*="team-name"], [class*="fixture__team--away"]')
+        if not home_el or not away_el:
+            continue
+        scores = el.select('[class*="score"], [class*="fixture__score"]')
+        h_score = a_score = None
+        if len(scores) >= 2:
+            try: h_score = int(scores[0].get_text(strip=True))
+            except: pass
+            try: a_score = int(scores[1].get_text(strip=True))
+            except: pass
+        status_el = el.select_one('[class*="status"], [class*="fixture__status"]')
+        status = parse_status(status_el.get_text(strip=True) if status_el else '')
+        mid = el.get('data-fixture-id') or el.get('id') or f'{home_el.get_text()}{away_el.get_text()}'
+        matches.append({
+            'raw_id': mid,
+            'home':   home_el.get_text(strip=True),
+            'away':   away_el.get_text(strip=True),
+            'h_score': h_score,
+            'a_score': a_score,
+            'status':  status,
+            'kickoff': None,
+        })
+    print(f'  HTML fallback: {len(matches)} matches')
+    return matches
+
+def scrape_page(url, fallback_status):
+    r = requests.get(url, headers=HEADERS, timeout=20)
+    r.raise_for_status()
+    soup = BeautifulSoup(r.text, 'html.parser')
+    print(f'  Got {len(r.text)} bytes from {url}')
+
+    matches = []
+    current_round = None
+
+    for el in soup.find_all(True):
+        cls = ' '.join(el.get('class', []))
+
+        if 'round' in cls.lower() or 'matchday' in cls.lower():
+            txt = el.get_text(strip=True)
+            if txt:
+                current_round = txt
+            continue
+
+        home_el = (el.select_one('[class*="fixture__team--home"] [class*="fixture__team-name"]') or
+                   el.select_one('[class*="home-team"] [class*="name"]'))
+        away_el = (el.select_one('[class*="fixture__team--away"] [class*="fixture__team-name"]') or
+                   el.select_one('[class*="away-team"] [class*="name"]'))
+        if not home_el or not away_el:
+            continue
+
+        score_els = el.select('[class*="fixture__score-container"] [class*="fixture__number"]')
+        h_score = a_score = None
+        if len(score_els) >= 2:
+            try: h_score = int(score_els[0].get_text(strip=True))
+            except: pass
+            try: a_score = int(score_els[1].get_text(strip=True))
+            except: pass
+
+        status_el = el.select_one('[class*="fixture__status"]')
+        status = parse_status(status_el.get_text(strip=True) if status_el else '') or fallback_status
+
+        time_el = el.select_one('[class*="fixture__number--time"], time')
+        kickoff = None
+        if time_el:
+            dt_str = time_el.get('datetime') or time_el.get_text(strip=True)
+            try:
+                kickoff = datetime.fromisoformat(dt_str.replace('Z', '+00:00')).isoformat()
+            except Exception:
+                pass
+
+        mid = (el.get('data-fixture-id') or el.get('data-id') or
+               f'{home_el.get_text().strip()}_v_{away_el.get_text().strip()}')
+
+        matches.append({
+            'raw_id':   mid,
+            'round':    current_round,
+            'home':     home_el.get_text(strip=True),
+            'away':     away_el.get_text(strip=True),
+            'h_score':  h_score,
+            'a_score':  a_score,
+            'status':   status,
+            'kickoff':  kickoff,
+        })
+
+    print(f'  Parsed {len(matches)} matches, round={current_round}')
+    return current_round, matches
+
+print('Scraping BBC Sport fixtures...')
+fix_round, fix_matches = scrape_page(FIXTURES_URL, 'NS')
+print('Scraping BBC Sport results...')
+res_round, res_matches = scrape_page(RESULTS_URL, 'FT')
+
+current_round = fix_round or res_round or 'Unknown'
+print(f'Round: {current_round}')
 
 DONE_ST  = {'FT', 'AET', 'PEN'}
 LIVE_ST  = {'1H', 'HT', '2H', 'ET', 'P', 'LIVE'}
 COUNT_ST = DONE_ST | LIVE_ST
 
-UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-      'AppleWebKit/537.36 (KHTML, like Gecko) '
-      'Chrome/122.0.0.0 Safari/537.36')
-
-def parse_status(t):
-    t = (t or '').strip().upper().replace("'", '').split('+')[0].strip()
-    if not t or t == '-':               return 'NS'
-    if t == 'HT':                       return 'HT'
-    if t in ('FT', 'FINISHED'):         return 'FT'
-    if t == 'AET':                      return 'AET'
-    if t in ('AP', 'PEN'):              return 'PEN'
-    if 'POSTP' in t or 'PPD' in t:     return 'PST'
-    if 'CANC' in t:                     return 'CANC'
-    if re.match(r'^\d+', t):
-        mins = int(re.match(r'^(\d+)', t).group(1))
-        return '2H' if mins > 45 else '1H'
-    return 'NS'
-
-def scrape(url, take_round='first'):
-    """
-    Scrape a Flashscore page.
-    take_round='first'  → first round listed (fixtures page = next upcoming round)
-    take_round='first'  → same logic for results (most recent = top of results page)
-    Returns (round_label, [matches])
-    """
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(
-            user_agent=UA,
-            viewport={'width': 1280, 'height': 900},
-            locale='en-GB',
-            timezone_id='Europe/London',
-        )
-        pg = ctx.new_page()
-        pg.goto(url, wait_until='domcontentloaded', timeout=30000)
-
-        try:
-            pg.click('#onetrust-accept-btn-handler', timeout=4000)
-        except Exception:
-            pass
-
-        try:
-            pg.wait_for_selector('[id^="g_1_"]', timeout=15000)
-        except Exception:
-            print(f'WARNING: no match elements found on {url}')
-            browser.close()
-            return None, []
-
-        pg.wait_for_timeout(2000)
-
-        # Grab round headers + matches in DOM order
-        raw = pg.evaluate('''() => {
-            const out   = [];
-            let   round = "Unknown";
-            document.querySelectorAll(
-                '[class*="event__round"], [id^="g_1_"]'
-            ).forEach(el => {
-                const isRound = Array.from(el.classList)
-                    .some(c => c.includes("event__round"));
-                if (isRound) {
-                    round = el.innerText.trim();
-                    return;
-                }
-                if (!el.id || !el.id.startsWith("g_1_")) return;
-                const hEl = el.querySelector('[class*="participant--home"]');
-                const aEl = el.querySelector('[class*="participant--away"]');
-                if (!hEl || !aEl) return;
-                const sh  = el.querySelector('[class*="score--home"]');
-                const sa  = el.querySelector('[class*="score--away"]');
-                const tm  = el.querySelector('[class*="event__time"]');
-                out.push({
-                    id:    el.id.replace("g_1_", ""),
-                    round: round,
-                    home:  hEl.innerText.trim(),
-                    away:  aEl.innerText.trim(),
-                    sh:    sh  ? sh.innerText.trim()  : null,
-                    sa:    sa  ? sa.innerText.trim()  : null,
-                    tt:    tm  ? tm.innerText.trim()  : "",
-                    stamp: el.getAttribute("data-stamp"),
-                });
-            });
-            return out;
-        }''')
-
-        browser.close()
-        print(f'  {url}: {len(raw)} events scraped')
-
-        if not raw:
-            return None, []
-
-        # Detect the target round — first round encountered on the page
-        first_round = raw[0]['round']
-        print(f'  Detected round: {first_round}')
-        round_matches = [r for r in raw if r['round'] == first_round]
-
-        out = []
-        for r in round_matches:
-            h_sc = int(r['sh']) if r.get('sh') and str(r['sh']).isdigit() else None
-            a_sc = int(r['sa']) if r.get('sa') and str(r['sa']).isdigit() else None
-            status  = parse_status(r.get('tt'))
-            kickoff = None
-            elapsed = None
-            if r.get('stamp'):
-                try:
-                    kickoff = datetime.fromtimestamp(
-                        int(r['stamp']), tz=timezone.utc).isoformat()
-                except Exception:
-                    pass
-            m = re.match(r'^(\d+)', (r.get('tt') or '').strip())
-            if m:
-                elapsed = int(m.group(1))
-            out.append({
-                'id':         r['id'],
-                'round':      first_round,
-                'kickoff':    kickoff,
-                'status':     status,
-                'home_team':  r['home'],
-                'away_team':  r['away'],
-                'home_score': h_sc,
-                'away_score': a_sc,
-                'elapsed':    elapsed,
-            })
-        return first_round, out
-
-print('Scraping fixtures page (upcoming)...')
-fix_round, fix_matches = scrape(FIXTURES_URL)
-
-print('Scraping results page (completed)...')
-res_round, res_matches = scrape(RESULTS_URL)
-
-print(f'Fixture round: {fix_round}')
-print(f'Results round: {res_round}')
-
-# If both pages return a round, prefer the fixtures round as canonical label.
-# If fixtures page is empty (all matches today are live/done), fall back to results.
-current_round = fix_round or res_round or 'Unknown'
-
-# Merge — results page data takes priority for completed matches
 merged = {}
 for m in res_matches:
-    merged[m['id']] = m
+    merged[m['raw_id']] = m
 for m in fix_matches:
-    if m['id'] not in merged:
-        merged[m['id']] = m
+    if m['raw_id'] not in merged:
+        merged[m['raw_id']] = m
 
-all_matches = list(merged.values())
-livescores  = [m for m in all_matches if m['status'] in COUNT_ST]
+all_matches = []
+for i, m in enumerate(merged.values()):
+    all_matches.append({
+        'id':         m['raw_id'],
+        'round':      m.get('round') or current_round,
+        'kickoff':    m.get('kickoff'),
+        'status':     m.get('status', 'NS'),
+        'home_team':  m['home'],
+        'away_team':  m['away'],
+        'home_score': m['h_score'],
+        'away_score': m['a_score'],
+        'elapsed':    None,
+    })
+
+livescores = [m for m in all_matches if m['status'] in COUNT_ST]
 
 if not all_matches:
-    print('ERROR: no matches found — possible Cloudflare block', file=sys.stderr)
+    print('ERROR: no matches scraped from BBC Sport', file=sys.stderr)
     sys.exit(1)
 
 os.makedirs('data', exist_ok=True)
 now = datetime.now(timezone.utc).isoformat()
 
 with open('data/fixtures.json', 'w') as fh:
-    json.dump({'updated': now, 'round': current_round,
-               'fixtures': all_matches}, fh, indent=2)
+    json.dump({'updated': now, 'round': current_round, 'fixtures': all_matches}, fh, indent=2)
 with open('data/livescores.json', 'w') as fh:
     json.dump({'updated': now, 'livescores': livescores}, fh, indent=2)
 
 print(f'Done: {len(all_matches)} fixtures, {len(livescores)} live/completed.')
-print(f'Round written: {current_round}')
