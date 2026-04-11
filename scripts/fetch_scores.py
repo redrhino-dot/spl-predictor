@@ -39,7 +39,7 @@ if not current_round:
 data = fetch('fixtures', {'league': LEAGUE_ID, 'season': SEASON, 'round': current_round})
 print(f"Fixtures returned: {len(data)}")
 
-for f in 
+for f in data:
     entry = {
         'id':         f['fixture']['id'],
         'round':      current_round,
