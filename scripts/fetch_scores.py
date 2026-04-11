@@ -81,30 +81,34 @@ if not all_events:
     print('ERROR: no events found from ESPN API', file=sys.stderr)
     sys.exit(1)
 
-# Group by round — find the round with most recent/active matches
+# Group matches by date — cluster within 3 days = same gameweek
 from collections import defaultdict
-by_round = defaultdict(list)
+clusters = defaultdict(list)
 for ev in all_events:
     parsed = parse_event(ev)
-    if parsed:
-        by_round[parsed['round']].append(parsed)
+    if not parsed or not parsed['kickoff']:
+        continue
+    try:
+        t   = datetime.fromisoformat(parsed['kickoff'].replace('Z', '+00:00'))
+        key = (t - timedelta(hours=t.hour % 72)).strftime('%Y-%m-%d')
+        clusters[key].append(parsed)
+    except Exception:
+        clusters['unknown'].append(parsed)
 
-# Pick the round that contains the most recent kickoff
-best_round = None
-best_time  = None
-for rnd, matches in by_round.items():
-    for m in matches:
-        if m['kickoff']:
-            try:
-                t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-                if best_time is None or abs((t - now).total_seconds()) < abs((best_time - now).total_seconds()):
-                    best_time  = t
-                    best_round = rnd
-            except Exception:
-                pass
+# Pick cluster whose anchor date is closest to today
+best_round = 'Unknown'
+best_diff  = None
+for key, matches in clusters.items():
+    try:
+        anchor = datetime.strptime(key, '%Y-%m-%d').replace(tzinfo=timezone.utc)
+        diff   = abs((anchor - now).total_seconds())
+        if best_diff is None or diff < best_diff:
+            best_diff  = diff
+            best_round = key
+    except Exception:
+        pass
 
-if not best_round:
-    best_round = list(by_round.keys())[0]
+fixtures = clusters[best_round]
 
 fixtures   = by_round[best_round]
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
