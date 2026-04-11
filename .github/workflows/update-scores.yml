@@ -16,9 +16,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: |
-          pip install playwright
-          playwright install chromium --with-deps
+        run: pip install requests beautifulsoup4
+
       - name: Fetch fixtures and live scores
         run: python3 scripts/fetch_scores.py
       - name: Commit updated data
