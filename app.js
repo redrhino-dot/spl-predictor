@@ -364,29 +364,85 @@ function showStatus(el, msg, type) {
    SECTION 3 — PROJECTED STANDINGS
    ============================================================ */
 function renderProjectedStandings() {
-  const tbody  = document.getElementById('projected-body');
-  const gwKey  = String(CONFIG.currentGameweek);
-  const gwPreds = predictionsData?.gameweeks[gwKey]?.predictions || {};
-  const liveMap = buildLiveMap();
+  const container = document.getElementById('projected-standings');
+  if (!container) return;
+
+  const gwKey    = String(CONFIG.currentGameweek);
   const fixtures = fixturesData.fixtures || [];
+  const preds    = predictionsData.gameweeks?.[gwKey]?.predictions || {};
+  const opening  = CONFIG.openingStandings || {};
 
-  const rows = CONFIG.openingStandings.map(entry => {
-    const earned = computeEarned(entry.name, fixtures, gwPreds, liveMap);
-    return { name: entry.name, opening: entry.points, earned, total: entry.points + earned };
-  }).sort((a, b) => b.total - a.total || b.opening - a.opening);
+  const rows = CONFIG.participants.map(name => {
+    const myPreds = preds[name] || [];
+    let gwPoints  = 0;
+    const earned  = [];
 
-  tbody.innerHTML = '';
-  rows.forEach((entry, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${i + 1}</td>
-      <td>${displayName(entry.name)}</td>
-      <td>${entry.opening}</td>
-      <td class="${entry.earned > 0 ? 'earned-positive' : ''}">${entry.earned > 0 ? '+' + entry.earned : entry.earned}</td>
-      <td><strong>${entry.total}</strong></td>`;
-    tbody.appendChild(tr);
+    for (const fixture of fixtures) {
+      if (fixture.home_score === null || fixture.away_score === null) continue;
+      if (fixture.status !== 'FT' && fixture.status !== 'AET' && fixture.status !== 'PEN') continue;
+
+      const pred = myPreds.find(p => String(p.fixture_id) === String(fixture.id));
+      if (!pred) continue;
+
+      const actualHome = fixture.home_score;
+      const actualAway = fixture.away_score;
+      const predHome   = pred.home_score;
+      const predAway   = pred.away_score;
+
+      // Exact score
+      if (predHome === actualHome && predAway === actualAway) {
+        gwPoints += 3;
+        earned.push(`${fixture.home_team.split(' ')[0]} 3`);
+        continue;
+      }
+      // Correct result
+      const actualResult = Math.sign(actualHome - actualAway);
+      const predResult   = Math.sign(predHome   - predAway);
+      if (actualResult === predResult) {
+        gwPoints += 1;
+        earned.push(`${fixture.home_team.split(' ')[0]} 1`);
+      }
+    }
+
+    const openingPts  = opening[name] || 0;
+    const projected   = openingPts + gwPoints;
+    return { name, openingPts, gwPoints, projected, earned };
   });
+
+  rows.sort((a, b) => b.projected - a.projected);
+
+  container.innerHTML = `
+    <h2 class="section-title">PROJECTED CLOSING STANDINGS</h2>
+    <div class="table-wrapper">
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>PARTICIPANT</th>
+            <th>OPENING PTS</th>
+            <th>POINTS EARNED</th>
+            <th>PROJECTED TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((r, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${r.name}</td>
+              <td>${r.openingPts}</td>
+              <td class="points-earned">${r.earned.length
+                ? r.earned.map(e => `<span class="earned-tag">${e}</span>`).join(' ')
+                : '<span class="no-points">—</span>'
+              }</td>
+              <td><strong>${r.projected}</strong></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
+
 
 /* ============================================================
    BLOCK ENDING TABLE
