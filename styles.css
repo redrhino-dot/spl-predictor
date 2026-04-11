@@ -506,3 +506,15 @@ input[type="password"] { width: 130px; }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
+
+.points-earned {
+  color: #00c853;
+  font-size: 0.82rem;
+}
+.earned-tag {
+  display: inline-block;
+  margin-right: 4px;
+}
+.no-points {
+  color: #666;
+}
