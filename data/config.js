@@ -4,28 +4,28 @@
 const CONFIG = {
 
   // ── GitHub repo ──────────────────────────────────────────
-  githubOwner: 'YOUR_GITHUB_USERNAME',
-  githubRepo:  'YOUR_REPO_NAME',
-  // Fine-grained PAT — Contents: Read + Write on this repo only
-  githubPAT:   'YOUR_FINE_GRAINED_PAT',
+githubOwner: 'redrhino-dot',
+githubRepo:  'spl-predictor',
+githubPAT:   ['github_pat_11B4JHOFQ0iAZkwDAvkquK',
+              '_dF9mfhURwGKCeqnHhGJ8BXomrlrErqG7hDM6vCIKaBdZ3G7A2EKHENcE6rZ'].join(''),
 
   // ── League / Season ──────────────────────────────────────
   leagueId: 179,
-  season:   2024,
+  season:   2025,
 
   // ── Current Gameweek ─────────────────────────────────────
   currentGameweek: 33,
-  currentGwLabel:  'GW33 — 12 Apr 2025',
+  currentGwLabel:  'GW33 — 11 Apr 2026',
 
   // ── Participants ─────────────────────────────────────────
   participants: ['Graham', 'Jon', 'Kris', 'Doug'],
 
   // ── PINs — change these after setup, share privately ─────
   pins: {
-    Graham: '1234',
-    Jon:    '2345',
-    Kris:   '3456',
-    Doug:   '4567',
+    Graham: '0726',
+    Jon:    '0712',
+    Kris:   '1006',
+    Doug:   '1030',
   },
 
   // ── Standings at START of GW33 ───────────────────────────
