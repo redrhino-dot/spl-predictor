@@ -81,34 +81,41 @@ if not all_events:
     print('ERROR: no events found from ESPN API', file=sys.stderr)
     sys.exit(1)
 
-# Group matches by date — cluster within 3 days = same gameweek
-from collections import defaultdict
-clusters = defaultdict(list)
+# Group all events — treat matches within 4 days of each other as same gameweek
+parsed_all = []
 for ev in all_events:
-    parsed = parse_event(ev)
-    if not parsed or not parsed['kickoff']:
-        continue
-    try:
-        t   = datetime.fromisoformat(parsed['kickoff'].replace('Z', '+00:00'))
-        key = (t - timedelta(hours=t.hour % 72)).strftime('%Y-%m-%d')
-        clusters[key].append(parsed)
-    except Exception:
-        clusters['unknown'].append(parsed)
+    p = parse_event(ev)
+    if p and p['kickoff']:
+        parsed_all.append(p)
 
-# Pick cluster whose anchor date is closest to today
-best_round = 'Unknown'
-best_diff  = None
-for key, matches in clusters.items():
-    try:
-        anchor = datetime.strptime(key, '%Y-%m-%d').replace(tzinfo=timezone.utc)
-        diff   = abs((anchor - now).total_seconds())
-        if best_diff is None or diff < best_diff:
-            best_diff  = diff
-            best_round = key
-    except Exception:
-        pass
+parsed_all.sort(key=lambda x: x['kickoff'])
 
-fixtures = clusters[best_round]
+# Find the cluster of matches closest to today
+# Walk through sorted matches, cluster if within 4 days of previous
+gameweeks = []
+current_gw = []
+for m in parsed_all:
+    if not current_gw:
+        current_gw.append(m)
+    else:
+        prev_t = datetime.fromisoformat(current_gw[-1]['kickoff'].replace('Z', '+00:00'))
+        this_t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
+        if (this_t - prev_t).days <= 4:
+            current_gw.append(m)
+        else:
+            gameweeks.append(current_gw)
+            current_gw = [m]
+if current_gw:
+    gameweeks.append(current_gw)
+
+# Pick gameweek closest to now
+best_gw   = min(gameweeks, key=lambda gw: min(
+    abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
+    for m in gw
+))
+fixtures    = best_gw
+best_round  = fixtures[0]['round'] if fixtures else 'Unknown'
+
 
 fixtures   = clusters[best_round]
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
