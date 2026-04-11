@@ -57,7 +57,7 @@ githubPAT:   ['github_pat_11B4JHOFQ0iAZkwDAvkquK',
   // Requires fixtures.json to be populated first (run the workflow).
   seededPredictions: {
     gw:          33,
-    submittedAt: '2025-04-12T13:55:00Z',
+    submittedAt: '2026-04-11T13:55:00Z',
     byFixture: [
       { homeTeam: 'Aberdeen',            awayTeam: 'Hibernian',
         Graham: [1,1], Jon: [1,2], Doug: [1,2], Kris: [0,2] },
