@@ -753,16 +753,7 @@ async function writeFileToGitHub(path, newContent) {
   try {
     const sha = await getCurrentSHA(apiBase);
     if (sha === null) return false;
-
-    const result = await doPut(apiBase, newContent, sha);
-    if (result === 409) {
-      // SHA mismatch — re-fetch SHA and retry once
-      const freshSHA = await getCurrentSHA(apiBase);
-      if (freshSHA === null) return false;
-      const retryResult = await doPut(apiBase, newContent, freshSHA);
-      return retryResult === true;
-    }
-    return result === true;
+    return await doPut(apiBase, newContent, sha);
   } catch (e) {
     console.error('GitHub write error:', e);
     return false;
