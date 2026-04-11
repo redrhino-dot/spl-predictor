@@ -138,21 +138,65 @@ function renderOpeningStandings() {
 /* ============================================================
    SECTION 2 — FIXTURES TABLE
    ============================================================ */
-= fixturesData.fixtures || [];
+function renderFixturesTable() {
+  const tbody    = document.getElementById('fixtures-body');
+  const fixtures = fixturesData.fixtures || [];
   tbody.innerHTML = '';
 
   if (fixtures.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" class="no-data">
+    tbody.innerHTML = `<tr><td colspan="${3 + CONFIG.participants.length}" class="no-data">
       Fixtures not yet loaded — run the GitHub Actions workflow first.
     </td></tr>`;
     updateTimestamp();
     return;
   }
 
-  const now    = new Date();
-  const gwKey  = String(CONFIG.currentGameweek);
+  const now     = new Date();
+  const gwKey   = String(CONFIG.currentGameweek);
   const gwPreds = predictionsData?.gameweeks[gwKey]?.predictions || {};
   const liveMap = buildLiveMap();
+  let lastGroup = null;
+
+  fixtures.forEach(fixture => {
+    const groupKey = formatGroupHeader(fixture.kickoff);
+    if (groupKey !== lastGroup) {
+      const headerRow = document.createElement('tr');
+      headerRow.className = 'date-group-header';
+      headerRow.innerHTML = `<td colspan="${3 + CONFIG.participants.length}">${groupKey}</td>`;
+      tbody.appendChild(headerRow);
+      lastGroup = groupKey;
+    }
+
+    const kickoff     = new Date(fixture.kickoff);
+    const started     = now >= kickoff;
+    const live        = liveMap[fixture.id] || fixture;
+    const status      = live.status || fixture.status || '';
+    const isCompleted = COMPLETED.includes(status);
+    const isLive      = LIVE.includes(status);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="team-name home-team">${getAlias(fixture.home_team)}</td>
+      <td class="team-name away-team">${getAlias(fixture.away_team)}</td>
+      <td class="score-cell">${buildScoreCell(live, fixture, started, isLive, isCompleted)}</td>
+      ${CONFIG.participants.map(p =>
+        buildPredCell(p, fixture, gwPreds[p] || [], live, started, isCompleted, isLive)
+      ).join('')}`;
+    tbody.appendChild(tr);
+  });
+
+  updateTimestamp();
+}
+
+function formatGroupHeader(iso) {
+  try {
+    return new Date(iso).toLocaleString('en-GB', {
+      timeZone: 'Europe/London',
+      weekday: 'short', day: 'numeric', month: 'short',
+      hour: '2-digit', minute: '2-digit',
+    });
+  } catch { return iso; }
+}
 
 /* ============================================================
    PREDICTION ENTRY FORM
