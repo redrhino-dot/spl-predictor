@@ -110,7 +110,7 @@ for key, matches in clusters.items():
 
 fixtures = clusters[best_round]
 
-fixtures   = by_round[best_round]
+fixtures   = clusters[best_round]
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
 print(f'Current round: {best_round} ({len(fixtures)} fixtures, {len(livescores)} live/done)')
 
