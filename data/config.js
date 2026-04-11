@@ -11,7 +11,7 @@ githubPAT:   ['github_pat_11B4JHOFQ0iAZkwDAvkquK',
 
   // ── League / Season ──────────────────────────────────────
   leagueId: 179,
-  season:   2026,
+  season:   2025,
 
   // ── Current Gameweek ─────────────────────────────────────
   currentGameweek: 33,
