@@ -5,7 +5,7 @@ from datetime import datetime
 
 API_KEY   = os.environ['API_KEY']
 LEAGUE_ID = 179
-SEASON    = 2024
+SEASON    = 2025
 HEADERS   = {
     'x-rapidapi-host': 'v3.football.api-sports.io',
     'x-rapidapi-key':  API_KEY,
