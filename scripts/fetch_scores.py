@@ -116,8 +116,6 @@ best_gw   = min(gameweeks, key=lambda gw: min(
 fixtures    = best_gw
 best_round  = fixtures[0]['round'] if fixtures else 'Unknown'
 
-
-fixtures   = clusters[best_round]
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
 print(f'Current round: {best_round} ({len(fixtures)} fixtures, {len(livescores)} live/done)')
 
