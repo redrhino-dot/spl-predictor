@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests
 
       - name: Fetch fixtures and live scores
         run: python3 scripts/fetch_scores.py
