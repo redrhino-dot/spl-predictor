@@ -1,7 +1,7 @@
 import json, requests, sys, os
 from datetime import datetime, timezone
 
-LEAGUE_ID = 4328
+LEAGUE_ID = 5173
 API_BASE  = 'https://www.thesportsdb.com/api/v1/json/3'
 
 STATUS_MAP = {
