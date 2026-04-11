@@ -518,3 +518,13 @@ input[type=number] { -moz-appearance: textfield; }
 .no-points {
   color: #666;
 }
+
+.date-group-header td {
+  background-color: #1a2a3a;
+  color: #00c853;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 6px 8px;
+  text-transform: uppercase;
+}
