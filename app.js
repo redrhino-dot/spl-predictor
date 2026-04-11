@@ -138,9 +138,7 @@ function renderOpeningStandings() {
 /* ============================================================
    SECTION 2 — FIXTURES TABLE
    ============================================================ */
-function renderFixturesTable() {
-  const tbody    = document.getElementById('fixtures-body');
-  const fixtures = fixturesData.fixtures || [];
+= fixturesData.fixtures || [];
   tbody.innerHTML = '';
 
   if (fixtures.length === 0) {
@@ -155,80 +153,6 @@ function renderFixturesTable() {
   const gwKey  = String(CONFIG.currentGameweek);
   const gwPreds = predictionsData?.gameweeks[gwKey]?.predictions || {};
   const liveMap = buildLiveMap();
-
-  fixtures.forEach(fixture => {
-    const kickoff    = new Date(fixture.kickoff);
-    const started    = now >= kickoff;
-    const live       = liveMap[fixture.id] || fixture;
-    const status     = live.status || fixture.status || '';
-    const isCompleted = COMPLETED.includes(status);
-    const isLive      = LIVE.includes(status);
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="team-name home-team">${fixture.home_team}</td>
-      <td class="kickoff-time">${formatKickoffBST(fixture.kickoff)}</td>
-      <td class="score-cell">${buildScoreCell(live, fixture, started, isLive, isCompleted)}</td>
-      <td class="team-name away-team">${fixture.away_team}</td>
-      ${CONFIG.participants.map(p =>
-        buildPredCell(p, fixture, gwPreds[p] || [], live, started, isCompleted, isLive)
-      ).join('')}`;
-    tbody.appendChild(tr);
-  });
-
-  updateTimestamp();
-}
-
-function buildLiveMap() {
-  const map = {};
-  (livescoresData.livescores || []).forEach(l => { map[l.id] = l; });
-  return map;
-}
-
-function buildScoreCell(live, fixture, started, isLive, isCompleted) {
-  if (!started) return '<span class="score-vs">vs</span>';
-  const h = live.home_score ?? fixture.home_score;
-  const a = live.away_score ?? fixture.away_score;
-  if (h === null || a === null) return '<span class="score-vs">vs</span>';
-  if (isCompleted) return `<span class="score-final">${h} – ${a}</span>`;
-  if (isLive) {
-    const elapsed = live.elapsed ? `<span class="elapsed">${live.elapsed}'</span>` : '';
-    return `<span class="score-live">${h} – ${a}</span>${elapsed}`;
-  }
-  return `<span class="score-final">${h} – ${a}</span>`;
-}
-
-function buildPredCell(participant, fixture, preds, live, started, isCompleted, isLive) {
-  if (!started) return '<td class="pred-cell pred-hidden">–</td>';
-
-  const pred     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
-  const predHome = pred ? pred.home_score : 0;
-  const predAway = pred ? pred.away_score : 0;
-  const predText = `${predHome}–${predAway}`;
-  const noPred   = pred === null;
-
-  const h = live.home_score ?? fixture.home_score;
-  const a = live.away_score ?? fixture.away_score;
-
-  if (!isCompleted && !isLive || h === null || a === null) {
-    return `<td class="pred-cell ${noPred ? 'pred-none' : 'pred-pending'}">${predText}</td>`;
-  }
-
-  const pts = scorePrediction(predHome, predAway, h, a);
-  const cls = pts === 3 ? 'pred-exact' : pts === 1 ? 'pred-correct' : 'pred-wrong';
-  const ptsLabel = `<span class="pts-label">${pts}pt${pts !== 1 ? 's' : ''}</span>`;
-
-  return `<td class="pred-cell ${cls}">${predText}${ptsLabel}</td>`;
-}
-
-function updateTimestamp() {
-  const el = document.getElementById('last-updated');
-  if (fixturesData.updated) {
-    el.textContent = 'Data updated: ' + formatTimeBST(fixturesData.updated);
-  } else {
-    el.textContent = '';
-  }
-}
 
 /* ============================================================
    PREDICTION ENTRY FORM
