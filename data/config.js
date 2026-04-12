@@ -1,1 +1,101 @@
-"// auto-updated config\n\nconst CONFIG = {\n  \"githubPAT\": ['github_pat_11B4JHOFQ', '00M5KnxT8h4jU_BCRac2McVqIi8kKAhKCM1pG4WCpg3XVcRcC2yiN00lB2D3Q7WG39xz8u0Og'].join(''),\n  \"githubOwner\": \"redrhino-dot\",\n  \"githubRepo\": \"spl-predictor\",\n  \"leagueId\": 179,\n  \"season\": 2025,\n  \"currentGameweek\": 33,\n  \"currentGwLabel\": \"GW33 — 11 Apr 2026\",\n  \"participants\": [\n    \"Graham\",\n    \"Jon\",\n    \"Kris\",\n    \"Doug\"\n  ],\n  \"pins\": {\n    \"Graham\": \"0726\",\n    \"Jon\": \"0712\",\n    \"Kris\": \"1940\",\n    \"Doug\": \"1030\"\n  },\n  \"openingStandings\": [\n    {\n      \"name\": \"Graham\",\n      \"points\": 139\n    },\n    {\n      \"name\": \"Jon\",\n      \"points\": 132\n    },\n    {\n      \"name\": \"Kris\",\n      \"points\": 130\n    },\n    {\n      \"name\": \"Doug\",\n      \"points\": 110\n    }\n  ],\n  \"teamAliases\": {\n    \"Hibs\": \"Hibernian\",\n    \"Huns\": \"Rangers\",\n    \"Celtic\": \"Celtic\",\n    \"St M\": \"St Mirren\",\n    \"Dons\": \"Aberdeen\",\n    \"Yinited\": \"Dundee United\",\n    \"Utd\": \"Dundee United\",\n    \"Livi\": \"Livingston\",\n    \"Well\": \"Motherwell\",\n    \"Killie\": \"Kilmarnock\",\n    \"Hearts\": \"Heart of Midlothian\",\n    \"Dundee\": \"Dundee\"\n  },\n  \"seededPredictions\": {\n    \"gw\": 33,\n    \"submittedAt\": \"2026-04-11T13:55:00Z\",\n    \"byFixture\": [\n      {\n        \"homeTeam\": \"Aberdeen\",\n        \"awayTeam\": \"Hibernian\",\n        \"Graham\": [\n          1,\n          1\n        ],\n        \"Jon\": [\n          1,\n          2\n        ],\n        \"Doug\": [\n          1,\n          2\n        ],\n        \"Kris\": [\n          0,\n          2\n        ]\n      },\n      {\n        \"homeTeam\": \"Celtic\",\n        \"awayTeam\": \"St Mirren\",\n        \"Graham\": [\n          2,\n          0\n        ],\n        \"Jon\": [\n          3,\n          0\n        ],\n        \"Doug\": [\n          1,\n          1\n        ],\n        \"Kris\": [\n          3,\n          1\n        ]\n      },\n      {\n        \"homeTeam\": \"Dundee United\",\n        \"awayTeam\": \"Livingston\",\n        \"Graham\": [\n          1,\n          0\n        ],\n        \"Jon\": [\n          2,\n          1\n        ],\n        \"Doug\": [\n          2,\n          1\n        ],\n        \"Kris\": [\n          2,\n          0\n        ]\n      },\n      {\n        \"homeTeam\": \"Heart of Midlothian\",\n        \"awayTeam\": \"Motherwell\",\n        \"Graham\": [\n          1,\n          0\n        ],\n        \"Jon\": [\n          2,\n          0\n        ],\n        \"Doug\": [\n          2,\n          1\n        ],\n        \"Kris\": [\n          2,\n          1\n        ]\n      },\n      {\n        \"homeTeam\": \"Kilmarnock\",\n        \"awayTeam\": \"Dundee\",\n        \"Graham\": [\n          2,\n          1\n        ],\n        \"Jon\": [\n          2,\n          2\n        ],\n        \"Doug\": [\n          1,\n          0\n        ],\n        \"Kris\": [\n          1,\n          1\n        ]\n      }\n    ]\n  }\n};\n"
+// auto-updated config
+
+const CONFIG = {
+  "githubPAT": ['github_pat_11B4JHOFQ', '00M5KnxT8h4jU_BCRac2McVqIi8kKAhKCM1pG4WCpg3XVcRcC2yiN00lB2D3Q7WG39xz8u0Og'].join(''),
+  "githubOwner": "redrhino-dot",
+  "githubRepo": "spl-predictor",
+  "leagueId": 179,
+  "season": 2025,
+  "currentGameweek": 33,
+  "currentGwLabel": "GW33 — 11 Apr 2026",
+  "participants": [
+    "Graham",
+    "Jon",
+    "Kris",
+    "Doug"
+  ],
+  "pins": {
+    "Graham": "0726",
+    "Jon": "0712",
+    "Kris": "1940",
+    "Doug": "1030"
+  },
+  "openingStandings": [
+    {
+      "name": "Graham",
+      "points": 139
+    },
+    {
+      "name": "Jon",
+      "points": 132
+    },
+    {
+      "name": "Kris",
+      "points": 130
+    },
+    {
+      "name": "Doug",
+      "points": 110
+    }
+  ],
+  "teamAliases": {
+    "Hibs": "Hibernian",
+    "Huns": "Rangers",
+    "Celtic": "Celtic",
+    "St M": "St Mirren",
+    "Dons": "Aberdeen",
+    "Yinited": "Dundee United",
+    "Utd": "Dundee United",
+    "Livi": "Livingston",
+    "Well": "Motherwell",
+    "Killie": "Kilmarnock",
+    "Hearts": "Heart of Midlothian",
+    "Dundee": "Dundee"
+  },
+  "seededPredictions": {
+    "gw": 33,
+    "submittedAt": "2026-04-11T13:55:00Z",
+    "byFixture": [
+      {
+        "homeTeam": "Aberdeen",
+        "awayTeam": "Hibernian",
+        "Graham": [1,1],
+        "Jon": [1,2],
+        "Doug": [1,2],
+        "Kris": [0,2]
+      },
+      {
+        "homeTeam": "Celtic",
+        "awayTeam": "St Mirren",
+        "Graham": [2,0],
+        "Jon": [3,0],
+        "Doug": [1,1],
+        "Kris": [3,1]
+      },
+      {
+        "homeTeam": "Dundee United",
+        "awayTeam": "Livingston",
+        "Graham": [1,0],
+        "Jon": [2,1],
+        "Doug": [2,1],
+        "Kris": [2,0]
+      },
+      {
+        "homeTeam": "Heart of Midlothian",
+        "awayTeam": "Motherwell",
+        "Graham": [1,0],
+        "Jon": [2,0],
+        "Doug": [2,1],
+        "Kris": [2,1]
+      },
+      {
+        "homeTeam": "Kilmarnock",
+        "awayTeam": "Dundee",
+        "Graham": [2,1],
+        "Jon": [2,2],
+        "Doug": [1,0],
+        "Kris": [1,1]
+      }
+    ]
+  }
+};
