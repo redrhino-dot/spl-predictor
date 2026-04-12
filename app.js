@@ -825,3 +825,56 @@ async function doPut(apiBase, newContent, sha) {
   if (res.status === 409) return 409;
   return res.ok;
 }
+async function rollToNextGW() {
+  const pin = prompt('Enter Kris\'s admin PIN to roll to the next gameweek:');
+  if (pin === null) return;
+  if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
+
+  // 1. Get the latest archived standings
+  const currentArchive = archiveData || await fetchJSON('data/archive.json');
+  if (!currentArchive || !currentArchive.gameweeks || currentArchive.gameweeks.length === 0) {
+    alert('No archived gameweeks found. Archive the current one first!');
+    return;
+  }
+
+  const lastGW = currentArchive.gameweeks[currentArchive.gameweeks.length - 1];
+  const nextGWNum = CONFIG.currentGameweek + 1;
+
+  // 2. Extract closing standings to become new opening standings
+  const newOpeningStandings = lastGW.closing_standings.map(s => ({
+    name: s.name,
+    points: s.points
+  }));
+
+  // 3. Build the new CONFIG object
+  const newConfigObj = {
+    ...CONFIG,
+    currentGameweek: nextGWNum,
+    currentGwLabel: `GW${nextGWNum} — TBD`,
+    openingStandings: newOpeningStandings,
+    seededPredictions: {
+      gw: nextGWNum,
+      submittedAt: new Date().toISOString(),
+      byFixture: []
+    }
+  };
+
+  // 4. Convert back to a JS file string
+  const fileContent = `// auto-updated by Roll to Next GW\n\nconst CONFIG = ${JSON.stringify(newConfigObj, null, 2)};\n`;
+
+  const btn = document.getElementById('roll-gw-btn');
+  btn.disabled = true;
+  btn.textContent = 'Rolling...';
+
+  // 5. Save to GitHub
+  const ok = await writeFileToGitHub('data/config.js', fileContent);
+  
+  if (ok === true) {
+    alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
+    window.location.reload();
+  } else {
+    alert('Failed to update config.js. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Roll to Next Gameweek';
+  }
+}
