@@ -144,3 +144,26 @@
   <script src="app.js"></script>
 </body>
 </html>
+
+<!-- SETTINGS TAB -->
+<div id="tab-settings" class="tab-content">
+  <section class="card">
+    <h2 class="section-title">CHANGE PIN</h2>
+    <div style="display: flex; flex-direction: column; gap: 15px; max-width: 300px;">
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; color: #8ba3c0;">PARTICIPANT</label>
+        <select id="pin-participant" style="width: 100%; padding: 8px; border-radius: 6px; background: #0f1925; color: #fff; border: 1px solid #2a3f5a;"></select>
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; color: #8ba3c0;">CURRENT PIN</label>
+        <input type="password" id="pin-current" inputmode="numeric" maxlength="4" placeholder="••••" style="width: 100%; padding: 8px; border-radius: 6px; background: #0f1925; color: #fff; border: 1px solid #2a3f5a;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; color: #8ba3c0;">NEW PIN</label>
+        <input type="password" id="pin-new" inputmode="numeric" maxlength="4" placeholder="••••" style="width: 100%; padding: 8px; border-radius: 6px; background: #0f1925; color: #fff; border: 1px solid #2a3f5a;">
+      </div>
+      <button id="pin-submit-btn" class="btn" style="margin-top: 10px;">Save New PIN</button>
+      <div id="pin-status" class="pred-status"></div>
+    </div>
+  </section>
+</div>
