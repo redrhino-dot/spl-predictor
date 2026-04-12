@@ -224,7 +224,6 @@ function buildPredCell(participant, fixture, preds, live, started, isCompleted, 
     return `<td class="pred-cell pred-hidden">${pred ? '✅' : '–'}</td>`;
   }
 
-
   const pred     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
   const predHome = pred ? pred.home_score : 0;
   const predAway = pred ? pred.away_score : 0;
@@ -240,7 +239,8 @@ function buildPredCell(participant, fixture, preds, live, started, isCompleted, 
 
   const pts = scorePrediction(predHome, predAway, h, a);
   const cls = pts === 3 ? 'pred-exact' : pts === 1 ? 'pred-correct' : 'pred-wrong';
-    const ptsLabel = `<span class="pts-label">${pts}</span>`;
+  const ptsLabel = `<span class="pts-label">${pts}</span>`;
+
   return `<td class="pred-cell ${cls}">${predText}${ptsLabel}</td>`;
 }
 
