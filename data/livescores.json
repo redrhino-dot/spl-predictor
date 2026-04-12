@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-12T11:30:42.283008+00:00",
+  "updated": "2026-04-12T11:37:59.853423+00:00",
   "livescores": [
     {
       "id": "742528",
@@ -10,7 +10,7 @@
       "away_team": "Hibernian",
       "home_score": 2,
       "away_score": 0,
-      "elapsed": null
+      "elapsed": 903
     },
     {
       "id": "742529",
@@ -21,7 +21,7 @@
       "away_team": "St Mirren",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": null
+      "elapsed": 905
     },
     {
       "id": "742530",
@@ -32,7 +32,7 @@
       "away_team": "Livingston",
       "home_score": 3,
       "away_score": 2,
-      "elapsed": null
+      "elapsed": 904
     },
     {
       "id": "742532",
@@ -43,7 +43,7 @@
       "away_team": "Motherwell",
       "home_score": 3,
       "away_score": 1,
-      "elapsed": null
+      "elapsed": 907
     },
     {
       "id": "742533",
@@ -54,7 +54,7 @@
       "away_team": "Dundee",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": null
+      "elapsed": 9013
     },
     {
       "id": "742531",
@@ -63,9 +63,9 @@
       "status": "1H",
       "home_team": "Falkirk",
       "away_team": "Rangers",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 0,
-      "elapsed": null
+      "elapsed": 35
     }
   ]
 }
