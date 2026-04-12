@@ -810,11 +810,17 @@ async function getCurrentSHA(apiBase) {
 }
 
 async function doPut(apiBase, newContent, sha) {
+  // If it's already a string, don't stringify it again!
+  const finalString = typeof newContent === 'string' 
+    ? newContent 
+    : JSON.stringify(newContent, null, 2);
+
   const body = JSON.stringify({
     message: `chore: update ${apiBase.split('/contents/')[1]}`,
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(newContent, null, 2)))),
+    content: btoa(unescape(encodeURIComponent(finalString))),
     sha,
   });
+
   const res = await fetch(apiBase, {
     method: 'PUT',
     headers: {
@@ -827,6 +833,7 @@ async function doPut(apiBase, newContent, sha) {
   if (res.status === 409) return 409;
   return res.ok;
 }
+
 async function rollToNextGW() {
   const pin = prompt('Enter Kris\'s admin PIN to roll to the next gameweek:');
   if (pin === null) return;
