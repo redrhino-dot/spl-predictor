@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-12T12:28:45.353233+00:00",
+  "updated": "2026-04-12T13:42:44.400524+00:00",
   "livescores": [
     {
       "id": "742528",
@@ -60,12 +60,12 @@
       "id": "742531",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-04-12T11:00Z",
-      "status": "2H",
+      "status": "FT",
       "home_team": "Falkirk",
       "away_team": "Rangers",
-      "home_score": 2,
-      "away_score": 4,
-      "elapsed": 66
+      "home_score": 3,
+      "away_score": 6,
+      "elapsed": 904
     }
   ]
 }
