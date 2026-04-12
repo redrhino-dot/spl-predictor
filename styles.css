@@ -549,30 +549,36 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 /* Aggressive iPhone tightening for the fixtures table */
+.fixtures-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .fixtures-table th, 
 .fixtures-table td {
-  padding: 8px 4px !important; /* Slash horizontal padding */
-  font-size: 0.85rem; /* Slightly smaller text */
-}
-
-/* Make the prediction cells more compact */
-.pred-cell {
-  min-width: 45px !important; /* Allow cells to shrink */
+  padding: 8px 2px !important; /* Minimum possible horizontal padding */
+  font-size: 0.75rem !important; /* Drop font size slightly more */
   text-align: center;
+  white-space: nowrap; /* Forces 1-0 to stay on one line! */
 }
 
-/* Make the points label a tiny badge to save space */
+/* Let team names truncate with ... if they are slightly too long */
+.team-name {
+  max-width: 55px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left !important;
+}
+
+.score-cell {
+  width: 45px; /* Keep score column just wide enough */
+}
+
+/* Make the points label tiny and tight underneath */
 .pts-label {
   display: block;
   font-size: 0.65rem;
-  margin-top: 2px;
-  opacity: 0.8;
+  margin-top: 1px;
+  opacity: 0.7;
 }
 
-/* Shrink the home/away team columns slightly */
-.team-name {
-  max-width: 75px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
