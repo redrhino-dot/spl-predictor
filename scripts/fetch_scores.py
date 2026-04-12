@@ -37,7 +37,7 @@ def parse_event(ev):
         return None
     home = next((c for c in competitors if c.get('homeAway') == 'home'), competitors[0])
     away = next((c for c in competitors if c.get('homeAway') == 'away'), competitors[1])
-        status_obj = comp.get('status', {})
+    status_obj = comp.get('status', {})
     detail     = status_obj.get('type', {}).get('description', '')
     state      = status_obj.get('type', {}).get('state', '')
     clock      = status_obj.get('displayClock', '')
