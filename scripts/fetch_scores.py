@@ -44,9 +44,13 @@ def parse_event(ev):
     status     = espn_status(detail, clock, state)
     elapsed    = None
     try:
-        elapsed = int(clock.split(':')[0]) if clock and clock != '0:00' else None
+        if clock and clock != '0:00':
+            # Remove any apostrophes or plus signs before converting to int
+            clean_clock = clock.split(':')[0].replace("'", "").replace("+", "")
+            elapsed = int(clean_clock)
     except Exception:
         pass
+
     h_score = a_score = None
     try: h_score = int(home.get('score'))
     except Exception: pass
