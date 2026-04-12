@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-12T11:37:59.853423+00:00",
+  "updated": "2026-04-12T11:46:37.793364+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
     {
@@ -65,8 +65,8 @@
       "home_team": "Falkirk",
       "away_team": "Rangers",
       "home_score": 2,
-      "away_score": 0,
-      "elapsed": 35
+      "away_score": 1,
+      "elapsed": 42
     }
   ]
 }
