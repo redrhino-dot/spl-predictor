@@ -675,7 +675,7 @@ async function archiveCurrentGW() {
 function getActivePrediction(participant, fixtureId, kickoff, preds) {
   const ko       = new Date(kickoff);
   const filtered = (preds || []).filter(
-    p => p.fixture_id === fixtureId && new Date(p.submitted_at) < ko
+    p => String(p.fixture_id) === String(fixtureId) && new Date(p.submitted_at) < ko
   );
   return filtered.length > 0 ? filtered[filtered.length - 1] : null;
 }
