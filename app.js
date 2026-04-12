@@ -360,7 +360,7 @@ async function submitPredictions() {
   const ok = await writeFileToGitHub('data/predictions.json', predictionsData);
   document.getElementById('pred-submit-btn').disabled = false;
 
-  if (ok) {
+  if (ok === true) {
     showStatus(statusEl, `Saved at ${formatTimeBST(submittedAt)} BST ✓`, 'success');
     renderFixturesTable();
     renderProjectedStandings();
