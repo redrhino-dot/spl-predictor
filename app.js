@@ -440,6 +440,7 @@ function checkAndRenderBlockEnding() {
 
   document.getElementById('archive-btn-container').style.display = 'block';
   document.getElementById('archive-gw-btn').onclick = archiveCurrentGW;
+  document.getElementById('roll-gw-btn').onclick = rollToNextGW; // ADD THIS LINE
 }
 
 function renderBlockEnding(fixtures, liveMap) {
