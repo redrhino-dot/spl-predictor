@@ -284,9 +284,11 @@ function renderPredictionForm() {
   fixtures.forEach(fixture => {
     const kickoff  = new Date(fixture.kickoff);
     const locked   = now >= kickoff;
-    const active   = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
-    const homeVal  = active !== null ? active.home_score : '';
-    const awayVal  = active !== null ? active.away_score : '';
+    const pin        = document.getElementById('pred-pin').value.trim();
+const pinCorrect = CONFIG.pins[participant] === pin;
+const active     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+const homeVal    = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
+const awayVal    = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
 
     const row = document.createElement('div');
     row.className = 'pred-row' + (locked ? ' pred-row-disabled' : '');
