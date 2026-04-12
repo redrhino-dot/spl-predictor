@@ -240,7 +240,7 @@ function buildPredCell(participant, fixture, preds, live, started, isCompleted, 
 
   const pts = scorePrediction(predHome, predAway, h, a);
   const cls = pts === 3 ? 'pred-exact' : pts === 1 ? 'pred-correct' : 'pred-wrong';
-  const ptsLabel = `<span class="pts-label">${pts}pt${pts !== 1 ? 's' : ''}</span>`;
+    const ptsLabel = `<span class="pts-label">${pts}</span>`;
   return `<td class="pred-cell ${cls}">${predText}${ptsLabel}</td>`;
 }
 
