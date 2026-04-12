@@ -7,15 +7,17 @@ HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
 DONE_ST = {'FT', 'AET', 'PEN'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
 
-def espn_status(detail, clock):
+def espn_status(detail, clock, state):
     d = (detail or '').upper()
     if any(x in d for x in ('FINAL', 'FULL TIME', 'FT')): return 'FT'
     if any(x in d for x in ('HALF TIME', 'HALFTIME')):    return 'HT'
     if 'POSTPONE' in d:  return 'PST'
     if 'CANCEL'   in d:  return 'CANC'
-    if 'PROGRESS' in d or 'LIVE' in d:
+    
+    # State 'in' means in progress. Also catch 'FIRST HALF' or 'SECOND HALF' directly.
+    if state == 'in' or 'HALF' in d or 'PROGRESS' in d or 'LIVE' in d:
         try:
-            mins = int((clock or '0:00').split(':')[0])
+            mins = int((clock or '0:00').split(':')[0].replace("'", ""))
             return '2H' if mins > 45 else '1H'
         except Exception:
             return 'LIVE'
