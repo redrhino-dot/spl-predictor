@@ -198,6 +198,56 @@ function formatGroupHeader(iso) {
   } catch { return iso; }
 }
 
+function buildLiveMap() {
+  const map = {};
+  (livescoresData.livescores || []).forEach(l => { map[l.id] = l; });
+  return map;
+}
+
+function buildScoreCell(live, fixture, started, isLive, isCompleted) {
+  if (!started) return '<span class="score-vs">vs</span>';
+  const h = live.home_score ?? fixture.home_score;
+  const a = live.away_score ?? fixture.away_score;
+  if (h === null || a === null) return '<span class="score-vs">vs</span>';
+  if (isCompleted) return `<span class="score-final">${h} – ${a}</span>`;
+  if (isLive) {
+    const elapsed = live.elapsed ? `<span class="elapsed">${live.elapsed}'</span>` : '';
+    return `<span class="score-live">${h} – ${a}</span>${elapsed}`;
+  }
+  return `<span class="score-final">${h} – ${a}</span>`;
+}
+
+function buildPredCell(participant, fixture, preds, live, started, isCompleted, isLive) {
+  if (!started) return '<td class="pred-cell pred-hidden">–</td>';
+
+  const pred     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+  const predHome = pred ? pred.home_score : 0;
+  const predAway = pred ? pred.away_score : 0;
+  const predText = `${predHome}–${predAway}`;
+  const noPred   = pred === null;
+
+  const h = live.home_score ?? fixture.home_score;
+  const a = live.away_score ?? fixture.away_score;
+
+  if ((!isCompleted && !isLive) || h === null || a === null) {
+    return `<td class="pred-cell ${noPred ? 'pred-none' : 'pred-pending'}">${predText}</td>`;
+  }
+
+  const pts = scorePrediction(predHome, predAway, h, a);
+  const cls = pts === 3 ? 'pred-exact' : pts === 1 ? 'pred-correct' : 'pred-wrong';
+  const ptsLabel = `<span class="pts-label">${pts}pt${pts !== 1 ? 's' : ''}</span>`;
+  return `<td class="pred-cell ${cls}">${predText}${ptsLabel}</td>`;
+}
+
+function updateTimestamp() {
+  const el = document.getElementById('last-updated');
+  if (fixturesData.updated) {
+    el.textContent = 'Data updated: ' + formatTimeBST(fixturesData.updated);
+  } else {
+    el.textContent = '';
+  }
+}
+
 /* ============================================================
    PREDICTION ENTRY FORM
    ============================================================ */
