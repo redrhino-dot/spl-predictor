@@ -218,7 +218,11 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
 }
 
 function buildPredCell(participant, fixture, preds, live, started, isCompleted, isLive) {
-  if (!started) return '<td class="pred-cell pred-hidden">–</td>';
+  if (!started) {
+    const pred = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+    return `<td class="pred-cell pred-hidden">${pred ? '✅' : '–'}</td>`;
+  }
+
 
   const pred     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
   const predHome = pred ? pred.home_score : 0;
