@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupNavigation();
   renderOpeningStandings();
   populateParticipantDropdown();
+  setupSettingsTab();
 
   await loadAllData();
   await seedPredictionsIfNeeded();
