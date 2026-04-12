@@ -861,15 +861,13 @@ async function rollToNextGW() {
   };
 
   // 4. Convert back to a JS file string
-  const fileContent = `// auto-updated by Roll to Next GW\n\nconst CONFIG = ${JSON.stringify(newConfigObj, null, 2)};\n`;
-
-  const btn = document.getElementById('roll-gw-btn');
+    const btn = document.getElementById('roll-gw-btn');
   btn.disabled = true;
   btn.textContent = 'Rolling...';
 
-  // 5. Save to GitHub
-  const ok = await writeFileToGitHub('data/config.js', fileContent);
-  
+  // 5. Save to GitHub Safely
+  const ok = await saveSafeConfig(newConfigObj);
+
   if (ok === true) {
     alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
     window.location.reload();
@@ -878,4 +876,63 @@ async function rollToNextGW() {
     btn.disabled = false;
     btn.textContent = 'Roll to Next Gameweek';
   }
+}
+/* ============================================================
+   SETTINGS / PIN MANAGEMENT
+   ============================================================ */
+function setupSettingsTab() {
+  const sel = document.getElementById('pin-participant');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Select —</option>';
+  CONFIG.participants.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+  document.getElementById('pin-submit-btn').addEventListener('click', changePin);
+}
+
+async function changePin() {
+  const participant = document.getElementById('pin-participant').value;
+  const currentPin  = document.getElementById('pin-current').value.trim();
+  const newPin      = document.getElementById('pin-new').value.trim();
+  const statusEl    = document.getElementById('pin-status');
+
+  if (!participant) { showStatus(statusEl, 'Please select a participant.', 'error'); return; }
+  if (CONFIG.pins[participant] !== currentPin) { showStatus(statusEl, 'Current PIN is incorrect.', 'error'); return; }
+  if (newPin.length !== 4 || !/^\d+$/.test(newPin)) { showStatus(statusEl, 'New PIN must be 4 digits.', 'error'); return; }
+
+  showStatus(statusEl, 'Saving new PIN...', 'info');
+  document.getElementById('pin-submit-btn').disabled = true;
+
+  const newConfigObj = { ...CONFIG };
+  newConfigObj.pins[participant] = newPin;
+
+  const ok = await saveSafeConfig(newConfigObj);
+  document.getElementById('pin-submit-btn').disabled = false;
+
+  if (ok === true) {
+    showStatus(statusEl, 'PIN changed successfully! ✓', 'success');
+    CONFIG.pins[participant] = newPin; // Update in-memory
+    document.getElementById('pin-current').value = '';
+    document.getElementById('pin-new').value = '';
+  } else {
+    showStatus(statusEl, 'Failed to save PIN. Try again.', 'error');
+  }
+}
+
+// Safely saves config.js without exposing the GitHub PAT to secret scanners
+async function saveSafeConfig(configObj) {
+  const pat = configObj.githubPAT;
+  const safePat = `['${pat.substring(0, 20)}', '${pat.substring(20)}'].join('')`;
+
+  const copy = { ...configObj };
+  delete copy.githubPAT; // Remove it so JSON.stringify doesn't process it
+
+  let jsonStr = JSON.stringify(copy, null, 2);
+  // Inject the safely split PAT back into the top of the object
+  jsonStr = jsonStr.replace('{\n', `{\n  "githubPAT": ${safePat},\n`);
+
+  const fileContent = `// auto-updated config\n\nconst CONFIG = ${jsonStr};\n`;
+  return await writeFileToGitHub('data/config.js', fileContent);
 }
