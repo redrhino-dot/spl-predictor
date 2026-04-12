@@ -755,7 +755,7 @@ function getAlias(apiName) {
    DISPLAY HELPERS
    ============================================================ */
 function displayName(name) {
-  return name === 'Graham' ? 'Smith' : name;
+  return name;
 }
 
 function formatKickoffBST(iso) {
