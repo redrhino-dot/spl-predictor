@@ -775,9 +775,14 @@ function formatTimeBST(iso) {
 async function writeFileToGitHub(path, newContent) {
   const apiBase = `https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/contents/${path}`;
   try {
-    const sha = await getCurrentSHA(apiBase);
-    if (sha === null) return false;
-    return await doPut(apiBase, newContent, sha);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const sha = await getCurrentSHA(apiBase);
+      if (sha === null) return false;
+      const result = await doPut(apiBase, newContent, sha);
+      if (result === 409) continue;  // SHA stale, retry with fresh one
+      return result;
+    }
+    return false;
   } catch (e) {
     console.error('GitHub write error:', e);
     return false;
