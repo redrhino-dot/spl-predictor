@@ -547,3 +547,32 @@ input[type=number] { -moz-appearance: textfield; }
   50% { opacity: 0.5; }
   100% { opacity: 1; }
 }
+
+/* Aggressive iPhone tightening for the fixtures table */
+.fixtures-table th, 
+.fixtures-table td {
+  padding: 8px 4px !important; /* Slash horizontal padding */
+  font-size: 0.85rem; /* Slightly smaller text */
+}
+
+/* Make the prediction cells more compact */
+.pred-cell {
+  min-width: 45px !important; /* Allow cells to shrink */
+  text-align: center;
+}
+
+/* Make the points label a tiny badge to save space */
+.pts-label {
+  display: block;
+  font-size: 0.65rem;
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+/* Shrink the home/away team columns slightly */
+.team-name {
+  max-width: 75px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
