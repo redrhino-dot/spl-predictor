@@ -528,3 +528,22 @@ input[type=number] { -moz-appearance: textfield; }
   padding: 6px 8px;
   text-transform: uppercase;
 }
+
+.score-live {
+  color: #00c853;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+.elapsed {
+  color: #00c853;
+  font-size: 0.7rem;
+  margin-left: 4px;
+  vertical-align: super;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
