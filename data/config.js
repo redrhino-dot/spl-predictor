@@ -6,8 +6,8 @@ const CONFIG = {
   "githubRepo": "spl-predictor",
   "leagueId": 179,
   "season": 2025,
-  "currentGameweek": 33,
-  "currentGwLabel": "GW33 — 11 Apr 2026",
+  "currentGameweek": 34,
+  "currentGwLabel": "GW34 — TBD",
   "participants": [
     "Graham",
     "Jon",
@@ -53,49 +53,8 @@ const CONFIG = {
     "Dundee": "Dundee"
   },
   "seededPredictions": {
-    "gw": 33,
-    "submittedAt": "2026-04-11T13:55:00Z",
-    "byFixture": [
-      {
-        "homeTeam": "Aberdeen",
-        "awayTeam": "Hibernian",
-        "Graham": [1,1],
-        "Jon": [1,2],
-        "Doug": [1,2],
-        "Kris": [0,2]
-      },
-      {
-        "homeTeam": "Celtic",
-        "awayTeam": "St Mirren",
-        "Graham": [2,0],
-        "Jon": [3,0],
-        "Doug": [1,1],
-        "Kris": [3,1]
-      },
-      {
-        "homeTeam": "Dundee United",
-        "awayTeam": "Livingston",
-        "Graham": [1,0],
-        "Jon": [2,1],
-        "Doug": [2,1],
-        "Kris": [2,0]
-      },
-      {
-        "homeTeam": "Heart of Midlothian",
-        "awayTeam": "Motherwell",
-        "Graham": [1,0],
-        "Jon": [2,0],
-        "Doug": [2,1],
-        "Kris": [2,1]
-      },
-      {
-        "homeTeam": "Kilmarnock",
-        "awayTeam": "Dundee",
-        "Graham": [2,1],
-        "Jon": [2,2],
-        "Doug": [1,0],
-        "Kris": [1,1]
-      }
-    ]
+    "gw": 34,
+    "submittedAt": "2026-04-14T23:05:35.479Z",
+    "byFixture": []
   }
 };
