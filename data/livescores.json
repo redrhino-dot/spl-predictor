@@ -1,4 +1,71 @@
 {
-  "updated": "2026-04-15T00:00:00Z",
-  "livescores": []
+  "updated": "2026-04-14T23:46:14.000941+00:00",
+  "livescores": [
+    {
+      "id": "742528",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-04-11T14:00Z",
+      "status": "FT",
+      "home_team": "Aberdeen",
+      "away_team": "Hibernian",
+      "home_score": 2,
+      "away_score": 0,
+      "elapsed": 903
+    },
+    {
+      "id": "742529",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-04-11T14:00Z",
+      "status": "FT",
+      "home_team": "Celtic",
+      "away_team": "St Mirren",
+      "home_score": 1,
+      "away_score": 0,
+      "elapsed": 905
+    },
+    {
+      "id": "742530",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-04-11T14:00Z",
+      "status": "FT",
+      "home_team": "Dundee United",
+      "away_team": "Livingston",
+      "home_score": 3,
+      "away_score": 2,
+      "elapsed": 904
+    },
+    {
+      "id": "742532",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-04-11T14:00Z",
+      "status": "FT",
+      "home_team": "Heart of Midlothian",
+      "away_team": "Motherwell",
+      "home_score": 3,
+      "away_score": 1,
+      "elapsed": 907
+    },
+    {
+      "id": "742533",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-04-11T14:00Z",
+      "status": "FT",
+      "home_team": "Kilmarnock",
+      "away_team": "Dundee",
+      "home_score": 2,
+      "away_score": 2,
+      "elapsed": 9013
+    },
+    {
+      "id": "742531",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-04-12T11:00Z",
+      "status": "FT",
+      "home_team": "Falkirk",
+      "away_team": "Rangers",
+      "home_score": 3,
+      "away_score": 6,
+      "elapsed": 904
+    }
+  ]
 }
