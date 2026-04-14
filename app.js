@@ -879,7 +879,24 @@ const newOpeningStandings = [...lastGW.closing_standings]
   // 5. Save to GitHub Safely
   const ok = await saveSafeConfig(newConfigObj);
 
-  if (ok === true) {
+    if (ok === true) {
+    // Trigger the fetch workflow to immediately pull new GW fixtures
+    try {
+      await fetch(`https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`, {
+        method: 'POST',
+        headers: {
+          Authorization: `token ${CONFIG.githubPAT}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ref: 'main' }),
+      });
+      // Wait 35 seconds for the action to complete then reload
+      btn.textContent = 'Fetching fixtures...';
+      await new Promise(r => setTimeout(r, 35000));
+    } catch(e) {
+      console.warn('Could not trigger fixture fetch:', e);
+    }
     alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
     window.location.reload();
   } else {
@@ -888,6 +905,7 @@ const newOpeningStandings = [...lastGW.closing_standings]
     btn.textContent = 'Roll to Next Gameweek';
   }
 }
+
 /* ============================================================
    SETTINGS / PIN MANAGEMENT
    ============================================================ */
