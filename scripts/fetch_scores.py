@@ -73,7 +73,7 @@ def parse_event(ev):
 now    = datetime.now(timezone.utc)
 events = {}
 print('Scanning date range for current gameweek...')
-for delta in range(-3, 8):
+for delta in range(-1, 10):
     day  = (now + timedelta(days=delta)).strftime('%Y%m%d')
     evs  = fetch_day(day)
     for e in evs:
