@@ -850,10 +850,13 @@ async function rollToNextGW() {
   const nextGWNum = CONFIG.currentGameweek + 1;
 
   // 2. Extract closing standings to become new opening standings
-  const newOpeningStandings = lastGW.closing_standings.map(s => ({
+const newOpeningStandings = [...lastGW.closing_standings]
+  .sort((a, b) => b.points - a.points)
+  .map(s => ({
     name: s.name,
     points: s.points
   }));
+
 
   // 3. Build the new CONFIG object
   const newConfigObj = {
