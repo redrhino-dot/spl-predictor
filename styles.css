@@ -581,4 +581,36 @@ input[type=number] { -moz-appearance: textfield; }
   margin-top: 1px;
   opacity: 0.7;
 }
+.sub-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 12px 0;
+}
+
+.sub-tab-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #2a3f5a;
+  background: transparent;
+  color: #8ba3c0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.sub-tab-btn.active {
+  background: #1a2f4a;
+  color: #ffffff;
+  border-color: #00c853;
+}
+
+.sub-tab-content {
+  display: none;
+}
+
+.sub-tab-content.active {
+  display: block;
+}
 
