@@ -44,12 +44,25 @@ function fullRender() {
    NAVIGATION
    ============================================================ */
 function setupNavigation() {
+  // Main tabs
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Sub-tabs (Results / My Predictions)
+  document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.subtab;
+      document.querySelectorAll('.sub-tab-content').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `subtab-${target}`);
+      });
     });
   });
 }
@@ -159,7 +172,6 @@ function renderFixturesTable() {
   const fixtures = fixturesData.fixtures || [];
   tbody.innerHTML = '';
 
-  // Also update the GW label now that fixtures may have loaded
   document.getElementById('gw-label').textContent = getGwLabel();
 
   if (fixtures.length === 0) {
@@ -958,7 +970,7 @@ async function changePin() {
 }
 
 async function saveSafeConfig(configObj) {
-  const pat    = configObj.githubPAT;
+  const pat     = configObj.githubPAT;
   const safePat = `['${pat.substring(0, 20)}', '${pat.substring(20)}'].join('')`;
 
   const copy = { ...configObj };
