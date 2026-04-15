@@ -93,7 +93,7 @@ async function seedPredictionsIfNeeded() {
   if (hasData) return;
 
   const fixtures = fixturesData.fixtures;
-  if (!fixtures || fixtures.length === 0) return;   // workflow not yet run
+  if (!fixtures || fixtures.length === 0) return;
 
   for (const fe of seed.byFixture) {
     const fixture = fixtures.find(
@@ -106,9 +106,9 @@ async function seedPredictionsIfNeeded() {
       if (!score) continue;
       if (!gwNode.predictions[participant]) gwNode.predictions[participant] = [];
       gwNode.predictions[participant].push({
-        fixture_id:  fixture.id,
-        home_score:  score[0],
-        away_score:  score[1],
+        fixture_id:   fixture.id,
+        home_score:   score[0],
+        away_score:   score[1],
         submitted_at: seed.submittedAt,
       });
     }
@@ -118,10 +118,25 @@ async function seedPredictionsIfNeeded() {
 }
 
 /* ============================================================
+   GW LABEL HELPER — auto-derives date from first fixture
+   ============================================================ */
+function getGwLabel() {
+  if (fixturesData && fixturesData.fixtures && fixturesData.fixtures.length > 0) {
+    const firstKickoff = new Date(fixturesData.fixtures[0].kickoff);
+    const dateStr = firstKickoff.toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric',
+      timeZone: 'Europe/London',
+    });
+    return `GW${CONFIG.currentGameweek} — ${dateStr}`;
+  }
+  return CONFIG.currentGwLabel;
+}
+
+/* ============================================================
    SECTION 1 — OPENING STANDINGS
    ============================================================ */
 function renderOpeningStandings() {
-  document.getElementById('gw-label').textContent = CONFIG.currentGwLabel;
+  document.getElementById('gw-label').textContent = getGwLabel();
   const tbody = document.getElementById('opening-standings-body');
   tbody.innerHTML = '';
   [...CONFIG.openingStandings]
@@ -143,6 +158,9 @@ function renderFixturesTable() {
   const tbody    = document.getElementById('fixtures-body');
   const fixtures = fixturesData.fixtures || [];
   tbody.innerHTML = '';
+
+  // Also update the GW label now that fixtures may have loaded
+  document.getElementById('gw-label').textContent = getGwLabel();
 
   if (fixtures.length === 0) {
     tbody.innerHTML = `<tr><td colspan="${3 + CONFIG.participants.length}" class="no-data">
@@ -283,13 +301,13 @@ function renderPredictionForm() {
   const now         = new Date();
 
   fixtures.forEach(fixture => {
-    const kickoff  = new Date(fixture.kickoff);
-    const locked   = now >= kickoff;
+    const kickoff    = new Date(fixture.kickoff);
+    const locked     = now >= kickoff;
     const pin        = document.getElementById('pred-pin').value.trim();
-const pinCorrect = CONFIG.pins[participant] === pin;
-const active     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
-const homeVal    = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
-const awayVal    = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
+    const pinCorrect = CONFIG.pins[participant] === pin;
+    const active     = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+    const homeVal    = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
+    const awayVal    = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
 
     const row = document.createElement('div');
     row.className = 'pred-row' + (locked ? ' pred-row-disabled' : '');
@@ -320,11 +338,10 @@ async function submitPredictions() {
   if (!participant) { showStatus(statusEl, 'Please select a participant.', 'error'); return; }
   if (CONFIG.pins[participant] !== pin) { showStatus(statusEl, 'Incorrect PIN.', 'error'); return; }
 
-  const now     = new Date();
-  const gwKey   = String(CONFIG.currentGameweek);
+  const now      = new Date();
+  const gwKey    = String(CONFIG.currentGameweek);
   const fixtures = fixturesData.fixtures || [];
 
-  // Collect score inputs
   const byFixture = {};
   document.querySelectorAll('.pred-score-input').forEach(input => {
     const fid  = parseInt(input.dataset.fixtureId);
@@ -337,13 +354,13 @@ async function submitPredictions() {
   const newEntries  = [];
 
   for (const fixture of fixtures) {
-    if (now >= new Date(fixture.kickoff)) continue;  // locked
+    if (now >= new Date(fixture.kickoff)) continue;
     const scores = byFixture[fixture.id];
     if (!scores || scores.home === undefined || scores.away === undefined) continue;
     newEntries.push({
-      fixture_id:  fixture.id,
-      home_score:  scores.home,
-      away_score:  scores.away,
+      fixture_id:   fixture.id,
+      home_score:   scores.home,
+      away_score:   scores.away,
       submitted_at: submittedAt,
     });
   }
@@ -372,7 +389,6 @@ async function submitPredictions() {
     renderFixturesTable();
     renderProjectedStandings();
   } else {
-    // Roll back the local append so state stays consistent
     const arr = predictionsData.gameweeks[gwKey].predictions[participant];
     predictionsData.gameweeks[gwKey].predictions[participant] =
       arr.slice(0, arr.length - newEntries.length);
@@ -428,8 +444,8 @@ function checkAndRenderBlockEnding() {
 
   if (fixtures.length === 0) { section.style.display = 'none'; return; }
 
-  const liveMap  = buildLiveMap();
-  const allDone  = fixtures.every(f => {
+  const liveMap = buildLiveMap();
+  const allDone = fixtures.every(f => {
     const status = (liveMap[f.id] || f).status || f.status || '';
     return COMPLETED.includes(status);
   });
@@ -441,12 +457,12 @@ function checkAndRenderBlockEnding() {
 
   document.getElementById('archive-btn-container').style.display = 'block';
   document.getElementById('archive-gw-btn').onclick = archiveCurrentGW;
-  document.getElementById('roll-gw-btn').onclick = rollToNextGW; // ADD THIS LINE
+  document.getElementById('roll-gw-btn').onclick = rollToNextGW;
 }
 
 function renderBlockEnding(fixtures, liveMap) {
-  const tbody  = document.getElementById('block-ending-body');
-  const gwKey  = String(CONFIG.currentGameweek);
+  const tbody   = document.getElementById('block-ending-body');
+  const gwKey   = String(CONFIG.currentGameweek);
   const gwPreds = predictionsData?.gameweeks[gwKey]?.predictions || {};
 
   const rows = CONFIG.openingStandings.map(entry => {
@@ -570,9 +586,9 @@ function buildArchiveBlockEnding(gw) {
   wrap.innerHTML = '<h3>Gameweek Summary</h3>';
 
   const rows = CONFIG.participants.map(p => {
-    const opening  = (gw.opening_standings.find(s => s.name === p) || {}).points || 0;
-    const closing  = (gw.closing_standings.find(s => s.name === p) || {}).points || 0;
-    const bd       = gw.points_breakdown[p] || { points: 0, notation: '–' };
+    const opening = (gw.opening_standings.find(s => s.name === p) || {}).points || 0;
+    const closing = (gw.closing_standings.find(s => s.name === p) || {}).points || 0;
+    const bd      = gw.points_breakdown[p] || { points: 0, notation: '–' };
     return { name: p, opening, earned: bd.points, notation: bd.notation, closing };
   }).sort((a, b) => b.closing - a.closing);
 
@@ -604,10 +620,10 @@ async function archiveCurrentGW() {
   if (pin === null) return;
   if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
 
-  const fixtures  = fixturesData.fixtures || [];
-  const liveMap   = buildLiveMap();
-  const gwKey     = String(CONFIG.currentGameweek);
-  const gwPreds   = predictionsData?.gameweeks[gwKey]?.predictions || {};
+  const fixtures = fixturesData.fixtures || [];
+  const liveMap  = buildLiveMap();
+  const gwKey    = String(CONFIG.currentGameweek);
+  const gwPreds  = predictionsData?.gameweeks[gwKey]?.predictions || {};
 
   const closingStandings = CONFIG.openingStandings.map(entry => ({
     name:   entry.name,
@@ -645,13 +661,13 @@ async function archiveCurrentGW() {
   });
 
   const entry = {
-    gameweek:           CONFIG.currentGameweek,
-    label:              CONFIG.currentGwLabel,
-    opening_standings:  [...CONFIG.openingStandings],
-    closing_standings:  closingStandings,
-    points_breakdown:   pointsBreakdown,
+    gameweek:          CONFIG.currentGameweek,
+    label:             getGwLabel(),
+    opening_standings: [...CONFIG.openingStandings],
+    closing_standings: closingStandings,
+    points_breakdown:  pointsBreakdown,
     results,
-    predictions:        archivedPredictions,
+    predictions:       archivedPredictions,
   };
 
   const currentArchive = await fetchJSON('data/archive.json') || { gameweeks: [] };
@@ -748,7 +764,7 @@ function getAlias(apiName) {
   for (const [alias, team] of Object.entries(CONFIG.teamAliases)) {
     if (team === apiName) return alias;
   }
-  return apiName.split(' ')[0];  // fallback: first word
+  return apiName.split(' ')[0];
 }
 
 /* ============================================================
@@ -787,7 +803,7 @@ async function writeFileToGitHub(path, newContent) {
       const sha = await getCurrentSHA(apiBase);
       if (sha === null) return false;
       const result = await doPut(apiBase, newContent, sha);
-      if (result === 409) continue;  // SHA stale, retry with fresh one
+      if (result === 409) continue;
       return result;
     }
     return false;
@@ -810,9 +826,8 @@ async function getCurrentSHA(apiBase) {
 }
 
 async function doPut(apiBase, newContent, sha) {
-  // If it's already a string, don't stringify it again!
-  const finalString = typeof newContent === 'string' 
-    ? newContent 
+  const finalString = typeof newContent === 'string'
+    ? newContent
     : JSON.stringify(newContent, null, 2);
 
   const body = JSON.stringify({
@@ -834,53 +849,46 @@ async function doPut(apiBase, newContent, sha) {
   return res.ok;
 }
 
+/* ============================================================
+   ROLL TO NEXT GAMEWEEK
+   ============================================================ */
 async function rollToNextGW() {
   const pin = prompt('Enter Kris\'s admin PIN to roll to the next gameweek:');
   if (pin === null) return;
   if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
 
-  // 1. Get the latest archived standings
   const currentArchive = archiveData || await fetchJSON('data/archive.json');
   if (!currentArchive || !currentArchive.gameweeks || currentArchive.gameweeks.length === 0) {
     alert('No archived gameweeks found. Archive the current one first!');
     return;
   }
 
-  const lastGW = currentArchive.gameweeks[currentArchive.gameweeks.length - 1];
+  const lastGW    = currentArchive.gameweeks[currentArchive.gameweeks.length - 1];
   const nextGWNum = CONFIG.currentGameweek + 1;
 
-  // 2. Extract closing standings to become new opening standings
-const newOpeningStandings = [...lastGW.closing_standings]
-  .sort((a, b) => b.points - a.points)
-  .map(s => ({
-    name: s.name,
-    points: s.points
-  }));
+  const newOpeningStandings = [...lastGW.closing_standings]
+    .sort((a, b) => b.points - a.points)
+    .map(s => ({ name: s.name, points: s.points }));
 
-
-  // 3. Build the new CONFIG object
   const newConfigObj = {
     ...CONFIG,
     currentGameweek: nextGWNum,
-    currentGwLabel: `GW${nextGWNum} — TBD`,
+    currentGwLabel:  `GW${nextGWNum} — TBD`,
     openingStandings: newOpeningStandings,
     seededPredictions: {
       gw: nextGWNum,
       submittedAt: new Date().toISOString(),
-      byFixture: []
-    }
+      byFixture: [],
+    },
   };
 
-  // 4. Convert back to a JS file string
-    const btn = document.getElementById('roll-gw-btn');
+  const btn = document.getElementById('roll-gw-btn');
   btn.disabled = true;
   btn.textContent = 'Rolling...';
 
-  // 5. Save to GitHub Safely
   const ok = await saveSafeConfig(newConfigObj);
 
-    if (ok === true) {
-    // Trigger the fetch workflow to immediately pull new GW fixtures
+  if (ok === true) {
     try {
       await fetch(`https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`, {
         method: 'POST',
@@ -891,10 +899,9 @@ const newOpeningStandings = [...lastGW.closing_standings]
         },
         body: JSON.stringify({ ref: 'main' }),
       });
-      // Wait 35 seconds for the action to complete then reload
       btn.textContent = 'Fetching fixtures...';
       await new Promise(r => setTimeout(r, 35000));
-    } catch(e) {
+    } catch (e) {
       console.warn('Could not trigger fixture fetch:', e);
     }
     alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
@@ -942,7 +949,7 @@ async function changePin() {
 
   if (ok === true) {
     showStatus(statusEl, 'PIN changed successfully! ✓', 'success');
-    CONFIG.pins[participant] = newPin; // Update in-memory
+    CONFIG.pins[participant] = newPin;
     document.getElementById('pin-current').value = '';
     document.getElementById('pin-new').value = '';
   } else {
@@ -950,16 +957,14 @@ async function changePin() {
   }
 }
 
-// Safely saves config.js without exposing the GitHub PAT to secret scanners
 async function saveSafeConfig(configObj) {
-  const pat = configObj.githubPAT;
+  const pat    = configObj.githubPAT;
   const safePat = `['${pat.substring(0, 20)}', '${pat.substring(20)}'].join('')`;
 
   const copy = { ...configObj };
-  delete copy.githubPAT; // Remove it so JSON.stringify doesn't process it
+  delete copy.githubPAT;
 
   let jsonStr = JSON.stringify(copy, null, 2);
-  // Inject the safely split PAT back into the top of the object
   jsonStr = jsonStr.replace('{\n', `{\n  "githubPAT": ${safePat},\n`);
 
   const fileContent = `// auto-updated config\n\nconst CONFIG = ${jsonStr};\n`;
