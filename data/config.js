@@ -15,18 +15,29 @@ const CONFIG = {
     "Doug"
   ],
   "pins": {
-    "Graham": "0726",
+    "Graham": "1002",
     "Jon": "0712",
     "Kris": "1940",
     "Doug": "1030"
   },
-"openingStandings": [
-  { "name": "Graham", "points": 143 },
-  { "name": "Jon",    "points": 138 },
-  { "name": "Kris",   "points": 135 },
-  { "name": "Doug",   "points": 112 }
-],
-
+  "openingStandings": [
+    {
+      "name": "Graham",
+      "points": 143
+    },
+    {
+      "name": "Jon",
+      "points": 138
+    },
+    {
+      "name": "Kris",
+      "points": 135
+    },
+    {
+      "name": "Doug",
+      "points": 112
+    }
+  ],
   "teamAliases": {
     "Hibs": "Hibernian",
     "Huns": "Rangers",
