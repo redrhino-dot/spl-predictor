@@ -614,3 +614,16 @@ input[type=number] { -moz-appearance: textfield; }
   display: block;
 }
 
+.pred-submitted-at {
+  display: block;
+  width: 100%;
+  font-size: 0.75rem;
+  color: #8ba3c0;
+  margin-top: 4px;
+  padding-left: 2px;
+  letter-spacing: 0.02em;
+}
+
+.pred-submitted-missing {
+  color: #e07070;
+}
