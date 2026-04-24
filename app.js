@@ -321,6 +321,16 @@ function renderPredictionForm() {
     const homeVal    = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
     const awayVal    = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
 
+        const pin        = document.getElementById('pred-pin').value.trim();
+    const pinCorrect = CONFIG.pins[participant] === pin;
+
+    let submittedLabel = '';
+    if (pinCorrect && participant && active && active.submitted_at) {
+      submittedLabel = `<span class="pred-submitted-at">Submitted: ${formatTimestampBST(active.submitted_at)}</span>`;
+    } else if (pinCorrect && participant && !active) {
+      submittedLabel = `<span class="pred-submitted-at pred-submitted-missing">Not yet submitted</span>`;
+    }
+
     const row = document.createElement('div');
     row.className = 'pred-row' + (locked ? ' pred-row-disabled' : '');
     row.innerHTML = `
@@ -335,7 +345,8 @@ function renderPredictionForm() {
              min="0" max="20" value="${awayVal}" placeholder="0"
              ${locked ? 'disabled' : ''} />
       <span class="pred-team pred-away">${fixture.away_team}</span>
-      ${locked ? '<span class="pred-locked">🔒 Locked</span>' : ''}`;
+      ${locked ? '<span class="pred-locked">🔒 Locked</span>' : ''}
+      ${submittedLabel}`;
     container.appendChild(row);
   });
 
@@ -804,6 +815,20 @@ function formatTimeBST(iso) {
     });
   } catch { return iso; }
 }
+
+function formatTimestampBST(iso) {
+  try {
+    return new Date(iso).toLocaleString('en-GB', {
+      timeZone: 'Europe/London',
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch { return iso; }
+}
+
 
 /* ============================================================
    GITHUB CONTENTS API — WRITE WITH 409 RETRY
