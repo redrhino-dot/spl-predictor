@@ -1043,13 +1043,13 @@ async function forceUpdate() {
       : `Error: ${e.message}`;
   }
 
-  let seconds = 20;
+  let seconds = 35;
   const timer = setInterval(() => {
     seconds -= 1;
     btn.textContent = seconds > 0 ? `⏳ Waiting ${seconds}s…` : '⏳ Loading…';
   }, 1000);
 
-  await new Promise(r => setTimeout(r, 20000));
+  await new Promise(r => setTimeout(r, 35000));
   clearInterval(timer);
 
   await loadAllData();
