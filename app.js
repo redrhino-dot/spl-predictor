@@ -1001,9 +1001,14 @@ async function saveSafeConfig(configObj) {
 }
 
 async function forceUpdate() {
-  const btn = document.getElementById('force-update-btn');
-  btn.disabled = true;
+  const btn      = document.getElementById('force-update-btn');
+  const debugEl  = document.getElementById('debug-log');
+  btn.disabled   = true;
   btn.textContent = '⏳ Fetching…';
+  if (debugEl) debugEl.textContent = '';
+
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 8000);
 
   try {
     const res = await fetch(
@@ -1016,35 +1021,41 @@ async function forceUpdate() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ref: 'main' }),
+        signal: controller.signal,
       }
     );
+    clearTimeout(timeout);
 
     if (!res.ok) {
       const text = await res.text();
-      console.error('Dispatch failed:', res.status, text);
+      if (debugEl) debugEl.textContent = `Failed: ${res.status} — ${text}`;
       btn.textContent = `❌ Failed (${res.status})`;
       btn.disabled = false;
       return;
     }
+
+    if (debugEl) debugEl.textContent = `OK: ${res.status} — workflow triggered`;
+
   } catch (e) {
-    console.error('Dispatch error:', e);
-    btn.textContent = '❌ Network error';
-    btn.disabled = false;
-    return;
+    clearTimeout(timeout);
+    if (debugEl) debugEl.textContent = e.name === 'AbortError'
+      ? 'Timed out / CORS blocked'
+      : `Error: ${e.message}`;
+    // Fall through and poll anyway — workflow may still have triggered
   }
 
-  let seconds = 15;
+  let seconds = 20;
   const timer = setInterval(() => {
     seconds -= 1;
     btn.textContent = seconds > 0 ? `⏳ Waiting ${seconds}s…` : '⏳ Loading…';
   }, 1000);
 
-  await new Promise(r => setTimeout(r, 15000));
+  await new Promise(r => setTimeout(r, 20000));
   clearInterval(timer);
 
   await loadAllData();
   fullRender();
 
-  btn.disabled = false;
+  btn.disabled   = false;
   btn.textContent = '🔄 Force Update';
 }
