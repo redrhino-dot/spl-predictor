@@ -231,6 +231,12 @@ function buildLiveMap() {
   return map;
 }
 
+function formatElapsed(elapsed, extraTime) {
+  if (!elapsed && elapsed !== 0) return '';
+  if (extraTime && extraTime > 0) return `${elapsed}+${extraTime}'`;
+  return `${elapsed}'`;
+}
+
 function buildScoreCell(live, fixture, started, isLive, isCompleted) {
   if (!started) return '<span class="score-vs">vs</span>';
   const h = live.home_score ?? fixture.home_score;
@@ -238,7 +244,8 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
   if (h === null || a === null) return '<span class="score-vs">vs</span>';
   if (isCompleted) return `<span class="score-final">${h} – ${a}</span>`;
   if (isLive) {
-    const elapsed = live.elapsed ? `<span class="elapsed">${live.elapsed}'</span>` : '';
+    const timeStr  = formatElapsed(live.elapsed, live.elapsed_extra);
+    const elapsed  = timeStr ? `<span class="elapsed">${timeStr}</span>` : '';
     return `<span class="score-live">${h} – ${a}</span>${elapsed}`;
   }
   return `<span class="score-final">${h} – ${a}</span>`;
@@ -742,13 +749,18 @@ function computeEarned(participant, fixtures, gwPreds, liveMap) {
 }
 
 function buildPointsNotation(participant, fixtures, gwPreds, liveMap) {
-  const parts = [];
-  const preds = gwPreds[participant] || [];
+  const concludedParts = [];
+  const liveParts      = [];
+  const preds          = gwPreds[participant] || [];
 
   for (const fixture of fixtures) {
-    const live   = liveMap[fixture.id] || fixture;
-    const status = live.status || fixture.status || '';
-    if (!COMPLETED.includes(status)) continue;
+    const live      = liveMap[fixture.id] || fixture;
+    const status    = live.status || fixture.status || '';
+    const isComplete = COMPLETED.includes(status);
+    const isLive     = LIVE.includes(status);
+
+    if (!isComplete && !isLive) continue;
+
     const h = live.home_score ?? fixture.home_score;
     const a = live.away_score ?? fixture.away_score;
     if (h === null || a === null) continue;
@@ -770,8 +782,17 @@ function buildPointsNotation(participant, fixtures, gwPreds, liveMap) {
       const alias  = getAlias(winner);
       notation = pts === 3 ? `${alias} 3` : alias;
     }
-    parts.push(notation);
+
+    if (isComplete) {
+      concludedParts.push(notation);
+    } else {
+      liveParts.push(`[${notation}]`);
+    }
   }
+
+  const parts = [];
+  if (concludedParts.length > 0) parts.push(concludedParts.join(', '));
+  if (liveParts.length > 0) parts.push(`<em>${liveParts.join(', ')}</em>`);
 
   return parts.join(', ') || '–';
 }
