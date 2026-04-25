@@ -999,3 +999,34 @@ async function saveSafeConfig(configObj) {
   const fileContent = `// auto-updated config\n\nconst CONFIG = ${jsonStr};\n`;
   return await writeFileToGitHub('data/config.js', fileContent);
 }
+
+async function forceUpdate() {
+  const btn = document.getElementById('force-update-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Fetching…';
+
+  try {
+    await fetch(
+      `https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `token ${CONFIG.githubPAT}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ref: 'main' }),
+      }
+    );
+  } catch (e) {
+    console.warn('Dispatch failed:', e);
+  }
+
+  // Wait 15s for the workflow to run and write livescores.json
+  await new Promise(r => setTimeout(r, 15000));
+  await loadAllData();
+  fullRender();
+
+  btn.disabled = false;
+  btn.textContent = '🔄 Force Update';
+}
