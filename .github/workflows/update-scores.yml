@@ -1,7 +1,7 @@
 name: Update Fixture & Score Data
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/2 * * * *'
   push:
     branches: [main]
   workflow_dispatch:
