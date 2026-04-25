@@ -79,44 +79,48 @@
   </div>
 </section>
 
-        <!-- Projected Closing Standings -->
-        <section class="card" id="projected-section">
-          <h2>Projected Closing Standings</h2>
-          <table class="data-table" id="projected-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Participant</th>
-                <th>Opening</th>
-                <th>Points Earned</th>
-                <th>Projected Total</th>
-              </tr>
-            </thead>
-            <tbody id="projected-body"></tbody>
-          </table>
-        </section>
+<!-- Projected Closing Standings -->
+<section class="card" id="projected-section">
+  <h2>Projected Closing Standings</h2>
+  <div class="table-scroll">
+    <table class="data-table" id="projected-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Participant</th>
+          <th>Opening</th>
+          <th>Points Earned</th>
+          <th>Projected Total</th>
+        </tr>
+      </thead>
+      <tbody id="projected-body"></tbody>
+    </table>
+  </div>
+</section>
 
-        <!-- Gameweek Final Summary -->
-        <section class="card" id="block-ending-section" style="display:none;">
-          <h2>Gameweek Final Summary</h2>
-          <table class="data-table" id="block-ending-table">
-            <thead>
-              <tr>
-                <th>Participant</th>
-                <th>Opening Pts</th>
-                <th>Points Earned</th>
-                <th>Closing Pts</th>
-              </tr>
-            </thead>
-            <tbody id="block-ending-body"></tbody>
-          </table>
-          <div id="archive-btn-container" style="display:none; text-align:center; margin-top:20px;">
-            <button id="archive-gw-btn" class="btn">Archive Current GW</button>
-            <button id="roll-gw-btn" class="btn" style="background-color:#ff9800; color:#121e2d; margin-top:10px;">Roll to Next Gameweek</button>
-          </div>
-        </section>
+<!-- Gameweek Final Summary -->
+<section class="card" id="block-ending-section" style="display:none;">
+  <h2>Gameweek Final Summary</h2>
+  <div class="table-scroll">
+    <table class="data-table" id="block-ending-table">
+      <thead>
+        <tr>
+          <th>Participant</th>
+          <th>Opening Pts</th>
+          <th>Points Earned</th>
+          <th>Closing Pts</th>
+        </tr>
+      </thead>
+      <tbody id="block-ending-body"></tbody>
+    </table>
+  </div>
+  <div id="archive-btn-container" style="display:none; text-align:center; margin-top:20px;">
+    <button id="archive-gw-btn" class="btn">Archive Current GW</button>
+    <button id="roll-gw-btn" class="btn" style="background-color:#ff9800; color:#121e2d; margin-top:10px;">Roll to Next Gameweek</button>
+  </div>
+</section>
 
-      </div><!-- end #subtab-results -->
+</div><!-- end #subtab-results -->
 
       <!-- ---- PREDICTIONS SUB-TAB ---- -->
       <div id="subtab-predictions" class="sub-tab-content">
