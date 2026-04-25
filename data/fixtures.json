@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-25T17:38:41.937793+00:00",
+  "updated": "2026-04-25T17:39:56.332524+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
     {
@@ -28,12 +28,12 @@
       "id": "401867697",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-04-25T16:30Z",
-      "status": "FT",
+      "status": "2H",
       "home_team": "Celtic",
       "away_team": "Falkirk",
       "home_score": 2,
       "away_score": 0,
-      "elapsed": 452
+      "elapsed": 49
     },
     {
       "id": "401867698",
