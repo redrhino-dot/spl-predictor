@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setInterval(async () => {
     await loadAllData();
     fullRender();
-  }, 60000);
+  }, 30000);
 });
 
 function fullRender() {
