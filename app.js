@@ -1001,9 +1001,9 @@ async function saveSafeConfig(configObj) {
 }
 
 async function forceUpdate() {
-  const btn      = document.getElementById('force-update-btn');
-  const debugEl  = document.getElementById('debug-log');
-  btn.disabled   = true;
+  const btn     = document.getElementById('force-update-btn');
+  const debugEl = document.getElementById('debug-log');
+  btn.disabled  = true;
   btn.textContent = '⏳ Fetching…';
   if (debugEl) debugEl.textContent = '';
 
@@ -1041,7 +1041,6 @@ async function forceUpdate() {
     if (debugEl) debugEl.textContent = e.name === 'AbortError'
       ? 'Timed out / CORS blocked'
       : `Error: ${e.message}`;
-    // Fall through and poll anyway — workflow may still have triggered
   }
 
   let seconds = 20;
@@ -1056,6 +1055,7 @@ async function forceUpdate() {
   await loadAllData();
   fullRender();
 
-  btn.disabled   = false;
+  if (debugEl) debugEl.textContent = '';
+  btn.disabled    = false;
   btn.textContent = '🔄 Force Update';
 }
