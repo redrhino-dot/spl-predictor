@@ -627,3 +627,26 @@ input[type=number] { -moz-appearance: textfield; }
 .pred-submitted-missing {
   color: #e07070;
 }
+
+.timestamp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+#force-update-btn {
+  background: transparent;
+  border: 1px solid #4a9ebb;
+  color: #4a9ebb;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+#force-update-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
