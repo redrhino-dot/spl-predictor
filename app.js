@@ -1006,7 +1006,7 @@ async function forceUpdate() {
   btn.textContent = '⏳ Fetching…';
 
   try {
-    await fetch(
+    const res = await fetch(
       `https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`,
       {
         method: 'POST',
@@ -1018,12 +1018,30 @@ async function forceUpdate() {
         body: JSON.stringify({ ref: 'main' }),
       }
     );
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('Dispatch failed:', res.status, text);
+      btn.textContent = `❌ Failed (${res.status})`;
+      btn.disabled = false;
+      return;
+    }
   } catch (e) {
-    console.warn('Dispatch failed:', e);
+    console.error('Dispatch error:', e);
+    btn.textContent = '❌ Network error';
+    btn.disabled = false;
+    return;
   }
 
-  // Wait 15s for the workflow to run and write livescores.json
+  let seconds = 15;
+  const timer = setInterval(() => {
+    seconds -= 1;
+    btn.textContent = seconds > 0 ? `⏳ Waiting ${seconds}s…` : '⏳ Loading…';
+  }, 1000);
+
   await new Promise(r => setTimeout(r, 15000));
+  clearInterval(timer);
+
   await loadAllData();
   fullRender();
 
