@@ -51,13 +51,17 @@
         </section>
 
         <!-- Predictions & Live Results -->
-        <section class="card">
-          <h2>Predictions &amp; Live Results</h2>
-          <div id="last-updated" class="last-updated"></div>
-          <div class="table-scroll">
-            <table class="data-table fixtures-table" id="fixtures-table">
-              <thead>
-                <tr>
+<section class="card">
+  <h2>Predictions &amp; Live Results</h2>
+  <div class="timestamp-row">
+    <div id="last-updated" class="last-updated"></div>
+    <button id="force-update-btn" onclick="forceUpdate()">🔄 Force Update</button>
+  </div>
+  <div class="table-scroll">
+    <table class="data-table fixtures-table" id="fixtures-table">
+      <thead>
+        <tr>
+
                   <th>Home</th>
                   <th>Away</th>
                   <th>Score</th>
