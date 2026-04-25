@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-25T17:39:56.332524+00:00",
+  "updated": "2026-04-25T17:41:10.835194+00:00",
   "livescores": [
     {
       "id": "401867695",
@@ -32,7 +32,7 @@
       "away_team": "Falkirk",
       "home_score": 2,
       "away_score": 0,
-      "elapsed": 49
+      "elapsed": 51
     }
   ]
 }
