@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-25T18:22:22.002125+00:00",
+  "updated": "2026-04-25T18:25:40.028997+00:00",
   "livescores": [
     {
       "id": "401867695",
@@ -27,12 +27,12 @@
       "id": "401867697",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-04-25T16:30Z",
-      "status": "2H",
+      "status": "LIVE",
       "home_team": "Celtic",
       "away_team": "Falkirk",
       "home_score": 3,
       "away_score": 1,
-      "elapsed": 86
+      "elapsed": 903
     }
   ]
 }
