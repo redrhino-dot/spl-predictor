@@ -1,12 +1,18 @@
 name: Update Fixture & Score Data
 on:
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: '*/5 * * * *'
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      force_run:
+        description: 'Force update regardless of live window'
+        required: false
+        default: 'true'
+
 jobs:
-  fetch-data:
+  fetch-
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,7 +25,10 @@ jobs:
         run: pip install requests
 
       - name: Fetch fixtures and live scores
+        env:
+          FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.force_run || 'true') || 'false' }}
         run: python3 scripts/fetch_scores.py
+
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
