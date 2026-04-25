@@ -16,7 +16,7 @@ const CONFIG = {
   ],
   "pins": {
     "Graham": "1002",
-    "Jon": "0712",
+    "Jon": "7429",
     "Kris": "1940",
     "Doug": "1030"
   },
