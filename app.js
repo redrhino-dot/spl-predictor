@@ -462,10 +462,15 @@ function renderProjectedStandings() {
    BLOCK ENDING TABLE
    ============================================================ */
 function checkAndRenderBlockEnding() {
-  const fixtures = fixturesData.fixtures || [];
-  const section  = document.getElementById('block-ending-section');
+  const fixtures       = fixturesData.fixtures || [];
+  const section        = document.getElementById('block-ending-section');
+  const projectedSection = document.getElementById('projected-section');
 
-  if (fixtures.length === 0) { section.style.display = 'none'; return; }
+  if (fixtures.length === 0) {
+    section.style.display          = 'none';
+    projectedSection.style.display = 'block';
+    return;
+  }
 
   const liveMap = buildLiveMap();
   const allDone = fixtures.every(f => {
@@ -473,9 +478,16 @@ function checkAndRenderBlockEnding() {
     return COMPLETED.includes(status);
   });
 
-  if (!allDone) { section.style.display = 'none'; return; }
+  if (!allDone) {
+    // Games still in progress — show Projected, hide Final Summary
+    projectedSection.style.display = 'block';
+    section.style.display          = 'none';
+    return;
+  }
 
-  section.style.display = 'block';
+  // All done — hide Projected, show Final Summary only
+  projectedSection.style.display = 'none';
+  section.style.display          = 'block';
   renderBlockEnding(fixtures, liveMap);
 
   document.getElementById('archive-btn-container').style.display = 'block';
