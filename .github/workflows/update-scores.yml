@@ -17,7 +17,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+            - uses: actions/checkout@v4
+      - name: Pull latest before fetch
+        run: git pull --rebase origin main
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -33,7 +36,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase --autostash origin main
           git add data/fixtures.json data/livescores.json
           git diff --staged --quiet || git commit -m "chore: update live scores [skip ci]"
           git push || true
