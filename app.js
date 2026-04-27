@@ -366,33 +366,40 @@ async function submitPredictions() {
   const fixtures = fixturesData.fixtures || [];
 
   const byFixture = {};
-  document.querySelectorAll('.pred-score-input').forEach(input => {
-    const fid  = parseInt(input.dataset.fixtureId);
-    const side = input.dataset.side;
-    if (!byFixture[fid]) byFixture[fid] = {};
-    byFixture[fid][side] = input.value === '' ? 0 : parseInt(input.value) || 0;
-  });
+document.querySelectorAll('.pred-score-input').forEach(input => {
+  const fid  = parseInt(input.dataset.fixtureId);
+  const side = input.dataset.side;
+  if (!byFixture[fid]) byFixture[fid] = {};
+  byFixture[fid][side]         = input.value === '' ? 0 : parseInt(input.value) || 0;
+  byFixture[fid][side + 'Raw'] = input.value;
+});
 
-  const submittedAt = new Date().toISOString();
-  const newEntries  = [];
+const submittedAt = new Date().toISOString();
+const newEntries  = [];
 
-  for (const fixture of fixtures) {
-    if (now >= new Date(fixture.kickoff)) continue;
-    const scores = byFixture[fixture.id];
-    if (!scores || scores.home === undefined || scores.away === undefined) continue;
+for (const fixture of fixtures) {
+  if (now >= new Date(fixture.kickoff)) continue;
+  const scores = byFixture[fixture.id];
+  if (!scores || scores.home === undefined || scores.away === undefined) continue;
 
-    // FIX: skip fixtures where both inputs were left blank
-    const homeInput = document.querySelector(`.pred-score-input[data-fixture-id="${fixture.id}"][data-side="home"]`);
-    const awayInput = document.querySelector(`.pred-score-input[data-fixture-id="${fixture.id}"][data-side="away"]`);
-    if (homeInput?.value === '' && awayInput?.value === '') continue;
-
-    newEntries.push({
-      fixture_id:   fixture.id,
-      home_score:   scores.home,
-      away_score:   scores.away,
-      submitted_at: submittedAt,
-    });
+  if (scores.homeRaw === '' && scores.awayRaw === '') {
+    // Blank — remove any existing erroneous prediction for this fixture
+    if (predictionsData.gameweeks[gwKey]?.predictions[participant]) {
+      predictionsData.gameweeks[gwKey].predictions[participant] =
+        predictionsData.gameweeks[gwKey].predictions[participant]
+          .filter(p => String(p.fixture_id) !== String(fixture.id));
+    }
+    continue;
   }
+
+  newEntries.push({
+    fixture_id:   fixture.id,
+    home_score:   scores.home,
+    away_score:   scores.away,
+    submitted_at: submittedAt,
+  });
+}
+
 
 
   if (newEntries.length === 0) {
