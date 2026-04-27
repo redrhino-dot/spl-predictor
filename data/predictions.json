@@ -532,6 +532,18 @@
             "home_score": 0,
             "away_score": 0,
             "submitted_at": "2026-04-27T22:34:01.695Z"
+          },
+          {
+            "fixture_id": "401867701",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-04-27T22:57:09.057Z"
+          },
+          {
+            "fixture_id": "401867702",
+            "home_score": 0,
+            "away_score": 0,
+            "submitted_at": "2026-04-27T22:57:09.057Z"
           }
         ]
       }
