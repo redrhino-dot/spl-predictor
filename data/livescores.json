@@ -1,39 +1,6 @@
 {
-  "updated": "2026-04-26T18:09:51.815643+00:00",
+  "updated": "2026-04-27T20:54:20.697477+00:00",
   "livescores": [
-    {
-      "id": "401867695",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-04-25T14:00Z",
-      "status": "FT",
-      "home_team": "Aberdeen",
-      "away_team": "Kilmarnock",
-      "home_score": 1,
-      "away_score": 0,
-      "elapsed": 905
-    },
-    {
-      "id": "401867696",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-04-25T14:00Z",
-      "status": "FT",
-      "home_team": "St Mirren",
-      "away_team": "Livingston",
-      "home_score": 0,
-      "away_score": 2,
-      "elapsed": 909
-    },
-    {
-      "id": "401867697",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-04-25T16:30Z",
-      "status": "FT",
-      "home_team": "Celtic",
-      "away_team": "Falkirk",
-      "home_score": 3,
-      "away_score": 1,
-      "elapsed": 904
-    },
     {
       "id": "401867698",
       "round": "2025-26-scottish-premiership",
