@@ -70,21 +70,13 @@ def parse_event(ev):
     }
 
 def is_live_window(fixtures):
-    """
-    Returns True if now is within the active match window for today's fixtures.
-    Window opens WINDOW_PRE_MINS before the earliest KO today,
-    and closes WINDOW_POST_MINS after the latest KO today.
-    Also returns True if any fixture is currently live (catches overruns).
-    """
     now = datetime.now(timezone.utc)
 
-    # Always run if any match is currently live
     for f in fixtures:
         if f.get('status') in LIVE_ST:
             print('Live match detected — running update.')
             return True
 
-    # Get kick-off times for today's fixtures only
     todays_kos = []
     for f in fixtures:
         if not f.get('kickoff'):
@@ -160,29 +152,28 @@ for m in parsed_all:
 if current_gw:
     gameweeks.append(current_gw)
 
-# Read target round from config
-try:
-    with open('data/config.json') as f:
-        config = json.load(f)
-    target_gw = config.get('currentGW')  # e.g. "33" or "Round 33"
-    print(f'Target GW from config: {target_gw}')
-except Exception:
-    target_gw = None
+# ── Select best gameweek (skip stale completed GWs) ──────────────────────────
 
-# Try to match by round name first, fall back to proximity
-if target_gw:
-    matching = [gw for gw in gameweeks if any(
-        str(target_gw) in str(m['round']) for m in gw
-    )]
-    best_gw = matching[0] if matching else min(gameweeks, key=lambda gw: min(
-        abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
+def gw_is_stale(gw):
+    all_done = all(m['status'] in DONE_ST for m in gw)
+    if not all_done:
+        return False
+    last_ko = max(
+        datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
         for m in gw
-    ))
-else:
-    best_gw = min(gameweeks, key=lambda gw: min(
-        abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
-        for m in gw
-    ))
+    )
+    return (now - last_ko).total_seconds() > 43200  # 12 hours
+
+fresh_gameweeks = [gw for gw in gameweeks if not gw_is_stale(gw)]
+candidates = fresh_gameweeks if fresh_gameweeks else gameweeks
+
+print(f'Gameweeks found: {len(gameweeks)}, fresh: {len(fresh_gameweeks)}')
+
+best_gw = min(candidates, key=lambda gw: min(
+    abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
+    for m in gw
+))
+
 fixtures   = best_gw
 best_round = fixtures[0]['round'] if fixtures else 'Unknown'
 
