@@ -1,38 +1,4 @@
 {
-  "updated": "2026-04-27T21:22:55.793242+00:00",
-  "livescores": [
-    {
-      "id": "401867698",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-04-26T13:00Z",
-      "status": "FT",
-      "home_team": "Dundee United",
-      "away_team": "Dundee",
-      "home_score": 3,
-      "away_score": 0,
-      "elapsed": 904
-    },
-    {
-      "id": "401867699",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-04-26T14:00Z",
-      "status": "FT",
-      "home_team": "Rangers",
-      "away_team": "Motherwell",
-      "home_score": 2,
-      "away_score": 3,
-      "elapsed": 9010
-    },
-    {
-      "id": "401867700",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-04-26T15:30Z",
-      "status": "FT",
-      "home_team": "Hibernian",
-      "away_team": "Heart of Midlothian",
-      "home_score": 1,
-      "away_score": 2,
-      "elapsed": 905
-    }
-  ]
+  "updated": "2026-04-27T21:53:35.891764+00:00",
+  "livescores": []
 }
