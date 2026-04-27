@@ -12,7 +12,7 @@ on:
         default: 'true'
 
 jobs:
-  fetch-
+  fetch-data:
     runs-on: ubuntu-latest
     permissions:
       contents: write
