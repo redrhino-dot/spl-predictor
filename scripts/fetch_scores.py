@@ -160,10 +160,29 @@ for m in parsed_all:
 if current_gw:
     gameweeks.append(current_gw)
 
-best_gw = min(gameweeks, key=lambda gw: min(
-    abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
-    for m in gw
-))
+# Read target round from config
+try:
+    with open('data/config.json') as f:
+        config = json.load(f)
+    target_gw = config.get('currentGW')  # e.g. "33" or "Round 33"
+    print(f'Target GW from config: {target_gw}')
+except Exception:
+    target_gw = None
+
+# Try to match by round name first, fall back to proximity
+if target_gw:
+    matching = [gw for gw in gameweeks if any(
+        str(target_gw) in str(m['round']) for m in gw
+    )]
+    best_gw = matching[0] if matching else min(gameweeks, key=lambda gw: min(
+        abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
+        for m in gw
+    ))
+else:
+    best_gw = min(gameweeks, key=lambda gw: min(
+        abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
+        for m in gw
+    ))
 fixtures   = best_gw
 best_round = fixtures[0]['round'] if fixtures else 'Unknown'
 
