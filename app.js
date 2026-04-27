@@ -380,6 +380,12 @@ async function submitPredictions() {
     if (now >= new Date(fixture.kickoff)) continue;
     const scores = byFixture[fixture.id];
     if (!scores || scores.home === undefined || scores.away === undefined) continue;
+
+    // FIX: skip fixtures where both inputs were left blank
+    const homeInput = document.querySelector(`.pred-score-input[data-fixture-id="${fixture.id}"][data-side="home"]`);
+    const awayInput = document.querySelector(`.pred-score-input[data-fixture-id="${fixture.id}"][data-side="away"]`);
+    if (homeInput?.value === '' && awayInput?.value === '') continue;
+
     newEntries.push({
       fixture_id:   fixture.id,
       home_score:   scores.home,
@@ -387,6 +393,7 @@ async function submitPredictions() {
       submitted_at: submittedAt,
     });
   }
+
 
   if (newEntries.length === 0) {
     showStatus(statusEl, 'No open fixtures to submit.', 'warning');
