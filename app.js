@@ -950,7 +950,13 @@ async function rollToNextGW() {
 
   const ok = await saveSafeConfig(newConfigObj);
 
-  if (ok === true) {
+    if (ok === true) {
+    // Clear stale fixture data so old results don't show for new GW
+    const emptyFixtures   = { updated: new Date().toISOString(), round: '', fixtures: [] };
+    const emptyLivescores = { updated: new Date().toISOString(), livescores: [] };
+    await writeFileToGitHub('data/fixtures.json', emptyFixtures);
+    await writeFileToGitHub('data/livescores.json', emptyLivescores);
+
     try {
       await fetch(`https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`, {
         method: 'POST',
@@ -959,7 +965,7 @@ async function rollToNextGW() {
           Accept: 'application/vnd.github+json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ref: 'main' }),
+        body: JSON.stringify({ ref: 'main', inputs: { force_run: 'true' } }),
       });
       btn.textContent = 'Fetching fixtures...';
       await new Promise(r => setTimeout(r, 35000));
@@ -968,10 +974,6 @@ async function rollToNextGW() {
     }
     alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
     window.location.reload();
-  } else {
-    alert('Failed to update config.js. Please try again.');
-    btn.disabled = false;
-    btn.textContent = 'Roll to Next Gameweek';
   }
 }
 
