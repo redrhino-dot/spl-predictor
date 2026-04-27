@@ -194,4 +194,3 @@ with open('data/livescores.json', 'w') as fh:
     json.dump({'updated': ts, 'livescores': livescores}, fh, indent=2)
 
 print(f'Done: {len(fixtures)} fixtures, {len(livescores)} live/completed.')
-
