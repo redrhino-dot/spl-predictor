@@ -18,12 +18,14 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+
       - name: Pull latest before fetch
         run: git pull --rebase origin main
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: pip install requests
 
