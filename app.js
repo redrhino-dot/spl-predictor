@@ -11,6 +11,8 @@ let livescoresData = { livescores: [] };
 let predictionsData = null;
 let archiveData     = null;
 
+let predFormDirty = false;
+
 /* ============================================================
    BOOT
    ============================================================ */
@@ -28,7 +30,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   setInterval(async () => {
     await loadAllData();
-    fullRender();
+    renderFixturesTable();
+    renderProjectedStandings();
+    checkAndRenderBlockEnding();
+
+    // Only re-render prediction form if user is not actively filling it in
+    if (!predFormDirty) {
+      renderPredictionForm();
+    }
   }, 30000);
 });
 
@@ -296,8 +305,14 @@ function populateParticipantDropdown() {
     opt.value = p; opt.textContent = p;
     sel.appendChild(opt);
   });
-  sel.addEventListener('change', renderPredictionForm);
-  document.getElementById('pred-pin').addEventListener('input', renderPredictionForm);
+  sel.addEventListener('change', () => {
+    predFormDirty = false;
+    renderPredictionForm();
+  });
+  document.getElementById('pred-pin').addEventListener('input', () => {
+    predFormDirty = false;
+    renderPredictionForm();
+  });
 }
 
 function renderPredictionForm() {
@@ -350,6 +365,11 @@ function renderPredictionForm() {
     container.appendChild(row);
   });
 
+  // Mark form dirty when user types in any input
+  container.querySelectorAll('.pred-score-input').forEach(input => {
+    input.addEventListener('input', () => { predFormDirty = true; });
+  });
+
   document.getElementById('pred-submit-btn').onclick = submitPredictions;
 }
 
@@ -366,41 +386,39 @@ async function submitPredictions() {
   const fixtures = fixturesData.fixtures || [];
 
   const byFixture = {};
-document.querySelectorAll('.pred-score-input').forEach(input => {
-  const fid  = parseInt(input.dataset.fixtureId);
-  const side = input.dataset.side;
-  if (!byFixture[fid]) byFixture[fid] = {};
-  byFixture[fid][side]         = input.value === '' ? 0 : parseInt(input.value) || 0;
-  byFixture[fid][side + 'Raw'] = input.value;
-});
-
-const submittedAt = new Date().toISOString();
-const newEntries  = [];
-
-for (const fixture of fixtures) {
-  if (now >= new Date(fixture.kickoff)) continue;
-  const scores = byFixture[fixture.id];
-  if (!scores || scores.home === undefined || scores.away === undefined) continue;
-
-  if (scores.homeRaw === '' && scores.awayRaw === '') {
-    // Blank — remove any existing erroneous prediction for this fixture
-    if (predictionsData.gameweeks[gwKey]?.predictions[participant]) {
-      predictionsData.gameweeks[gwKey].predictions[participant] =
-        predictionsData.gameweeks[gwKey].predictions[participant]
-          .filter(p => String(p.fixture_id) !== String(fixture.id));
-    }
-    continue;
-  }
-
-  newEntries.push({
-    fixture_id:   fixture.id,
-    home_score:   scores.home,
-    away_score:   scores.away,
-    submitted_at: submittedAt,
+  document.querySelectorAll('.pred-score-input').forEach(input => {
+    const fid  = parseInt(input.dataset.fixtureId);
+    const side = input.dataset.side;
+    if (!byFixture[fid]) byFixture[fid] = {};
+    byFixture[fid][side]         = input.value === '' ? 0 : parseInt(input.value) || 0;
+    byFixture[fid][side + 'Raw'] = input.value;
   });
-}
 
+  const submittedAt = new Date().toISOString();
+  const newEntries  = [];
 
+  for (const fixture of fixtures) {
+    if (now >= new Date(fixture.kickoff)) continue;
+    const scores = byFixture[fixture.id];
+    if (!scores || scores.home === undefined || scores.away === undefined) continue;
+
+    if (scores.homeRaw === '' && scores.awayRaw === '') {
+      // Blank — remove any existing erroneous prediction for this fixture
+      if (predictionsData.gameweeks[gwKey]?.predictions[participant]) {
+        predictionsData.gameweeks[gwKey].predictions[participant] =
+          predictionsData.gameweeks[gwKey].predictions[participant]
+            .filter(p => String(p.fixture_id) !== String(fixture.id));
+      }
+      continue;
+    }
+
+    newEntries.push({
+      fixture_id:   fixture.id,
+      home_score:   scores.home,
+      away_score:   scores.away,
+      submitted_at: submittedAt,
+    });
+  }
 
   if (newEntries.length === 0) {
     showStatus(statusEl, 'No open fixtures to submit.', 'warning');
@@ -422,6 +440,7 @@ for (const fixture of fixtures) {
   document.getElementById('pred-submit-btn').disabled = false;
 
   if (ok === true) {
+    predFormDirty = false;
     showStatus(statusEl, `Saved at ${formatTimeBST(submittedAt)} BST ✓`, 'success');
     renderFixturesTable();
     renderProjectedStandings();
@@ -493,13 +512,11 @@ function checkAndRenderBlockEnding() {
   });
 
   if (!allDone) {
-    // Games still in progress — show Projected, hide Final Summary
     projectedSection.style.display = 'block';
     section.style.display          = 'none';
     return;
   }
 
-  // All done — hide Projected, show Final Summary only
   projectedSection.style.display = 'none';
   section.style.display          = 'block';
   renderBlockEnding(fixtures, liveMap);
@@ -964,8 +981,7 @@ async function rollToNextGW() {
 
   const ok = await saveSafeConfig(newConfigObj);
 
-    if (ok === true) {
-    // Clear stale fixture data so old results don't show for new GW
+  if (ok === true) {
     const emptyFixtures   = { updated: new Date().toISOString(), round: '', fixtures: [] };
     const emptyLivescores = { updated: new Date().toISOString(), livescores: [] };
     await writeFileToGitHub('data/fixtures.json', emptyFixtures);
