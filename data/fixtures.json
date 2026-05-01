@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-01T20:31:59.948409+00:00",
+  "updated": "2026-05-01T20:35:54.120707+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
     {
@@ -11,7 +11,7 @@
       "away_team": "Aberdeen",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": 82
+      "elapsed": 87
     },
     {
       "id": "401867702",
