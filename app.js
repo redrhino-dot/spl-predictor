@@ -412,16 +412,25 @@ async function submitPredictions() {
       continue;
     }
 
-    newEntries.push({
-      fixture_id:   fixture.id,
-      home_score:   scores.home,
-      away_score:   scores.away,
-      submitted_at: submittedAt,
-    });
-  }
+// Check if prediction has actually changed vs existing
+const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
+  predictionsData.gameweeks[gwKey]?.predictions[participant] || []);
 
-  if (newEntries.length === 0) {
-    showStatus(statusEl, 'No open fixtures to submit.', 'warning');
+const unchanged = existing &&
+  existing.home_score === scores.home &&
+  existing.away_score === scores.away;
+
+if (!unchanged) {
+  newEntries.push({
+    fixture_id:   fixture.id,
+    home_score:   scores.home,
+    away_score:   scores.away,
+    submitted_at: submittedAt,
+  });
+}
+
+if (newEntries.length === 0) {
+    showStatus(statusEl, 'No changes to save.', 'info');
     return;
   }
 
