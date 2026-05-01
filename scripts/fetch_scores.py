@@ -144,7 +144,7 @@ for m in parsed_all:
     else:
         prev_t = datetime.fromisoformat(current_gw[-1]['kickoff'].replace('Z', '+00:00'))
         this_t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-        if (this_t - prev_t).days <= 4:
+        if (this_t - prev_t).days <= 3:
             current_gw.append(m)
         else:
             gameweeks.append(current_gw)
