@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderProjectedStandings();
     checkAndRenderBlockEnding();
 
-    // Only re-render prediction form if user is not actively filling it in
     if (!predFormDirty) {
       renderPredictionForm();
     }
@@ -365,7 +364,6 @@ function renderPredictionForm() {
     container.appendChild(row);
   });
 
-  // Mark form dirty when user types in any input
   container.querySelectorAll('.pred-score-input').forEach(input => {
     input.addEventListener('input', () => { predFormDirty = true; });
   });
@@ -403,7 +401,7 @@ async function submitPredictions() {
     if (!scores || scores.home === undefined || scores.away === undefined) continue;
 
     if (scores.homeRaw === '' && scores.awayRaw === '') {
-      // Blank — remove any existing erroneous prediction for this fixture
+      // Blank — remove any existing prediction for this fixture
       if (predictionsData.gameweeks[gwKey]?.predictions[participant]) {
         predictionsData.gameweeks[gwKey].predictions[participant] =
           predictionsData.gameweeks[gwKey].predictions[participant]
@@ -412,24 +410,25 @@ async function submitPredictions() {
       continue;
     }
 
-// Check if prediction has actually changed vs existing
-const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
-  predictionsData.gameweeks[gwKey]?.predictions[participant] || []);
+    // Only add if prediction has actually changed
+    const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
+      predictionsData.gameweeks[gwKey]?.predictions[participant] || []);
 
-const unchanged = existing &&
-  existing.home_score === scores.home &&
-  existing.away_score === scores.away;
+    const unchanged = existing &&
+      existing.home_score === scores.home &&
+      existing.away_score === scores.away;
 
-if (!unchanged) {
-  newEntries.push({
-    fixture_id:   fixture.id,
-    home_score:   scores.home,
-    away_score:   scores.away,
-    submitted_at: submittedAt,
-  });
-}
+    if (!unchanged) {
+      newEntries.push({
+        fixture_id:   fixture.id,
+        home_score:   scores.home,
+        away_score:   scores.away,
+        submitted_at: submittedAt,
+      });
+    }
+  }
 
-if (newEntries.length === 0) {
+  if (newEntries.length === 0) {
     showStatus(statusEl, 'No changes to save.', 'info');
     return;
   }
