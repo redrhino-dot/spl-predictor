@@ -1,16 +1,16 @@
 {
-  "updated": "2026-05-01T20:35:54.120707+00:00",
+  "updated": "2026-05-01T20:52:20.262821+00:00",
   "livescores": [
     {
       "id": "401867701",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-05-01T18:45Z",
-      "status": "2H",
+      "status": "LIVE",
       "home_team": "Livingston",
       "away_team": "Aberdeen",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": 87
+      "elapsed": 901
     }
   ]
 }
