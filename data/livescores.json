@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-01T20:22:56.029083+00:00",
+  "updated": "2026-05-01T20:25:42.497079+00:00",
   "livescores": [
     {
       "id": "401867701",
@@ -8,9 +8,9 @@
       "status": "2H",
       "home_team": "Livingston",
       "away_team": "Aberdeen",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 2,
-      "elapsed": 76
+      "elapsed": 78
     }
   ]
 }
