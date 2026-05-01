@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-01T20:25:42.497079+00:00",
+  "updated": "2026-05-01T20:31:59.948409+00:00",
   "livescores": [
     {
       "id": "401867701",
@@ -10,7 +10,7 @@
       "away_team": "Aberdeen",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": 78
+      "elapsed": 82
     }
   ]
 }
