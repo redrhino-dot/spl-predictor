@@ -177,7 +177,7 @@ function _makeDatasets(players, dataMap) {
   }));
 }
 
-function _baseOptions(onHover, onLeave) {
+function _baseOptions() {
   return {
     responsive:          true,
     maintainAspectRatio: false,
@@ -185,12 +185,7 @@ function _baseOptions(onHover, onLeave) {
     interaction:         { mode: 'index', intersect: false },
     plugins: {
       legend:  { display: false },
-      tooltip: { enabled: false }, // disabled — legend IS the tooltip
-    },
-    onHover: (event, elements, chart) => {
-      if (elements && elements.length > 0) {
-        onHover(elements[0].index);
-      }
+      tooltip: { enabled: false },
     },
     scales: {
       x: {
@@ -213,16 +208,36 @@ function _buildPointsChart(labels, players, points) {
   const lastIdx      = labels.length - 1;
   const updateLegend = _buildDynamicLegend('stats-legend-points', players, points, lastIdx, ' pts', null);
 
-  const opts = _baseOptions(
-    (idx) => updateLegend(idx),
-    ()    => updateLegend(lastIdx)
-  );
+  const opts = _baseOptions();
 
   opts.scales.y.ticks.callback = v => v + ' pts';
 
-  // Reset legend on mouse/touch leave
-  ctx.addEventListener('mouseleave',  () => updateLegend(lastIdx));
-  ctx.addEventListener('touchend',    () => setTimeout(() => updateLegend(lastIdx), 5000));
+  // Mouse hover — desktop
+  ctx.addEventListener('mousemove', (e) => {
+    if (!_pointsChart) return;
+    const els = _pointsChart.getElementsAtEventForMode(e, 'index', { intersect: false }, false);
+    if (els.length) updateLegend(els[0].index);
+  });
+  ctx.addEventListener('mouseleave', () => updateLegend(lastIdx));
+
+  // Touch — mobile: track finger movement, reset after 5s with cancellable timer
+  let _pointsResetTimer = null;
+  ctx.addEventListener('touchmove', (e) => {
+    if (!_pointsChart) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect  = ctx.getBoundingClientRect();
+    const nativeEvent = { clientX: touch.clientX, clientY: touch.clientY, target: ctx };
+    const els = _pointsChart.getElementsAtEventForMode(nativeEvent, 'index', { intersect: false }, false);
+    if (els.length) {
+      clearTimeout(_pointsResetTimer);
+      updateLegend(els[0].index);
+    }
+  }, { passive: false });
+  ctx.addEventListener('touchend', () => {
+    clearTimeout(_pointsResetTimer);
+    _pointsResetTimer = setTimeout(() => updateLegend(lastIdx), 5000);
+  });
 
   opts.plugins.zoom = {
     pan:  { enabled: true, mode: 'x' },
@@ -245,13 +260,33 @@ function _buildPositionChart(labels, players, positions) {
   const lastIdx   = labels.length - 1;
   const updateLegend = _buildDynamicLegend('stats-legend-position', players, positions, lastIdx, '', ordinals);
 
-  const opts = _baseOptions(
-    (idx) => updateLegend(idx),
-    ()    => updateLegend(lastIdx)
-  );
+  const opts = _baseOptions();
 
+  // Mouse hover — desktop
+  ctx.addEventListener('mousemove', (e) => {
+    if (!_positionChart) return;
+    const els = _positionChart.getElementsAtEventForMode(e, 'index', { intersect: false }, false);
+    if (els.length) updateLegend(els[0].index);
+  });
   ctx.addEventListener('mouseleave', () => updateLegend(lastIdx));
-  ctx.addEventListener('touchend',   () => setTimeout(() => updateLegend(lastIdx), 5000));
+
+  // Touch — mobile
+  let _posResetTimer = null;
+  ctx.addEventListener('touchmove', (e) => {
+    if (!_positionChart) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const nativeEvent = { clientX: touch.clientX, clientY: touch.clientY, target: ctx };
+    const els = _positionChart.getElementsAtEventForMode(nativeEvent, 'index', { intersect: false }, false);
+    if (els.length) {
+      clearTimeout(_posResetTimer);
+      updateLegend(els[0].index);
+    }
+  }, { passive: false });
+  ctx.addEventListener('touchend', () => {
+    clearTimeout(_posResetTimer);
+    _posResetTimer = setTimeout(() => updateLegend(lastIdx), 5000);
+  });
 
   opts.scales.y.reverse        = true;
   opts.scales.y.min            = 1;
