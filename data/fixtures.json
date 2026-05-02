@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-02T15:53:01.353972+00:00",
+  "updated": "2026-05-02T15:54:39.476758+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
     {
@@ -22,7 +22,7 @@
       "away_team": "St Mirren",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 905
+      "elapsed": 906
     },
     {
       "id": "401867703",
