@@ -161,6 +161,19 @@ function _buildDynamicLegend(containerId, players, dataMap, defaultIdx, suffix, 
   return renderLegend;
 }
 
+/* ── Clear hover state helper ─────────────────────────────── */
+function _clearChartHover(chart) {
+  chart.setActiveElements([]);
+  if (chart.tooltip) chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+  // Dispatch a synthetic mouseleave into Chart.js internals to flush _active
+  const canvas = chart.canvas;
+  if (canvas) {
+    const evt = new MouseEvent('mouseout', { bubbles: true, cancelable: true });
+    canvas.dispatchEvent(evt);
+  }
+  chart.update('none');
+}
+
 /* ── Shared chart helpers ──────────────────────────────────── */
 function _makeDatasets(players, dataMap) {
   return players.map(name => ({
@@ -220,11 +233,7 @@ function _buildPointsChart(labels, players, points) {
   });
   ctx.addEventListener('mouseleave', () => {
     updateLegend(lastIdx);
-    if (_pointsChart) {
-      _pointsChart.setActiveElements([]);
-      _pointsChart.tooltip.setActiveElements([]);
-      _pointsChart.update();
-    }
+    _clearChartHover(_pointsChart);
   });
 
   // Touch — mobile: track finger movement, reset after 5s with cancellable timer
@@ -246,9 +255,7 @@ function _buildPointsChart(labels, players, points) {
     _pointsResetTimer = setTimeout(() => {
       updateLegend(lastIdx);
       if (_pointsChart) {
-        _pointsChart.setActiveElements([]);
-        _pointsChart.tooltip.setActiveElements([]);
-        _pointsChart.update();
+        _clearChartHover(_pointsChart);
       }
     }, 5000);
   });
@@ -284,11 +291,7 @@ function _buildPositionChart(labels, players, positions) {
   });
   ctx.addEventListener('mouseleave', () => {
     updateLegend(lastIdx);
-    if (_positionChart) {
-      _positionChart.setActiveElements([]);
-      _positionChart.tooltip.setActiveElements([]);
-      _positionChart.update();
-    }
+    _clearChartHover(_positionChart);
   });
 
   // Touch — mobile
@@ -309,9 +312,7 @@ function _buildPositionChart(labels, players, positions) {
     _posResetTimer = setTimeout(() => {
       updateLegend(lastIdx);
       if (_positionChart) {
-        _positionChart.setActiveElements([]);
-        _positionChart.tooltip.setActiveElements([]);
-        _positionChart.update();
+        _clearChartHover(_positionChart);
       }
     }, 5000);
   });
