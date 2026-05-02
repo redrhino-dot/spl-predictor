@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-02T15:04:58.568571+00:00",
+  "updated": "2026-05-02T15:07:12.185704+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
     {
@@ -22,7 +22,7 @@
       "away_team": "St Mirren",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 47
+      "elapsed": 50
     },
     {
       "id": "401867703",
@@ -33,7 +33,7 @@
       "away_team": "Motherwell",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 47
+      "elapsed": 49
     },
     {
       "id": "401867704",
@@ -44,7 +44,7 @@
       "away_team": "Dundee United",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 47
+      "elapsed": 49
     },
     {
       "id": "401867705",
