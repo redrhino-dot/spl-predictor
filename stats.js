@@ -1,8 +1,8 @@
 /* ============================================================
    stats.js — Scottish Premiership Predictor
-   Reads live from data/archive.json on every tab open so it
-   automatically reflects any Archive Current GW / Roll Forward.
-   Cumulative points chart supports pinch-to-zoom and drag-to-pan.
+   Dynamic legend replaces tooltip popup — hover/touch a GW to
+   see all four players' values update in the legend below the chart.
+   Cumulative points chart also supports pinch-to-zoom and drag-to-pan.
    ============================================================ */
 
 const PLAYER_COLORS = {
@@ -15,7 +15,7 @@ const PLAYER_COLORS = {
 let _pointsChart   = null;
 let _positionChart = null;
 
-/* ── Entry point — called by setupNavigation() when Stats tab opens ── */
+/* ── Entry point ───────────────────────────────────────────── */
 async function renderStatsTab() {
   const container = document.getElementById('stats-container');
   if (!container) return;
@@ -77,7 +77,7 @@ async function renderStatsTab() {
       <div class="stats-chart-hint">Pinch to zoom · Drag to pan</div>
       <div class="stats-chart-wrap"><canvas id="statsPointsChart"></canvas></div>
       <div class="stats-chart-controls">
-        <button class="stats-reset-btn" id="stats-reset-zoom" onclick="_resetPointsZoom()">↺ Reset Zoom</button>
+        <button class="stats-reset-btn" onclick="_resetPointsZoom()">↺ Reset Zoom</button>
       </div>
       <div class="stats-legend" id="stats-legend-points"></div>
     </section>
@@ -125,6 +125,42 @@ function _buildStandings(players, points) {
   }).join('');
 }
 
+/* ── Dynamic legend builder ────────────────────────────────── */
+// Renders legend items with a value that updates on hover/touch
+// suffix: ' pts' for points chart, '' for position chart
+// ordinals: null for points, array for position
+function _buildDynamicLegend(containerId, players, dataMap, defaultIdx, suffix, ordinals) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const renderLegend = (idx) => {
+    // Sort by value at this index so legend order matches current ranking
+    const sorted = [...players].sort((a, b) => {
+      const va = dataMap[a][idx] ?? 0;
+      const vb = dataMap[b][idx] ?? 0;
+      return suffix === ' pts' ? vb - va : va - vb; // pts: desc, position: asc
+    });
+
+    el.innerHTML = sorted.map(name => {
+      const val   = dataMap[name][idx] ?? 0;
+      const color = PLAYER_COLORS[name] || '#94a3b8';
+      const label = ordinals ? (ordinals[val] || val) : val + suffix;
+      return `
+        <div class="stats-legend-item">
+          <span class="stats-legend-dot" style="background:${color}"></span>
+          <span class="stats-legend-name">${name}</span>
+          <span class="stats-legend-val" style="color:${color}">${label}</span>
+        </div>`;
+    }).join('');
+  };
+
+  // Default: show last GW values
+  renderLegend(defaultIdx);
+
+  // Return the update function so the chart can call it
+  return renderLegend;
+}
+
 /* ── Shared chart helpers ──────────────────────────────────── */
 function _makeDatasets(players, dataMap) {
   return players.map(name => ({
@@ -141,23 +177,20 @@ function _makeDatasets(players, dataMap) {
   }));
 }
 
-function _baseOptions(tooltipLabel) {
+function _baseOptions(onHover, onLeave) {
   return {
     responsive:          true,
     maintainAspectRatio: false,
     animation:           { duration: 500, easing: 'easeInOutQuart' },
     interaction:         { mode: 'index', intersect: false },
     plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#1a2a3d',
-        borderColor:     '#2a3f5a',
-        borderWidth:     1,
-        titleColor:      '#8ba3c0',
-        bodyColor:       '#e2e8f0',
-        padding:         10,
-        callbacks:       { label: tooltipLabel },
-      },
+      legend:  { display: false },
+      tooltip: { enabled: false }, // disabled — legend IS the tooltip
+    },
+    onHover: (event, elements, chart) => {
+      if (elements && elements.length > 0) {
+        onHover(elements[0].index);
+      }
     },
     scales: {
       x: {
@@ -172,34 +205,28 @@ function _baseOptions(tooltipLabel) {
   };
 }
 
-function _buildLegend(id, players) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.innerHTML = players.map(name => `
-    <div class="stats-legend-item">
-      <span class="stats-legend-dot" style="background:${PLAYER_COLORS[name] || '#94a3b8'}"></span>
-      <span>${name}</span>
-    </div>`).join('');
-}
-
-/* ── Points chart — with zoom/pan plugin ───────────────────── */
+/* ── Points chart ──────────────────────────────────────────── */
 function _buildPointsChart(labels, players, points) {
   const ctx = document.getElementById('statsPointsChart');
   if (!ctx) return;
-  const opts = _baseOptions(c => ' ' + c.dataset.label + ': ' + c.parsed.y + ' pts');
+
+  const lastIdx      = labels.length - 1;
+  const updateLegend = _buildDynamicLegend('stats-legend-points', players, points, lastIdx, ' pts', null);
+
+  const opts = _baseOptions(
+    (idx) => updateLegend(idx),
+    ()    => updateLegend(lastIdx)
+  );
+
   opts.scales.y.ticks.callback = v => v + ' pts';
 
-  // Zoom/pan — pinch to zoom on mobile, wheel on desktop, drag to pan
+  // Reset legend on mouse/touch leave
+  ctx.addEventListener('mouseleave',  () => updateLegend(lastIdx));
+  ctx.addEventListener('touchend',    () => setTimeout(() => updateLegend(lastIdx), 1500));
+
   opts.plugins.zoom = {
-    pan: {
-      enabled: true,
-      mode: 'x',
-    },
-    zoom: {
-      wheel:  { enabled: true },
-      pinch:  { enabled: true },
-      mode:   'x',
-    },
+    pan:  { enabled: true, mode: 'x' },
+    zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' },
   };
 
   _pointsChart = new Chart(ctx, {
@@ -207,24 +234,34 @@ function _buildPointsChart(labels, players, points) {
     data: { labels, datasets: _makeDatasets(players, points) },
     options: opts,
   });
-  _buildLegend('stats-legend-points', players);
 }
 
-/* ── Position chart — no zoom needed ──────────────────────── */
+/* ── Position chart ────────────────────────────────────────── */
 function _buildPositionChart(labels, players, positions) {
   const ctx = document.getElementById('statsPositionChart');
   if (!ctx) return;
-  const ordinals = ['', '1st', '2nd', '3rd', '4th'];
-  const opts = _baseOptions(c => ' ' + c.dataset.label + ': ' + (ordinals[c.parsed.y] || c.parsed.y));
-  opts.scales.y.reverse       = true;
-  opts.scales.y.min           = 1;
-  opts.scales.y.max           = players.length;
+
+  const ordinals  = ['', '1st', '2nd', '3rd', '4th'];
+  const lastIdx   = labels.length - 1;
+  const updateLegend = _buildDynamicLegend('stats-legend-position', players, positions, lastIdx, '', ordinals);
+
+  const opts = _baseOptions(
+    (idx) => updateLegend(idx),
+    ()    => updateLegend(lastIdx)
+  );
+
+  ctx.addEventListener('mouseleave', () => updateLegend(lastIdx));
+  ctx.addEventListener('touchend',   () => setTimeout(() => updateLegend(lastIdx), 1500));
+
+  opts.scales.y.reverse        = true;
+  opts.scales.y.min            = 1;
+  opts.scales.y.max            = players.length;
   opts.scales.y.ticks.stepSize = 1;
   opts.scales.y.ticks.callback = v => ordinals[v] || '';
+
   _positionChart = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets: _makeDatasets(players, positions) },
     options: opts,
   });
-  _buildLegend('stats-legend-position', players);
 }
