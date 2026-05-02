@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-02T15:54:39.476758+00:00",
+  "updated": "2026-05-02T15:56:39.803254+00:00",
   "livescores": [
     {
       "id": "401867701",
@@ -16,12 +16,12 @@
       "id": "401867702",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-05-02T14:00Z",
-      "status": "LIVE",
+      "status": "FT",
       "home_team": "Dundee",
       "away_team": "St Mirren",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 906
+      "elapsed": 908
     },
     {
       "id": "401867703",
