@@ -651,6 +651,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 
 
+
 /* ============================================================
    STATS TAB — paste at the bottom of styles.css
    ============================================================ */
@@ -702,16 +703,16 @@ input[type=number] { -moz-appearance: textfield; }
 
 /* Legend */
 .stats-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
   margin-top: 12px;
 }
 .stats-legend-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: #8ba3c0;
 }
 .stats-legend-dot {
@@ -720,6 +721,16 @@ input[type=number] { -moz-appearance: textfield; }
   border-radius: 50%;
   flex-shrink: 0;
   display: inline-block;
+}
+.stats-legend-name {
+  flex: 1;
+  color: #8ba3c0;
+}
+.stats-legend-val {
+  font-weight: 700;
+  font-size: 0.82rem;
+  min-width: 48px;
+  text-align: right;
 }
 
 /* ── Zoom controls ── */
