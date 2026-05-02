@@ -222,7 +222,7 @@ function _buildPointsChart(labels, players, points) {
 
   // Reset legend on mouse/touch leave
   ctx.addEventListener('mouseleave',  () => updateLegend(lastIdx));
-  ctx.addEventListener('touchend',    () => setTimeout(() => updateLegend(lastIdx), 1500));
+  ctx.addEventListener('touchend',    () => setTimeout(() => updateLegend(lastIdx), 5000));
 
   opts.plugins.zoom = {
     pan:  { enabled: true, mode: 'x' },
@@ -251,7 +251,7 @@ function _buildPositionChart(labels, players, positions) {
   );
 
   ctx.addEventListener('mouseleave', () => updateLegend(lastIdx));
-  ctx.addEventListener('touchend',   () => setTimeout(() => updateLegend(lastIdx), 1500));
+  ctx.addEventListener('touchend',   () => setTimeout(() => updateLegend(lastIdx), 5000));
 
   opts.scales.y.reverse        = true;
   opts.scales.y.min            = 1;
