@@ -218,7 +218,14 @@ function _buildPointsChart(labels, players, points) {
     const els = _pointsChart.getElementsAtEventForMode(e, 'index', { intersect: false }, false);
     if (els.length) updateLegend(els[0].index);
   });
-  ctx.addEventListener('mouseleave', () => updateLegend(lastIdx));
+  ctx.addEventListener('mouseleave', () => {
+    updateLegend(lastIdx);
+    if (_pointsChart) {
+      _pointsChart.setActiveElements([]);
+      _pointsChart.tooltip.setActiveElements([]);
+      _pointsChart.update();
+    }
+  });
 
   // Touch — mobile: track finger movement, reset after 5s with cancellable timer
   let _pointsResetTimer = null;
@@ -236,7 +243,14 @@ function _buildPointsChart(labels, players, points) {
   }, { passive: false });
   ctx.addEventListener('touchend', () => {
     clearTimeout(_pointsResetTimer);
-    _pointsResetTimer = setTimeout(() => updateLegend(lastIdx), 5000);
+    _pointsResetTimer = setTimeout(() => {
+      updateLegend(lastIdx);
+      if (_pointsChart) {
+        _pointsChart.setActiveElements([]);
+        _pointsChart.tooltip.setActiveElements([]);
+        _pointsChart.update();
+      }
+    }, 5000);
   });
 
   opts.plugins.zoom = {
@@ -268,7 +282,14 @@ function _buildPositionChart(labels, players, positions) {
     const els = _positionChart.getElementsAtEventForMode(e, 'index', { intersect: false }, false);
     if (els.length) updateLegend(els[0].index);
   });
-  ctx.addEventListener('mouseleave', () => updateLegend(lastIdx));
+  ctx.addEventListener('mouseleave', () => {
+    updateLegend(lastIdx);
+    if (_positionChart) {
+      _positionChart.setActiveElements([]);
+      _positionChart.tooltip.setActiveElements([]);
+      _positionChart.update();
+    }
+  });
 
   // Touch — mobile
   let _posResetTimer = null;
@@ -285,7 +306,14 @@ function _buildPositionChart(labels, players, positions) {
   }, { passive: false });
   ctx.addEventListener('touchend', () => {
     clearTimeout(_posResetTimer);
-    _posResetTimer = setTimeout(() => updateLegend(lastIdx), 5000);
+    _posResetTimer = setTimeout(() => {
+      updateLegend(lastIdx);
+      if (_positionChart) {
+        _positionChart.setActiveElements([]);
+        _positionChart.tooltip.setActiveElements([]);
+        _positionChart.update();
+      }
+    }, 5000);
   });
 
   opts.scales.y.reverse        = true;
