@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scottish Premiership Predictor</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <header>
@@ -19,6 +20,7 @@
       <nav>
         <button class="nav-btn active" data-tab="main">Current GW</button>
         <button class="nav-btn" data-tab="archive">Archive</button>
+        <button class="nav-btn" data-tab="stats">Stats</button>
         <button class="nav-btn" data-tab="settings">Settings</button>
       </nav>
     </div>
@@ -29,7 +31,6 @@
     <!-- ===================== MAIN TAB ===================== -->
     <div id="tab-main" class="tab-content active">
 
-      <!-- Sub-tab navigation -->
       <div class="sub-tabs">
         <button class="sub-tab-btn active" data-subtab="results">Results</button>
         <button class="sub-tab-btn" data-subtab="predictions">My Predictions</button>
@@ -38,89 +39,63 @@
       <!-- ---- RESULTS SUB-TAB ---- -->
       <div id="subtab-results" class="sub-tab-content active">
 
-        <!-- Opening Standings -->
         <section class="card">
           <h2>Opening Standings — <span id="gw-label"></span></h2>
           <table class="data-table" id="opening-standings-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Participant</th>
-                <th>Points</th>
-              </tr>
-            </thead>
+            <thead><tr><th>#</th><th>Participant</th><th>Points</th></tr></thead>
             <tbody id="opening-standings-body"></tbody>
           </table>
         </section>
 
-<!-- Predictions & Live Results -->
-<section class="card">
-  <h2>Predictions &amp; Live Results</h2>
-  <div class="timestamp-row">
-    <div id="last-updated" class="last-updated"></div>
-    <button id="force-update-btn" onclick="forceUpdate()">🔄 Force Update</button>
-  </div>
-  <div id="debug-log" style="font-size:0.7rem;color:#f87171;margin-bottom:6px;word-break:break-all;"></div>
-  <div class="table-scroll">
-    <table class="data-table fixtures-table" id="fixtures-table">
-      <thead>
-        <tr>
-          <th>Home</th>
-          <th>Away</th>
-          <th>Score</th>
-          <th>Graham</th>
-          <th>Jon</th>
-          <th>Kris</th>
-          <th>Doug</th>
-        </tr>
-      </thead>
-      <tbody id="fixtures-body"></tbody>
-    </table>
-  </div>
-</section>
+        <section class="card">
+          <h2>Predictions &amp; Live Results</h2>
+          <div class="timestamp-row">
+            <div id="last-updated" class="last-updated"></div>
+            <button id="force-update-btn" onclick="forceUpdate()">🔄 Force Update</button>
+          </div>
+          <div id="debug-log" style="font-size:0.7rem;color:#f87171;margin-bottom:6px;word-break:break-all;"></div>
+          <div class="table-scroll">
+            <table class="data-table fixtures-table" id="fixtures-table">
+              <thead>
+                <tr>
+                  <th>Home</th><th>Away</th><th>Score</th>
+                  <th>Graham</th><th>Jon</th><th>Kris</th><th>Doug</th>
+                </tr>
+              </thead>
+              <tbody id="fixtures-body"></tbody>
+            </table>
+          </div>
+        </section>
 
-<!-- Projected Closing Standings -->
-<section class="card" id="projected-section">
-  <h2>Projected Closing Standings</h2>
-  <div class="table-scroll">
-    <table class="data-table" id="projected-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Participant</th>
-          <th>Opening</th>
-          <th>Points Earned</th>
-          <th>Projected Total</th>
-        </tr>
-      </thead>
-      <tbody id="projected-body"></tbody>
-    </table>
-  </div>
-</section>
+        <section class="card" id="projected-section">
+          <h2>Projected Closing Standings</h2>
+          <div class="table-scroll">
+            <table class="data-table" id="projected-table">
+              <thead>
+                <tr><th>#</th><th>Participant</th><th>Opening</th><th>Points Earned</th><th>Projected Total</th></tr>
+              </thead>
+              <tbody id="projected-body"></tbody>
+            </table>
+          </div>
+        </section>
 
-<!-- Gameweek Final Summary -->
-<section class="card" id="block-ending-section" style="display:none;">
-  <h2>Gameweek Final Summary</h2>
-  <div class="table-scroll">
-    <table class="data-table" id="block-ending-table">
-      <thead>
-        <tr>
-          <th>Participant</th>
-          <th>Opening Pts</th>
-          <th>Points Earned</th>
-          <th>Closing Pts</th>
-        </tr>
-      </thead>
-      <tbody id="block-ending-body"></tbody>
-    </table>
-  </div>
-  <div id="archive-btn-container" style="display:none; text-align:center; margin-top:20px;">
-    <button id="archive-gw-btn" class="btn">Archive Current GW</button>
-    <button id="roll-gw-btn" class="btn" style="background-color:#ff9800; color:#121e2d; margin-top:10px;">Roll to Next Gameweek</button>
-  </div>
-</section>
+        <section class="card" id="block-ending-section" style="display:none;">
+          <h2>Gameweek Final Summary</h2>
+          <div class="table-scroll">
+            <table class="data-table" id="block-ending-table">
+              <thead>
+                <tr><th>Participant</th><th>Opening Pts</th><th>Points Earned</th><th>Closing Pts</th></tr>
+              </thead>
+              <tbody id="block-ending-body"></tbody>
+            </table>
+          </div>
+          <div id="archive-btn-container" style="display:none; text-align:center; margin-top:20px;">
+            <button id="archive-gw-btn" class="btn">Archive Current GW</button>
+            <button id="roll-gw-btn" class="btn" style="background-color:#ff9800; color:#121e2d; margin-top:10px;">Roll to Next Gameweek</button>
+          </div>
+        </section>
 
-</div><!-- end #subtab-results -->
+      </div><!-- end #subtab-results -->
 
       <!-- ---- PREDICTIONS SUB-TAB ---- -->
       <div id="subtab-predictions" class="sub-tab-content">
@@ -129,9 +104,7 @@
           <div class="pred-header-controls">
             <div class="pred-control-group">
               <label for="pred-participant">Participant</label>
-              <select id="pred-participant">
-                <option value="">— Select —</option>
-              </select>
+              <select id="pred-participant"><option value="">— Select —</option></select>
             </div>
             <div class="pred-control-group">
               <label for="pred-pin">PIN</label>
@@ -160,6 +133,13 @@
         </div>
         <div id="archive-content"></div>
       </section>
+    </div>
+
+    <!-- ===================== STATS TAB ===================== -->
+    <div id="tab-stats" class="tab-content">
+      <div id="stats-container">
+        <div class="stats-loading">Loading stats…</div>
+      </div>
     </div>
 
     <!-- ===================== SETTINGS TAB ===================== -->
@@ -191,5 +171,6 @@
 
   <script src="data/config.js"></script>
   <script src="app.js"></script>
+  <script src="stats.js"></script>
 </body>
 </html>
