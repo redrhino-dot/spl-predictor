@@ -1,7 +1,8 @@
 /* ============================================================
-   stats.js — Stats tab for Scottish Premiership Predictor
+   stats.js — Scottish Premiership Predictor
    Reads live from data/archive.json on every tab open so it
    automatically reflects any Archive Current GW / Roll Forward.
+   Cumulative points chart supports pinch-to-zoom and drag-to-pan.
    ============================================================ */
 
 const PLAYER_COLORS = {
@@ -19,7 +20,6 @@ async function renderStatsTab() {
   const container = document.getElementById('stats-container');
   if (!container) return;
 
-  // Destroy old charts to avoid canvas reuse errors
   if (_pointsChart)   { _pointsChart.destroy();   _pointsChart   = null; }
   if (_positionChart) { _positionChart.destroy(); _positionChart = null; }
 
@@ -41,13 +41,11 @@ async function renderStatsTab() {
     return;
   }
 
-  /* ── Derive players from first GW closing standings ── */
   const players = gameweeks[0].closing_standings
     .slice()
     .sort((a, b) => b.points - a.points)
     .map(s => s.name);
 
-  /* ── Build series data ── */
   const labels    = [];
   const points    = {};
   const positions = {};
@@ -57,22 +55,18 @@ async function renderStatsTab() {
     labels.push('GW' + gw.gameweek);
     const closing = {};
     gw.closing_standings.forEach(s => closing[s.name] = s.points);
-
     players.forEach(p => points[p].push(closing[p] ?? 0));
-
     const sorted = [...players].sort((a, b) => (closing[b] ?? 0) - (closing[a] ?? 0));
     const pos = {};
     sorted.forEach((name, i) => {
       pos[name] = (i > 0 && (closing[name] ?? 0) === (closing[sorted[i-1]] ?? 0))
-        ? pos[sorted[i-1]]
-        : i + 1;
+        ? pos[sorted[i-1]] : i + 1;
     });
     players.forEach(p => positions[p].push(pos[p] ?? players.length));
   });
 
   const lastGW = gameweeks[gameweeks.length - 1];
 
-  /* ── Render shell ── */
   container.innerHTML = `
     <section class="card">
       <h2>Current Standings — GW${lastGW.gameweek}</h2>
@@ -80,7 +74,11 @@ async function renderStatsTab() {
     </section>
     <section class="card">
       <h2>Cumulative Points by Gameweek</h2>
+      <div class="stats-chart-hint">Pinch to zoom · Drag to pan</div>
       <div class="stats-chart-wrap"><canvas id="statsPointsChart"></canvas></div>
+      <div class="stats-chart-controls">
+        <button class="stats-reset-btn" id="stats-reset-zoom" onclick="_resetPointsZoom()">↺ Reset Zoom</button>
+      </div>
       <div class="stats-legend" id="stats-legend-points"></div>
     </section>
     <section class="card">
@@ -89,23 +87,24 @@ async function renderStatsTab() {
       <div class="stats-legend" id="stats-legend-position"></div>
     </section>`;
 
-  _buildStandings(players, points, lastGW);
+  _buildStandings(players, points);
   _buildPointsChart(labels, players, points);
   _buildPositionChart(labels, players, positions);
+}
+
+function _resetPointsZoom() {
+  if (_pointsChart) _pointsChart.resetZoom();
 }
 
 /* ── Standings summary ─────────────────────────────────────── */
 function _buildStandings(players, points) {
   const container = document.getElementById('stats-standings');
   if (!container) return;
-
   const lastPts = {};
   players.forEach(p => lastPts[p] = points[p][points[p].length - 1]);
   const sorted = [...players].sort((a, b) => lastPts[b] - lastPts[a]);
   const max    = lastPts[sorted[0]];
-
   const medals = ['🥇', '🥈', '🥉', ''];
-
   container.innerHTML = sorted.map((name, i) => {
     const pts   = lastPts[name];
     const color = PLAYER_COLORS[name] || '#94a3b8';
@@ -129,16 +128,16 @@ function _buildStandings(players, points) {
 /* ── Shared chart helpers ──────────────────────────────────── */
 function _makeDatasets(players, dataMap) {
   return players.map(name => ({
-    label:              name,
-    data:               dataMap[name],
-    borderColor:        PLAYER_COLORS[name] || '#94a3b8',
-    backgroundColor:    (PLAYER_COLORS[name] || '#94a3b8') + '22',
-    borderWidth:        2.5,
-    pointRadius:        2,
-    pointHoverRadius:   5,
+    label:               name,
+    data:                dataMap[name],
+    borderColor:         PLAYER_COLORS[name] || '#94a3b8',
+    backgroundColor:     (PLAYER_COLORS[name] || '#94a3b8') + '22',
+    borderWidth:         2.5,
+    pointRadius:         2,
+    pointHoverRadius:    5,
     pointBackgroundColor: PLAYER_COLORS[name] || '#94a3b8',
-    tension:            0.3,
-    fill:               false,
+    tension:             0.3,
+    fill:                false,
   }));
 }
 
@@ -183,12 +182,26 @@ function _buildLegend(id, players) {
     </div>`).join('');
 }
 
-/* ── Points chart ──────────────────────────────────────────── */
+/* ── Points chart — with zoom/pan plugin ───────────────────── */
 function _buildPointsChart(labels, players, points) {
   const ctx = document.getElementById('statsPointsChart');
   if (!ctx) return;
   const opts = _baseOptions(c => ' ' + c.dataset.label + ': ' + c.parsed.y + ' pts');
   opts.scales.y.ticks.callback = v => v + ' pts';
+
+  // Zoom/pan — pinch to zoom on mobile, wheel on desktop, drag to pan
+  opts.plugins.zoom = {
+    pan: {
+      enabled: true,
+      mode: 'x',
+    },
+    zoom: {
+      wheel:  { enabled: true },
+      pinch:  { enabled: true },
+      mode:   'x',
+    },
+  };
+
   _pointsChart = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets: _makeDatasets(players, points) },
@@ -197,15 +210,15 @@ function _buildPointsChart(labels, players, points) {
   _buildLegend('stats-legend-points', players);
 }
 
-/* ── Position chart ────────────────────────────────────────── */
+/* ── Position chart — no zoom needed ──────────────────────── */
 function _buildPositionChart(labels, players, positions) {
   const ctx = document.getElementById('statsPositionChart');
   if (!ctx) return;
   const ordinals = ['', '1st', '2nd', '3rd', '4th'];
   const opts = _baseOptions(c => ' ' + c.dataset.label + ': ' + (ordinals[c.parsed.y] || c.parsed.y));
-  opts.scales.y.reverse      = true;
-  opts.scales.y.min          = 1;
-  opts.scales.y.max          = players.length;
+  opts.scales.y.reverse       = true;
+  opts.scales.y.min           = 1;
+  opts.scales.y.max           = players.length;
   opts.scales.y.ticks.stepSize = 1;
   opts.scales.y.ticks.callback = v => ordinals[v] || '';
   _positionChart = new Chart(ctx, {
