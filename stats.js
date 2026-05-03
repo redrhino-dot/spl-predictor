@@ -53,7 +53,9 @@ async function renderStatsTab() {
     return;
   }
 
-  const gameweeks = archive.gameweeks || [];
+  let gameweeks;
+  try {
+    gameweeks = archive.gameweeks || [];
   if (!gameweeks.length) {
     container.innerHTML = '<div class="stats-error">No archived gameweeks yet.</div>';
     return;
@@ -243,6 +245,10 @@ async function renderStatsTab() {
   _buildOverall(players, stats);
   _buildPrediction(players, stats);
   _buildClubs(clubLeaderboard);
+  } catch (err) {
+    container.innerHTML = '<div class="stats-error">Error building stats.<br><small>' + err.message + '</small></div>';
+    console.error('Stats error:', err);
+  }
 }
 
 function _resetPointsZoom() {
