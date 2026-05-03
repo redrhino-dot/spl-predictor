@@ -12,6 +12,24 @@ const PLAYER_COLORS = {
   Doug:   '#fb923c',
 };
 
+const CLUB_ALIASES = {
+  'Huns': 'Rangers', 'HUNS': 'Rangers',
+  'Well': 'Motherwell', 'WELL': 'Motherwell',
+  'Hibs': 'Hibernian', 'HIBS': 'Hibernian',
+  'Dons': 'Aberdeen', 'DONS': 'Aberdeen',
+  'Killie': 'Kilmarnock', 'KILLIE': 'Kilmarnock',
+  'Livi': 'Livingston',
+  'St M': 'St Mirren', 'StM': 'St Mirren', 'ST M': 'St Mirren',
+  'Kings': 'Ross County',
+  'JAMBOS': 'Hearts', 'Jambos': 'Hearts',
+  'Glory Glory Dundee United': 'Dundee Utd',
+  'Utd': 'Dundee Utd',
+  'StJ': 'St Johnstone',
+  'ICT': 'Inverness',
+  'Yinited': 'Man Utd',
+};
+function _normClub(name) { return CLUB_ALIASES[name.trim()] || name.trim(); }
+
 let _pointsChart   = null;
 let _positionChart = null;
 
@@ -65,6 +83,120 @@ async function renderStatsTab() {
     players.forEach(p => positions[p].push(pos[p] ?? players.length));
   });
 
+
+  /* ── Compute extended stats ─────────────────────────────── */
+  const gwEarned = {};   // per-GW points earned
+  players.forEach(p => {
+    gwEarned[p] = gameweeks.map((gw, i) => {
+      const open  = (gw.opening_standings.find(s => s.name === p) || {}).points || 0;
+      const close = (gw.closing_standings.find(s => s.name === p) || {}).points || 0;
+      return close - open;
+    });
+  });
+
+  // GW winner(s) each week
+  const gwWinners = gameweeks.map((gw, i) => {
+    const scores = players.map(p => gwEarned[p][i]);
+    const max = Math.max(...scores);
+    return players.filter((p, pi) => scores[pi] === max);
+  });
+
+  // GW last(s) each week
+  const gwLasts = gameweeks.map((gw, i) => {
+    const scores = players.map(p => gwEarned[p][i]);
+    const min = Math.min(...scores);
+    return players.filter((p, pi) => scores[pi] === min);
+  });
+
+  // Per-player stats
+  const stats = {};
+  players.forEach(p => {
+    const earned = gwEarned[p];
+    const wins   = gwWinners.filter(w => w.includes(p)).length;
+    const spoons = gwLasts.filter(l => l.includes(p)).length;
+    const avg    = earned.reduce((a, b) => a + b, 0) / earned.length;
+    const maxPts = Math.max(...earned);
+    const minPts = Math.min(...earned);
+    const maxGW  = earned.indexOf(maxPts) + 1;
+    const minGW  = earned.indexOf(minPts) + 1;
+
+    // Win streak, no-win streak, current no-win streak
+    let bestWinStreak = 0, curWin = 0;
+    let bestNoWinStreak = 0, curNoWin = 0;
+    earned.forEach((_, i) => {
+      if (gwWinners[i].includes(p)) { curWin++; bestWinStreak = Math.max(bestWinStreak, curWin); curNoWin = 0; }
+      else { curNoWin++; bestNoWinStreak = Math.max(bestNoWinStreak, curNoWin); curWin = 0; }
+    });
+    let curNoWinActive = 0;
+    for (let i = earned.length - 1; i >= 0; i--) {
+      if (!gwWinners[i].includes(p)) curNoWinActive++; else break;
+    }
+
+    // Weeks in 1st
+    const weeksIn1st = gameweeks.filter((gw, i) => {
+      const maxCum = Math.max(...players.map(pl => points[pl][i]));
+      return points[p][i] === maxCum;
+    }).length;
+
+    // First GW in lead
+    let firstLead = null;
+    for (let i = 0; i < gameweeks.length; i++) {
+      const maxCum = Math.max(...players.map(pl => points[pl][i]));
+      if (points[p][i] === maxCum) { firstLead = i + 1; break; }
+    }
+
+    // 3pt predictions & best club from notation
+    let threePtCount = 0;
+    const clubPts = {};
+    gameweeks.forEach(gw => {
+      const bp = gw.points_breakdown && gw.points_breakdown[p];
+      if (!bp || !bp.notation) return;
+      const entries = bp.notation.split(',').map(e => e.trim());
+      entries.forEach(entry => {
+        const is3 = entry.endsWith(' 3') || entry.endsWith('!!');
+        if (is3) threePtCount++;
+        const pts3 = is3 ? 3 : 1;
+        const clubStr = entry.replace(/\s*3$/, '').replace(/!!$/, '').trim();
+        clubStr.split('/').forEach(raw => {
+          const club = _normClub(raw);
+          if (club) clubPts[club] = (clubPts[club] || 0) + pts3;
+        });
+      });
+    });
+    const bestClubEntry = Object.entries(clubPts).sort((a, b) => b[1] - a[1])[0] || ['—', 0];
+
+    // Best single-GW position climb (biggest drop in position number = biggest climb)
+    let bestClimb = 0, bestClimbGW = null;
+    for (let i = 1; i < positions[p].length; i++) {
+      const climb = positions[p][i-1] - positions[p][i]; // positive = moved up
+      if (climb > bestClimb) { bestClimb = climb; bestClimbGW = i + 1; }
+    }
+
+    stats[p] = { wins, spoons, avg, maxPts, minPts, maxGW, minGW,
+                 bestWinStreak, bestNoWinStreak, curNoWinActive,
+                 weeksIn1st, firstLead, threePtCount,
+                 bestClub: bestClubEntry[0], bestClubPts: bestClubEntry[1],
+                 bestClimb, bestClimbGW };
+  });
+
+  // Club leaderboard across all players
+  const allClubPts = {};
+  gameweeks.forEach(gw => {
+    players.forEach(p => {
+      const bp = gw.points_breakdown && gw.points_breakdown[p];
+      if (!bp || !bp.notation) return;
+      bp.notation.split(',').map(e => e.trim()).forEach(entry => {
+        const pts3 = (entry.endsWith(' 3') || entry.endsWith('!!')) ? 3 : 1;
+        const clubStr = entry.replace(/\s*3$/, '').replace(/!!$/, '').trim();
+        clubStr.split('/').forEach(raw => {
+          const club = _normClub(raw);
+          if (club) allClubPts[club] = (allClubPts[club] || 0) + pts3;
+        });
+      });
+    });
+  });
+  const clubLeaderboard = Object.entries(allClubPts).sort((a, b) => b[1] - a[1]);
+
   const lastGW = gameweeks[gameweeks.length - 1];
 
   container.innerHTML = `
@@ -85,11 +217,31 @@ async function renderStatsTab() {
       <h2>League Position by Gameweek</h2>
       <div class="stats-chart-wrap"><canvas id="statsPositionChart"></canvas></div>
       <div class="stats-legend" id="stats-legend-position"></div>
+    </section>
+    <section class="card">
+      <h2>Gameweek Performance</h2>
+      <div id="stats-gw-perf"></div>
+    </section>
+    <section class="card">
+      <h2>Overall Standing</h2>
+      <div id="stats-overall"></div>
+    </section>
+    <section class="card">
+      <h2>Prediction Quality</h2>
+      <div id="stats-prediction"></div>
+    </section>
+    <section class="card">
+      <h2>Club Leaderboard</h2>
+      <div id="stats-clubs"></div>
     </section>`;
 
   _buildStandings(players, points);
   _buildPointsChart(labels, players, points);
   _buildPositionChart(labels, players, positions);
+  _buildGWPerf(players, stats);
+  _buildOverall(players, stats);
+  _buildPrediction(players, stats);
+  _buildClubs(clubLeaderboard);
 }
 
 function _resetPointsZoom() {
@@ -328,4 +480,164 @@ function _buildPositionChart(labels, players, positions) {
     data: { labels, datasets: _makeDatasets(players, positions) },
     options: opts,
   });
+}
+
+/* ── Stat section builders ─────────────────────────────────── */
+
+function _buildGWPerf(players, stats) {
+  const el = document.getElementById('stats-gw-perf');
+  if (!el) return;
+  const medals = ['🥇','🥈','🥉',''];
+
+  const rows = [
+    { label: 'GW Wins',            key: 'wins',           suffix: ' GWs', desc: true },
+    { label: 'Best Win Streak',     key: 'bestWinStreak',  suffix: ' GWs', desc: true },
+    { label: 'Longest No-Win Run',  key: 'bestNoWinStreak',suffix: ' GWs', desc: false },
+    { label: 'Current No-Win Run',  key: 'curNoWinActive', suffix: ' GWs', desc: false },
+    { label: 'Highest GW Score',    key: 'maxPts',         suffix: ' pts', desc: true, sub: p => `GW${stats[p].maxGW}` },
+    { label: 'Lowest GW Score',     key: 'minPts',         suffix: ' pts', desc: false, sub: p => `GW${stats[p].minGW}` },
+    { label: 'Avg Points / GW',     key: 'avg',            suffix: ' pts', desc: true, fmt: v => v.toFixed(1) },
+    { label: 'Wooden Spoon GWs',    key: 'spoons',         suffix: ' GWs', desc: false },
+  ];
+
+  el.innerHTML = rows.map(row => {
+    const sorted = [...players].sort((a, b) =>
+      row.desc ? stats[b][row.key] - stats[a][row.key] : stats[a][row.key] - stats[b][row.key]);
+    const best = stats[sorted[0]][row.key];
+
+    return `<div class="stat-row-group">
+      <div class="stat-row-label">${row.label}</div>
+      ${sorted.map((p, i) => {
+        const val   = stats[p][row.key];
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        const disp  = row.fmt ? row.fmt(val) : val;
+        const sub   = row.sub ? `<span class="stat-sub">${row.sub(p)}</span>` : '';
+        const pct   = best > 0 ? Math.round((val / best) * 100) : 0;
+        const barPct = row.desc ? pct : (best > 0 ? Math.round(((best - val + 1) / (best + 1)) * 100) : 50);
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i] || ''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(barPct,8)}%;background:${color}"></div></div>
+          <span class="stat-val" style="color:${color}">${disp}${row.suffix}${sub}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function _buildOverall(players, stats) {
+  const el = document.getElementById('stats-overall');
+  if (!el) return;
+  const medals = ['🥇','🥈','🥉',''];
+
+  const sortedWeeks = [...players].sort((a,b) => stats[b].weeksIn1st - stats[a].weeksIn1st);
+  const maxWeeks    = stats[sortedWeeks[0]].weeksIn1st || 1;
+
+  const sortedFirst = [...players].sort((a,b) => (stats[a].firstLead||999) - (stats[b].firstLead||999));
+
+  const sortedClimb = [...players].sort((a,b) => stats[b].bestClimb - stats[a].bestClimb);
+  const maxClimb    = stats[sortedClimb[0]].bestClimb || 1;
+
+  el.innerHTML = `
+    <div class="stat-row-group">
+      <div class="stat-row-label">Weeks in 1st Place</div>
+      ${sortedWeeks.map((p, i) => {
+        const val   = stats[p].weeksIn1st;
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        const pct   = Math.round((val / maxWeeks) * 100);
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i]||''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(pct,8)}%;background:${color}"></div></div>
+          <span class="stat-val" style="color:${color}">${val} GWs</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="stat-row-group">
+      <div class="stat-row-label">First GW in the Lead</div>
+      ${sortedFirst.map((p, i) => {
+        const val   = stats[p].firstLead;
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i]||''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap stat-bar-wrap--empty"></div>
+          <span class="stat-val" style="color:${color}">${val ? 'GW' + val : 'Never'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="stat-row-group">
+      <div class="stat-row-label">Biggest Single-GW Position Climb</div>
+      ${sortedClimb.map((p, i) => {
+        const val   = stats[p].bestClimb;
+        const gw    = stats[p].bestClimbGW;
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        const pct   = Math.round((val / maxClimb) * 100);
+        const disp  = val > 0 ? `+${val} place${val > 1 ? 's' : ''}` : 'None';
+        const sub   = val > 0 && gw ? ` <span class="stat-sub">GW${gw}</span>` : '';
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i]||''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(val>0?pct:4,4)}%;background:${color}"></div></div>
+          <span class="stat-val" style="color:${color}">${disp}${sub}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function _buildPrediction(players, stats) {
+  const el = document.getElementById('stats-prediction');
+  if (!el) return;
+  const medals = ['🥇','🥈','🥉',''];
+
+  const sorted3pt   = [...players].sort((a,b) => stats[b].threePtCount - stats[a].threePtCount);
+  const max3pt      = stats[sorted3pt[0]].threePtCount || 1;
+  const sortedClub  = [...players].sort((a,b) => stats[b].bestClubPts - stats[a].bestClubPts);
+
+  el.innerHTML = `
+    <div class="stat-row-group">
+      <div class="stat-row-label">Exact Score Predictions (3 pts)</div>
+      ${sorted3pt.map((p, i) => {
+        const val   = stats[p].threePtCount;
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        const pct   = Math.round((val / max3pt) * 100);
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i]||''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(pct,8)}%;background:${color}"></div></div>
+          <span class="stat-val" style="color:${color}">${val} hits</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="stat-row-group">
+      <div class="stat-row-label">Best Club (Points Earned)</div>
+      ${sortedClub.map((p, i) => {
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i]||''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap stat-bar-wrap--empty"></div>
+          <span class="stat-val stat-val--club" style="color:${color}">${stats[p].bestClub} <span class="stat-sub">${stats[p].bestClubPts}pts</span></span>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function _buildClubs(clubLeaderboard) {
+  const el = document.getElementById('stats-clubs');
+  if (!el) return;
+  const medals = ['🥇','🥈','🥉'];
+  const maxPts = clubLeaderboard[0] ? clubLeaderboard[0][1] : 1;
+  const CLUB_BADGE_COLOR = '#1e3a5a';
+
+  el.innerHTML = clubLeaderboard.map(([club, pts], i) => {
+    const pct   = Math.round((pts / maxPts) * 100);
+    const medal = medals[i] || '';
+    return `<div class="stat-player-row">
+      <span class="stat-medal">${medal}</span>
+      <span class="stat-name stat-name--club">${club}</span>
+      <div class="stat-bar-wrap"><div class="stat-bar stat-bar--club" style="width:${Math.max(pct,4)}%"></div></div>
+      <span class="stat-val stat-val--neutral">${pts} pts</span>
+    </div>`;
+  }).join('');
 }
