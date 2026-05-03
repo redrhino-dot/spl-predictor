@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-03T12:59:49.240257+00:00",
+  "updated": "2026-05-03T13:00:35.532037+00:00",
   "livescores": [
     {
       "id": "401867701",
@@ -53,12 +53,12 @@
       "id": "401867705",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-05-03T11:00Z",
-      "status": "2H",
+      "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Celtic",
       "home_score": 1,
       "away_score": 2,
-      "elapsed": 82,
+      "elapsed": null,
       "elapsed_extra": null
     }
   ]
