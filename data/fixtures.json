@@ -1,18 +1,7 @@
 {
-  "updated": "2026-05-02T15:58:50.152259+00:00",
+  "updated": "2026-05-03T10:55:21.032937+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
-    {
-      "id": "401867701",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-05-01T18:45Z",
-      "status": "FT",
-      "home_team": "Livingston",
-      "away_team": "Aberdeen",
-      "home_score": 2,
-      "away_score": 2,
-      "elapsed": 907
-    },
     {
       "id": "401867702",
       "round": "2025-26-scottish-premiership",
