@@ -13,20 +13,20 @@ const PLAYER_COLORS = {
 };
 
 const CLUB_ALIASES = {
-  'Huns': 'Rangers', 'HUNS': 'Rangers',
-  'Well': 'Motherwell', 'WELL': 'Motherwell',
+  'Huns': 'Rangers',   'HUNS': 'Rangers',
+  'Well': 'Motherwell','WELL': 'Motherwell',
   'Hibs': 'Hibernian', 'HIBS': 'Hibernian',
-  'Dons': 'Aberdeen', 'DONS': 'Aberdeen',
+  'Dons': 'Aberdeen',  'DONS': 'Aberdeen',
   'Killie': 'Kilmarnock', 'KILLIE': 'Kilmarnock',
   'Livi': 'Livingston',
   'St M': 'St Mirren', 'StM': 'St Mirren', 'ST M': 'St Mirren',
   'Kings': 'Ross County',
-  'JAMBOS': 'Hearts', 'Jambos': 'Hearts',
+  'JAMBOS': 'Hearts',  'Jambos': 'Hearts',
+  'Yinited': 'Dundee Utd', 'Yinited 1': 'Dundee Utd',
   'Glory Glory Dundee United': 'Dundee Utd',
   'Utd': 'Dundee Utd',
   'StJ': 'St Johnstone',
   'ICT': 'Inverness',
-  'Yinited': 'Man Utd',
 };
 function _normClub(name) { return CLUB_ALIASES[name.trim()] || name.trim(); }
 
@@ -112,13 +112,20 @@ async function renderStatsTab() {
   const stats = {};
   players.forEach(p => {
     const earned = gwEarned[p];
-    const wins   = gwWinners.filter(w => w.includes(p)).length;
-    const spoons = gwLasts.filter(l => l.includes(p)).length;
+    const wins         = gwWinners.filter(w => w.includes(p)).length;
+    const outrightWins = gwWinners.filter(w => w.length === 1 && w[0] === p).length;
+    const spoons       = gwLasts.filter(l => l.includes(p)).length;
+    const outrightSpoons = gwLasts.filter(l => l.length === 1 && l[0] === p).length;
     const avg    = earned.reduce((a, b) => a + b, 0) / earned.length;
     const maxPts = Math.max(...earned);
-    const minPts = Math.min(...earned);
     const maxGW  = earned.indexOf(maxPts) + 1;
-    const minGW  = earned.indexOf(minPts) + 1;
+    // Ignore GWs where ALL players scored 0 (fixture scheduling blanks)
+    const validIdx = earned.map((v, i) => i).filter(i =>
+      players.some(pl => gwEarned[pl][i] > 0)
+    );
+    const validEarned = validIdx.map(i => earned[i]);
+    const minPts = validEarned.length ? Math.min(...validEarned) : 0;
+    const minGW  = validIdx[validEarned.indexOf(minPts)] + 1;
 
     // Win streak, no-win streak, current no-win streak
     let bestWinStreak = 0, curWin = 0;
@@ -138,11 +145,12 @@ async function renderStatsTab() {
       return points[p][i] === maxCum;
     }).length;
 
-    // First GW in lead
+    // First GW in OUTRIGHT lead (sole leader only)
     let firstLead = null;
     for (let i = 0; i < gameweeks.length; i++) {
       const maxCum = Math.max(...players.map(pl => points[pl][i]));
-      if (points[p][i] === maxCum) { firstLead = i + 1; break; }
+      const leaders = players.filter(pl => points[pl][i] === maxCum);
+      if (points[p][i] === maxCum && leaders.length === 1) { firstLead = i + 1; break; }
     }
 
     // 3pt predictions & best club from notation
@@ -165,18 +173,11 @@ async function renderStatsTab() {
     });
     const bestClubEntry = Object.entries(clubPts).sort((a, b) => b[1] - a[1])[0] || ['—', 0];
 
-    // Best single-GW position climb (biggest drop in position number = biggest climb)
-    let bestClimb = 0, bestClimbGW = null;
-    for (let i = 1; i < positions[p].length; i++) {
-      const climb = positions[p][i-1] - positions[p][i]; // positive = moved up
-      if (climb > bestClimb) { bestClimb = climb; bestClimbGW = i + 1; }
-    }
-
-    stats[p] = { wins, spoons, avg, maxPts, minPts, maxGW, minGW,
+    stats[p] = { wins, outrightWins, spoons, outrightSpoons,
+                 avg, maxPts, minPts, maxGW, minGW,
                  bestWinStreak, bestNoWinStreak, curNoWinActive,
                  weeksIn1st, firstLead, threePtCount,
-                 bestClub: bestClubEntry[0], bestClubPts: bestClubEntry[1],
-                 bestClimb, bestClimbGW };
+                 bestClub: bestClubEntry[0], bestClubPts: bestClubEntry[1] };
   });
 
   // Club leaderboard across all players
@@ -490,14 +491,16 @@ function _buildGWPerf(players, stats) {
   const medals = ['🥇','🥈','🥉',''];
 
   const rows = [
-    { label: 'GW Wins',            key: 'wins',           suffix: ' GWs', desc: true },
+    { label: 'Outright GW Wins',    key: 'outrightWins',   suffix: ' GWs', desc: true },
+    { label: 'GW Wins (inc. shared)',key: 'wins',           suffix: ' GWs', desc: true },
     { label: 'Best Win Streak',     key: 'bestWinStreak',  suffix: ' GWs', desc: true },
     { label: 'Longest No-Win Run',  key: 'bestNoWinStreak',suffix: ' GWs', desc: false },
     { label: 'Current No-Win Run',  key: 'curNoWinActive', suffix: ' GWs', desc: false },
     { label: 'Highest GW Score',    key: 'maxPts',         suffix: ' pts', desc: true, sub: p => `GW${stats[p].maxGW}` },
     { label: 'Lowest GW Score',     key: 'minPts',         suffix: ' pts', desc: false, sub: p => `GW${stats[p].minGW}` },
     { label: 'Avg Points / GW',     key: 'avg',            suffix: ' pts', desc: true, fmt: v => v.toFixed(1) },
-    { label: 'Wooden Spoon GWs',    key: 'spoons',         suffix: ' GWs', desc: false },
+    { label: 'Outright Wooden Spoons', key: 'outrightSpoons', suffix: ' GWs', desc: false },
+    { label: 'Wooden Spoon GWs (inc. shared)', key: 'spoons', suffix: ' GWs', desc: false },
   ];
 
   el.innerHTML = rows.map(row => {
@@ -535,8 +538,6 @@ function _buildOverall(players, stats) {
 
   const sortedFirst = [...players].sort((a,b) => (stats[a].firstLead||999) - (stats[b].firstLead||999));
 
-  const sortedClimb = [...players].sort((a,b) => stats[b].bestClimb - stats[a].bestClimb);
-  const maxClimb    = stats[sortedClimb[0]].bestClimb || 1;
 
   el.innerHTML = `
     <div class="stat-row-group">
@@ -554,7 +555,7 @@ function _buildOverall(players, stats) {
       }).join('')}
     </div>
     <div class="stat-row-group">
-      <div class="stat-row-label">First GW in the Lead</div>
+      <div class="stat-row-label">First GW in Outright Lead</div>
       ${sortedFirst.map((p, i) => {
         const val   = stats[p].firstLead;
         const color = PLAYER_COLORS[p] || '#94a3b8';
@@ -566,23 +567,6 @@ function _buildOverall(players, stats) {
         </div>`;
       }).join('')}
     </div>
-    <div class="stat-row-group">
-      <div class="stat-row-label">Biggest Single-GW Position Climb</div>
-      ${sortedClimb.map((p, i) => {
-        const val   = stats[p].bestClimb;
-        const gw    = stats[p].bestClimbGW;
-        const color = PLAYER_COLORS[p] || '#94a3b8';
-        const pct   = Math.round((val / maxClimb) * 100);
-        const disp  = val > 0 ? `+${val} place${val > 1 ? 's' : ''}` : 'None';
-        const sub   = val > 0 && gw ? ` <span class="stat-sub">GW${gw}</span>` : '';
-        return `<div class="stat-player-row">
-          <span class="stat-medal">${medals[i]||''}</span>
-          <span class="stat-name" style="color:${color}">${p}</span>
-          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(val>0?pct:4,4)}%;background:${color}"></div></div>
-          <span class="stat-val" style="color:${color}">${disp}${sub}</span>
-        </div>`;
-      }).join('')}
-    </div>`;
 }
 
 function _buildPrediction(players, stats) {
