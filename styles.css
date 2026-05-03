@@ -650,8 +650,6 @@ input[type=number] { -moz-appearance: textfield; }
 }
 
 
-
-
 /* ============================================================
    STATS TAB — paste at the bottom of styles.css
    ============================================================ */
@@ -760,3 +758,103 @@ input[type=number] { -moz-appearance: textfield; }
   background: #1a2f47;
   color: #e2e8f0;
 }
+/* ════════════════════════════════════════════════════════════
+   Stat section cards — GW Performance, Overall, Prediction,
+   Club Leaderboard
+   ════════════════════════════════════════════════════════════ */
+
+.stat-row-group {
+  margin-bottom: 20px;
+}
+.stat-row-group:last-child {
+  margin-bottom: 0;
+}
+
+.stat-row-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #4a6080;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #1a2f47;
+}
+
+.stat-player-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 9px;
+  min-height: 22px;
+}
+.stat-player-row:last-child {
+  margin-bottom: 0;
+}
+
+.stat-medal {
+  font-size: 0.85rem;
+  width: 18px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.stat-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  width: 58px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.stat-name--club {
+  width: auto;
+  flex: 1;
+  color: #8ba3c0;
+  font-weight: 500;
+}
+
+.stat-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: #1a2f47;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 40px;
+}
+.stat-bar-wrap--empty {
+  background: transparent;
+}
+
+.stat-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.stat-bar--club {
+  background: #2a5080;
+}
+
+.stat-val {
+  font-size: 0.82rem;
+  font-weight: 700;
+  min-width: 54px;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.stat-val--neutral {
+  color: #8ba3c0;
+}
+.stat-val--club {
+  min-width: 80px;
+}
+
+.stat-sub {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #4a6080;
+  margin-left: 3px;
+}
+
+
+
