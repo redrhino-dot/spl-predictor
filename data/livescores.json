@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-03T11:37:49.400374+00:00",
+  "updated": "2026-05-03T11:44:44.032588+00:00",
   "livescores": [
     {
       "id": "401867702",
@@ -43,7 +43,7 @@
       "away_team": "Celtic",
       "home_score": 0,
       "away_score": 0,
-      "elapsed": 36
+      "elapsed": 42
     }
   ]
 }
