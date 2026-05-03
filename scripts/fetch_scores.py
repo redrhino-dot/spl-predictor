@@ -121,7 +121,7 @@ FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
 now    = datetime.now(timezone.utc)
 events = {}
 print('Scanning date range for current gameweek...')
-for delta in range(-1, 10):
+for delta in range(-4, 10):
     day = (now + timedelta(days=delta)).strftime('%Y%m%d')
     evs = fetch_day(day)
     for e in evs:
