@@ -13,18 +13,18 @@ const PLAYER_COLORS = {
 };
 
 const CLUB_ALIASES = {
-  'Huns': 'Rangers',   'HUNS': 'Rangers',
-  'Well': 'Motherwell','WELL': 'Motherwell',
+  'Huns': 'Rangers', 'HUNS': 'Rangers',
+  'Well': 'Motherwell', 'WELL': 'Motherwell',
   'Hibs': 'Hibernian', 'HIBS': 'Hibernian',
-  'Dons': 'Aberdeen',  'DONS': 'Aberdeen',
+  'Dons': 'Aberdeen', 'DONS': 'Aberdeen',
   'Killie': 'Kilmarnock', 'KILLIE': 'Kilmarnock',
   'Livi': 'Livingston',
   'St M': 'St Mirren', 'StM': 'St Mirren', 'ST M': 'St Mirren',
   'Kings': 'Ross County',
-  'JAMBOS': 'Hearts',  'Jambos': 'Hearts',
-  'Yinited': 'Dundee Utd', 'Yinited 1': 'Dundee Utd',
+  'JAMBOS': 'Hearts', 'Jambos': 'Hearts',
   'Glory Glory Dundee United': 'Dundee Utd',
   'Utd': 'Dundee Utd',
+  'Yinited': 'Dundee Utd', 'Yinited 1': 'Dundee Utd',
   'StJ': 'St Johnstone',
   'ICT': 'Inverness',
 };
@@ -53,9 +53,7 @@ async function renderStatsTab() {
     return;
   }
 
-  let gameweeks;
-  try {
-    gameweeks = archive.gameweeks || [];
+  const gameweeks = archive.gameweeks || [];
   if (!gameweeks.length) {
     container.innerHTML = '<div class="stats-error">No archived gameweeks yet.</div>';
     return;
@@ -114,20 +112,17 @@ async function renderStatsTab() {
   const stats = {};
   players.forEach(p => {
     const earned = gwEarned[p];
-    const wins         = gwWinners.filter(w => w.includes(p)).length;
-    const outrightWins = gwWinners.filter(w => w.length === 1 && w[0] === p).length;
-    const spoons       = gwLasts.filter(l => l.includes(p)).length;
+    const wins           = gwWinners.filter(w => w.includes(p)).length;
+    const outrightWins   = gwWinners.filter(w => w.length === 1 && w[0] === p).length;
+    const spoons         = gwLasts.filter(l => l.includes(p)).length;
     const outrightSpoons = gwLasts.filter(l => l.length === 1 && l[0] === p).length;
     const avg    = earned.reduce((a, b) => a + b, 0) / earned.length;
-    const maxPts = Math.max(...earned);
-    const maxGW  = earned.indexOf(maxPts) + 1;
-    // Ignore GWs where ALL players scored 0 (fixture scheduling blanks)
-    const validIdx = earned.map((v, i) => i).filter(i =>
-      players.some(pl => gwEarned[pl][i] > 0)
-    );
+    const maxPts      = Math.max(...earned);
+    const maxGW       = earned.indexOf(maxPts) + 1;
+    const validIdx    = earned.map((v, i) => i).filter(i => players.some(pl => gwEarned[pl][i] > 0));
     const validEarned = validIdx.map(i => earned[i]);
-    const minPts = validEarned.length ? Math.min(...validEarned) : 0;
-    const minGW  = validIdx[validEarned.indexOf(minPts)] + 1;
+    const minPts      = validEarned.length ? Math.min(...validEarned) : 0;
+    const minGW       = validIdx[validEarned.indexOf(minPts)] + 1;
 
     // Win streak, no-win streak, current no-win streak
     let bestWinStreak = 0, curWin = 0;
@@ -150,7 +145,7 @@ async function renderStatsTab() {
     // First GW in OUTRIGHT lead (sole leader only)
     let firstLead = null;
     for (let i = 0; i < gameweeks.length; i++) {
-      const maxCum = Math.max(...players.map(pl => points[pl][i]));
+      const maxCum  = Math.max(...players.map(pl => points[pl][i]));
       const leaders = players.filter(pl => points[pl][i] === maxCum);
       if (points[p][i] === maxCum && leaders.length === 1) { firstLead = i + 1; break; }
     }
@@ -245,10 +240,6 @@ async function renderStatsTab() {
   _buildOverall(players, stats);
   _buildPrediction(players, stats);
   _buildClubs(clubLeaderboard);
-  } catch (err) {
-    container.innerHTML = '<div class="stats-error">Error building stats.<br><small>' + err.message + '</small></div>';
-    console.error('Stats error:', err);
-  }
 }
 
 function _resetPointsZoom() {
@@ -497,8 +488,8 @@ function _buildGWPerf(players, stats) {
   const medals = ['🥇','🥈','🥉',''];
 
   const rows = [
-    { label: 'Outright GW Wins',    key: 'outrightWins',   suffix: ' GWs', desc: true },
-    { label: 'GW Wins (inc. shared)',key: 'wins',           suffix: ' GWs', desc: true },
+    { label: 'Outright GW Wins',      key: 'outrightWins',   suffix: ' GWs', desc: true },
+    { label: 'GW Wins (inc. shared)',  key: 'wins',           suffix: ' GWs', desc: true },
     { label: 'Best Win Streak',     key: 'bestWinStreak',  suffix: ' GWs', desc: true },
     { label: 'Longest No-Win Run',  key: 'bestNoWinStreak',suffix: ' GWs', desc: false },
     { label: 'Current No-Win Run',  key: 'curNoWinActive', suffix: ' GWs', desc: false },
@@ -573,32 +564,7 @@ function _buildOverall(players, stats) {
         </div>`;
       }).join('')}
     </div>
-}
-
-function _buildPrediction(players, stats) {
-  const el = document.getElementById('stats-prediction');
-  if (!el) return;
-  const medals = ['🥇','🥈','🥉',''];
-
-  const sorted3pt   = [...players].sort((a,b) => stats[b].threePtCount - stats[a].threePtCount);
-  const max3pt      = stats[sorted3pt[0]].threePtCount || 1;
-  const sortedClub  = [...players].sort((a,b) => stats[b].bestClubPts - stats[a].bestClubPts);
-
-  el.innerHTML = `
     <div class="stat-row-group">
-      <div class="stat-row-label">Exact Score Predictions (3 pts)</div>
-      ${sorted3pt.map((p, i) => {
-        const val   = stats[p].threePtCount;
-        const color = PLAYER_COLORS[p] || '#94a3b8';
-        const pct   = Math.round((val / max3pt) * 100);
-        return `<div class="stat-player-row">
-          <span class="stat-medal">${medals[i]||''}</span>
-          <span class="stat-name" style="color:${color}">${p}</span>
-          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(pct,8)}%;background:${color}"></div></div>
-          <span class="stat-val" style="color:${color}">${val} hits</span>
-        </div>`;
-      }).join('')}
-    </div>
     <div class="stat-row-group">
       <div class="stat-row-label">Best Club (Points Earned)</div>
       ${sortedClub.map((p, i) => {
