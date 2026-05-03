@@ -20,7 +20,7 @@ const CLUB_ALIASES = {
   'Killie': 'Kilmarnock', 'KILLIE': 'Kilmarnock',
   'Livi': 'Livingston',
   'St M': 'St Mirren', 'StM': 'St Mirren', 'ST M': 'St Mirren',
-  'Kings': 'Ross County',
+  'Kings': 'Dundee',
   'JAMBOS': 'Hearts', 'Jambos': 'Hearts',
   'Glory Glory Dundee United': 'Dundee Utd',
   'Utd': 'Dundee Utd',
