@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-03T11:53:14.287316+00:00",
+  "updated": "2026-05-03T12:02:29.831383+00:00",
   "livescores": [
     {
       "id": "401867702",
@@ -10,7 +10,8 @@
       "away_team": "St Mirren",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 908
+      "elapsed": null,
+      "elapsed_extra": null
     },
     {
       "id": "401867703",
@@ -21,7 +22,8 @@
       "away_team": "Motherwell",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 905
+      "elapsed": null,
+      "elapsed_extra": null
     },
     {
       "id": "401867704",
@@ -32,18 +34,20 @@
       "away_team": "Dundee United",
       "home_score": 3,
       "away_score": 0,
-      "elapsed": 905
+      "elapsed": null,
+      "elapsed_extra": null
     },
     {
       "id": "401867705",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-05-03T11:00Z",
-      "status": "LIVE",
+      "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Celtic",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 453
+      "elapsed": null,
+      "elapsed_extra": null
     }
   ]
 }
