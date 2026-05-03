@@ -563,8 +563,33 @@ function _buildOverall(players, stats) {
           <span class="stat-val" style="color:${color}">${val ? 'GW' + val : 'Never'}</span>
         </div>`;
       }).join('')}
-    </div>
+  `;
+}
+
+function _buildPrediction(players, stats) {
+  const el = document.getElementById('stats-prediction');
+  if (!el) return;
+  const medals = ['🥇','🥈','🥉',''];
+
+  const sorted3pt  = [...players].sort((a,b) => stats[b].threePtCount - stats[a].threePtCount);
+  const max3pt     = stats[sorted3pt[0]].threePtCount || 1;
+  const sortedClub = [...players].sort((a,b) => stats[b].bestClubPts - stats[a].bestClubPts);
+
+  el.innerHTML = `
     <div class="stat-row-group">
+      <div class="stat-row-label">Exact Score Predictions (3 pts)</div>
+      ${sorted3pt.map((p, i) => {
+        const val   = stats[p].threePtCount;
+        const color = PLAYER_COLORS[p] || '#94a3b8';
+        const pct   = Math.round((val / max3pt) * 100);
+        return `<div class="stat-player-row">
+          <span class="stat-medal">${medals[i]||''}</span>
+          <span class="stat-name" style="color:${color}">${p}</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(pct,8)}%;background:${color}"></div></div>
+          <span class="stat-val" style="color:${color}">${val} hits</span>
+        </div>`;
+      }).join('')}
+    </div>
     <div class="stat-row-group">
       <div class="stat-row-label">Best Club (Points Earned)</div>
       ${sortedClub.map((p, i) => {
