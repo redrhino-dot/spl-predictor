@@ -43,11 +43,19 @@ def parse_event(ev):
     state      = status_obj.get('type', {}).get('state', '')
     clock      = status_obj.get('displayClock', '')
     status     = espn_status(detail, clock, state)
-    elapsed    = None
+    elapsed       = None
+    elapsed_extra = None
     try:
         if clock and clock != '0:00':
-            clean_clock = clock.split(':')[0].replace("'", "").replace("+", "")
-            elapsed = int(clean_clock)
+            # Handle formats: "45:00", "45:00+3", "90:00+5"
+            plus_idx = clock.find('+')
+            if plus_idx >= 0:
+                elapsed_extra = int(clock[plus_idx + 1:].strip())
+                base_clock    = clock[:plus_idx]
+            else:
+                base_clock = clock
+            mins_str = base_clock.split(':')[0].replace("'", "").strip()
+            elapsed  = int(mins_str)
     except Exception:
         pass
 
@@ -66,7 +74,8 @@ def parse_event(ev):
         'away_team':  away.get('team', {}).get('displayName', ''),
         'home_score': h_score,
         'away_score': a_score,
-        'elapsed':    elapsed,
+        'elapsed':       elapsed,
+        'elapsed_extra': elapsed_extra,
     }
 
 def is_live_window(fixtures):
@@ -144,7 +153,7 @@ for m in parsed_all:
     else:
         prev_t = datetime.fromisoformat(current_gw[-1]['kickoff'].replace('Z', '+00:00'))
         this_t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-        if (this_t - prev_t).days <= 3:
+        if (this_t - prev_t).days <= 4:
             current_gw.append(m)
         else:
             gameweeks.append(current_gw)
