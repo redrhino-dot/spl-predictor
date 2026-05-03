@@ -1,6 +1,18 @@
 {
-  "updated": "2026-05-03T12:17:34.030753+00:00",
+  "updated": "2026-05-03T12:21:15.789150+00:00",
   "livescores": [
+    {
+      "id": "401867701",
+      "round": "2025-26-scottish-premiership",
+      "kickoff": "2026-05-01T18:45Z",
+      "status": "FT",
+      "home_team": "Livingston",
+      "away_team": "Aberdeen",
+      "home_score": 2,
+      "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
     {
       "id": "401867702",
       "round": "2025-26-scottish-premiership",
@@ -46,7 +58,7 @@
       "away_team": "Celtic",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 52,
+      "elapsed": 56,
       "elapsed_extra": null
     }
   ]
