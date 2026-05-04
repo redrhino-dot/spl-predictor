@@ -13,7 +13,9 @@ WINDOW_POST_MINS = 120  # minutes after last scheduled KO to keep fetching
 def espn_status(detail, clock, state):
     d = (detail or '').upper()
     if any(x in d for x in ('FINAL', 'FULL TIME', 'FT')): return 'FT'
-    if any(x in d for x in ('HALF TIME', 'HALFTIME')):    return 'HT'
+    if state == 'post': return 'FT'   # ESPN state=post always means finished
+    if any(x in d for x in ('HALF TIME', 'HALFTIME', 'HALF-TIME')): return 'HT'
+    if d in ('HT', 'HALF TIME', 'HALFTIME'): return 'HT'
     if 'POSTPONE' in d:  return 'PST'
     if 'CANCEL'   in d:  return 'CANC'
     if state == 'in' or 'HALF' in d or 'PROGRESS' in d or 'LIVE' in d:
