@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-04T17:50:54.189786+00:00",
+  "updated": "2026-05-04T18:00:56.821508+00:00",
   "livescores": [
     {
       "id": "401867701",
@@ -68,9 +68,9 @@
       "status": "2H",
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 1,
-      "elapsed": 57,
+      "elapsed": 71,
       "elapsed_extra": null
     }
   ]
