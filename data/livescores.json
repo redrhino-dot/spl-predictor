@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-04T18:24:14.771788+00:00",
+  "updated": "2026-05-04T18:55:28.436659+00:00",
   "livescores": [
     {
       "id": "401867701",
@@ -65,12 +65,12 @@
       "id": "401867706",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-05-04T16:30Z",
-      "status": "2H",
+      "status": "LIVE",
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
       "home_score": 2,
       "away_score": 1,
-      "elapsed": 72,
+      "elapsed": null,
       "elapsed_extra": null
     }
   ]
