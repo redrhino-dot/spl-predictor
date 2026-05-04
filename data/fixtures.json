@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-04T18:55:28.436659+00:00",
+  "updated": "2026-05-04T22:43:40.112734+00:00",
   "round": "2025-26-scottish-premiership",
   "fixtures": [
     {
@@ -66,7 +66,7 @@
       "id": "401867706",
       "round": "2025-26-scottish-premiership",
       "kickoff": "2026-05-04T16:30Z",
-      "status": "LIVE",
+      "status": "FT",
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
       "home_score": 2,
