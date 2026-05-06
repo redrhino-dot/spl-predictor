@@ -128,7 +128,7 @@ FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
 now    = datetime.now(timezone.utc)
 events = {}
 print('Scanning date range for current gameweek...')
-for delta in range(-4, 10):
+for delta in range(-4, 7):
     day = (now + timedelta(days=delta)).strftime('%Y%m%d')
     evs = fetch_day(day)
     for e in evs:
@@ -153,33 +153,51 @@ for ev in all_events:
 parsed_all.sort(key=lambda x: x['kickoff'])
 
 # ── Cluster into gameweeks ────────────────────────────────────────────────────
-# PRIMARY: group by week_number if ESPN provides it
-# FALLBACK: date-gap clustering (<=3.5 days = same GW)
+# TIER 1: group by week_number (integer) if ESPN provides it
+# TIER 2: group by round text (e.g. "Round 35") if consistent
+# TIER 3: date-gap fallback (last resort)
 
-use_week_number = any(m['week_number'] is not None for m in parsed_all)
-
-if use_week_number:
-    print('Grouping by ESPN week.number (primary method)')
+def cluster_by_key(items, key_fn):
+    """Group items by key_fn, return sorted list of lists."""
     gw_map = defaultdict(list)
-    no_week = []
-    for m in parsed_all:
-        if m['week_number'] is not None:
-            gw_map[m['week_number']].append(m)
+    no_key = []
+    for m in items:
+        k = key_fn(m)
+        if k is not None:
+            gw_map[k].append(m)
         else:
-            no_week.append(m)
-    # Sort each group by kickoff, then collect as list of lists
-    gameweeks = [sorted(v, key=lambda x: x['kickoff']) for _, v in sorted(gw_map.items())]
-    # Attach any week_number-less fixtures to closest group by date
-    for m in no_week:
+            no_key.append(m)
+    groups = [sorted(v, key=lambda x: x['kickoff']) for _, v in sorted(gw_map.items())]
+    # Attach key-less fixtures to nearest group
+    for m in no_key:
+        if not groups:
+            groups.append([m])
+            continue
         mt = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-        closest = min(gameweeks, key=lambda gw: min(
+        closest = min(groups, key=lambda gw: min(
             abs((datetime.fromisoformat(f['kickoff'].replace('Z', '+00:00')) - mt).total_seconds())
             for f in gw
         ))
         closest.append(m)
         closest.sort(key=lambda x: x['kickoff'])
+    return groups
+
+use_week_number = any(m['week_number'] is not None for m in parsed_all)
+round_texts     = [m['round'] for m in parsed_all if m['round'] and m['round'] != 'Unknown']
+use_round_text  = (
+    not use_week_number and
+    len(round_texts) > 0 and
+    any(rt.lower().startswith('round') for rt in round_texts)
+)
+
+if use_week_number:
+    print('Grouping by ESPN week.number (tier 1)')
+    gameweeks = cluster_by_key(parsed_all, lambda m: m['week_number'])
+elif use_round_text:
+    print('Grouping by ESPN round text (tier 2)')
+    gameweeks = cluster_by_key(parsed_all, lambda m: m['round'] if m['round'] != 'Unknown' else None)
 else:
-    print('Grouping by date-gap (fallback method — week.number not available)')
+    print('Grouping by date-gap (tier 3 fallback)')
     gameweeks  = []
     current_gw = []
     for m in parsed_all:
