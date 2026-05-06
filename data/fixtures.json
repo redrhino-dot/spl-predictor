@@ -1,10 +1,12 @@
 {
-  "updated": "2026-05-06T22:36:00.475098+00:00",
+  "updated": "2026-05-06T23:21:58.305330+00:00",
   "round": "2025-26-scottish-premiership",
+  "week_number": null,
   "fixtures": [
     {
       "id": "401867708",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-09T14:00Z",
       "status": "NS",
       "home_team": "Aberdeen",
@@ -17,6 +19,7 @@
     {
       "id": "401867707",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-09T14:00Z",
       "status": "NS",
       "home_team": "Dundee",
@@ -29,6 +32,7 @@
     {
       "id": "401867709",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-09T14:00Z",
       "status": "NS",
       "home_team": "Falkirk",
@@ -41,6 +45,7 @@
     {
       "id": "401867710",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-09T14:00Z",
       "status": "NS",
       "home_team": "St Mirren",
@@ -53,6 +58,7 @@
     {
       "id": "401867711",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-09T19:00Z",
       "status": "NS",
       "home_team": "Motherwell",
@@ -65,6 +71,7 @@
     {
       "id": "401867712",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-10T11:00Z",
       "status": "NS",
       "home_team": "Celtic",
@@ -77,6 +84,7 @@
     {
       "id": "401867713",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-12T18:45Z",
       "status": "NS",
       "home_team": "Aberdeen",
@@ -89,6 +97,7 @@
     {
       "id": "401867714",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-12T18:45Z",
       "status": "NS",
       "home_team": "Dundee United",
@@ -101,46 +110,11 @@
     {
       "id": "401867715",
       "round": "2025-26-scottish-premiership",
+      "week_number": null,
       "kickoff": "2026-05-12T18:45Z",
       "status": "NS",
       "home_team": "Kilmarnock",
       "away_team": "Dundee",
-      "home_score": 0,
-      "away_score": 0,
-      "elapsed": 0,
-      "elapsed_extra": null
-    },
-    {
-      "id": "401867716",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-05-13T19:00Z",
-      "status": "NS",
-      "home_team": "Heart of Midlothian",
-      "away_team": "Falkirk",
-      "home_score": 0,
-      "away_score": 0,
-      "elapsed": 0,
-      "elapsed_extra": null
-    },
-    {
-      "id": "401867717",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-05-13T19:00Z",
-      "status": "NS",
-      "home_team": "Motherwell",
-      "away_team": "Celtic",
-      "home_score": 0,
-      "away_score": 0,
-      "elapsed": 0,
-      "elapsed_extra": null
-    },
-    {
-      "id": "401867718",
-      "round": "2025-26-scottish-premiership",
-      "kickoff": "2026-05-13T19:00Z",
-      "status": "NS",
-      "home_team": "Rangers",
-      "away_team": "Hibernian",
       "home_score": 0,
       "away_score": 0,
       "elapsed": 0,
