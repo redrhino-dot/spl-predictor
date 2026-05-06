@@ -1,5 +1,6 @@
 import json, os, sys, requests
 from datetime import datetime, timezone, timedelta
+from collections import defaultdict
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1'
 HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
@@ -45,11 +46,11 @@ def parse_event(ev):
     state      = status_obj.get('type', {}).get('state', '')
     clock      = status_obj.get('displayClock', '')
     status     = espn_status(detail, clock, state)
+
     elapsed       = None
     elapsed_extra = None
     try:
         if clock and clock != '0:00':
-            # Handle formats: "45:00", "45:00+3", "90:00+5"
             plus_idx = clock.find('+')
             if plus_idx >= 0:
                 elapsed_extra = int(clock[plus_idx + 1:].strip())
@@ -66,16 +67,20 @@ def parse_event(ev):
     except Exception: pass
     try: a_score = int(away.get('score'))
     except Exception: pass
-    note = ev.get('week', {}).get('text') or ev.get('season', {}).get('slug') or 'Unknown'
+
+    week_num  = ev.get('week', {}).get('number')   # e.g. 35  (primary GW key)
+    week_text = ev.get('week', {}).get('text') or ev.get('season', {}).get('slug') or 'Unknown'
+
     return {
-        'id':         str(ev.get('id', '')),
-        'round':      note,
-        'kickoff':    comp.get('date') or ev.get('date'),
-        'status':     status,
-        'home_team':  home.get('team', {}).get('displayName', ''),
-        'away_team':  away.get('team', {}).get('displayName', ''),
-        'home_score': h_score,
-        'away_score': a_score,
+        'id':            str(ev.get('id', '')),
+        'round':         week_text,
+        'week_number':   week_num,
+        'kickoff':       comp.get('date') or ev.get('date'),
+        'status':        status,
+        'home_team':     home.get('team', {}).get('displayName', ''),
+        'away_team':     away.get('team', {}).get('displayName', ''),
+        'home_score':    h_score,
+        'away_score':    a_score,
         'elapsed':       elapsed,
         'elapsed_extra': elapsed_extra,
     }
@@ -138,7 +143,7 @@ if not all_events:
     print('ERROR: no events found from ESPN API', file=sys.stderr)
     sys.exit(1)
 
-# Parse and cluster into gameweeks
+# Parse all events
 parsed_all = []
 for ev in all_events:
     p = parse_event(ev)
@@ -147,21 +152,49 @@ for ev in all_events:
 
 parsed_all.sort(key=lambda x: x['kickoff'])
 
-gameweeks   = []
-current_gw  = []
-for m in parsed_all:
-    if not current_gw:
-        current_gw.append(m)
-    else:
-        prev_t = datetime.fromisoformat(current_gw[-1]['kickoff'].replace('Z', '+00:00'))
-        this_t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-        if (this_t - prev_t).total_seconds() / 86400 <= 3.5:
+# ── Cluster into gameweeks ────────────────────────────────────────────────────
+# PRIMARY: group by week_number if ESPN provides it
+# FALLBACK: date-gap clustering (<=3.5 days = same GW)
+
+use_week_number = any(m['week_number'] is not None for m in parsed_all)
+
+if use_week_number:
+    print('Grouping by ESPN week.number (primary method)')
+    gw_map = defaultdict(list)
+    no_week = []
+    for m in parsed_all:
+        if m['week_number'] is not None:
+            gw_map[m['week_number']].append(m)
+        else:
+            no_week.append(m)
+    # Sort each group by kickoff, then collect as list of lists
+    gameweeks = [sorted(v, key=lambda x: x['kickoff']) for _, v in sorted(gw_map.items())]
+    # Attach any week_number-less fixtures to closest group by date
+    for m in no_week:
+        mt = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
+        closest = min(gameweeks, key=lambda gw: min(
+            abs((datetime.fromisoformat(f['kickoff'].replace('Z', '+00:00')) - mt).total_seconds())
+            for f in gw
+        ))
+        closest.append(m)
+        closest.sort(key=lambda x: x['kickoff'])
+else:
+    print('Grouping by date-gap (fallback method — week.number not available)')
+    gameweeks  = []
+    current_gw = []
+    for m in parsed_all:
+        if not current_gw:
             current_gw.append(m)
         else:
-            gameweeks.append(current_gw)
-            current_gw = [m]
-if current_gw:
-    gameweeks.append(current_gw)
+            prev_t = datetime.fromisoformat(current_gw[-1]['kickoff'].replace('Z', '+00:00'))
+            this_t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
+            if (this_t - prev_t).total_seconds() / 86400 <= 3.5:
+                current_gw.append(m)
+            else:
+                gameweeks.append(current_gw)
+                current_gw = [m]
+    if current_gw:
+        gameweeks.append(current_gw)
 
 # ── Select best gameweek (skip stale completed GWs) ──────────────────────────
 
@@ -187,9 +220,10 @@ best_gw = min(candidates, key=lambda gw: min(
 
 fixtures   = best_gw
 best_round = fixtures[0]['round'] if fixtures else 'Unknown'
+best_week  = fixtures[0]['week_number'] if fixtures else None
 
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
-print(f'Current round: {best_round} ({len(fixtures)} fixtures, {len(livescores)} live/done)')
+print(f'Current round: {best_round} (week {best_week}) — {len(fixtures)} fixtures, {len(livescores)} live/done)')
 
 # ── Live window check (skip if FORCE_RUN is set) ─────────────────────────────
 if not FORCE_RUN and not is_live_window(fixtures):
@@ -200,7 +234,7 @@ os.makedirs('data', exist_ok=True)
 ts = datetime.now(timezone.utc).isoformat()
 
 with open('data/fixtures.json', 'w') as fh:
-    json.dump({'updated': ts, 'round': best_round, 'fixtures': fixtures}, fh, indent=2)
+    json.dump({'updated': ts, 'round': best_round, 'week_number': best_week, 'fixtures': fixtures}, fh, indent=2)
 with open('data/livescores.json', 'w') as fh:
     json.dump({'updated': ts, 'livescores': livescores}, fh, indent=2)
 
