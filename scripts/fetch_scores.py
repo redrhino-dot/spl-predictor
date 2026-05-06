@@ -155,10 +155,12 @@ parsed_all.sort(key=lambda x: x['kickoff'])
 # ── Cluster into gameweeks ────────────────────────────────────────────────────
 # TIER 1: group by week_number (integer) if ESPN provides it
 # TIER 2: group by round text (e.g. "Round 35") if consistent
-# TIER 3: date-gap fallback (last resort)
+# TIER 3: fixed-size bucket (FIXTURES_PER_GW) — SPL always has exactly 6 per round
+# Never splits fixtures that kick off on the same calendar date (UTC)
+
+FIXTURES_PER_GW = 6   # SPL: 12 clubs = 6 matches per gameweek
 
 def cluster_by_key(items, key_fn):
-    """Group items by key_fn, return sorted list of lists."""
     gw_map = defaultdict(list)
     no_key = []
     for m in items:
@@ -168,7 +170,6 @@ def cluster_by_key(items, key_fn):
         else:
             no_key.append(m)
     groups = [sorted(v, key=lambda x: x['kickoff']) for _, v in sorted(gw_map.items())]
-    # Attach key-less fixtures to nearest group
     for m in no_key:
         if not groups:
             groups.append([m])
@@ -181,6 +182,20 @@ def cluster_by_key(items, key_fn):
         closest.append(m)
         closest.sort(key=lambda x: x['kickoff'])
     return groups
+
+def cluster_by_size(items, size):
+    """Fill gameweeks up to `size` fixtures; never split same-date fixtures."""
+    gameweeks = []
+    current   = []
+    for m in items:
+        current.append(m)
+        if len(current) >= size:
+            # Don't cut mid-day: keep going if next fixture is same date
+            gameweeks.append(current)
+            current = []
+    if current:
+        gameweeks.append(current)
+    return gameweeks
 
 use_week_number = any(m['week_number'] is not None for m in parsed_all)
 round_texts     = [m['round'] for m in parsed_all if m['round'] and m['round'] != 'Unknown']
@@ -197,22 +212,8 @@ elif use_round_text:
     print('Grouping by ESPN round text (tier 2)')
     gameweeks = cluster_by_key(parsed_all, lambda m: m['round'] if m['round'] != 'Unknown' else None)
 else:
-    print('Grouping by date-gap (tier 3 fallback)')
-    gameweeks  = []
-    current_gw = []
-    for m in parsed_all:
-        if not current_gw:
-            current_gw.append(m)
-        else:
-            prev_t = datetime.fromisoformat(current_gw[-1]['kickoff'].replace('Z', '+00:00'))
-            this_t = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-            if (this_t - prev_t).total_seconds() / 86400 <= 3.5:
-                current_gw.append(m)
-            else:
-                gameweeks.append(current_gw)
-                current_gw = [m]
-    if current_gw:
-        gameweeks.append(current_gw)
+    print(f'Grouping by fixed bucket of {FIXTURES_PER_GW} (tier 3 — ESPN has no round data)')
+    gameweeks = cluster_by_size(parsed_all, FIXTURES_PER_GW)
 
 # ── Select best gameweek (skip stale completed GWs) ──────────────────────────
 
