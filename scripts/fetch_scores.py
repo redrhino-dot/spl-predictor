@@ -128,7 +128,13 @@ FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
 now    = datetime.now(timezone.utc)
 events = {}
 print('Scanning date range for current gameweek...')
-for delta in range(-4, 7):
+# Lookback window: extend to -4 on Fri/Sat/Sun/Mon to catch Friday evening kickoffs
+# On Tue/Wed/Thu use -1 only — avoids pulling in last weekend's completed fixtures
+_weekday     = now.weekday()   # Mon=0 Tue=1 Wed=2 Thu=3 Fri=4 Sat=5 Sun=6
+_lookback    = -4 if _weekday in (4, 5, 6, 0) else -1
+print(f'Scan window: {_lookback} to +7 days (weekday={now.strftime("%A")})')
+
+for delta in range(_lookback, 7):
     day = (now + timedelta(days=delta)).strftime('%Y%m%d')
     evs = fetch_day(day)
     for e in evs:
