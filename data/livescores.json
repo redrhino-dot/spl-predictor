@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-09T20:03:43.687817+00:00",
+  "updated": "2026-05-09T20:58:11.333415+00:00",
   "livescores": [
     {
       "id": "401867708",
@@ -58,12 +58,12 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-09T19:00Z",
-      "status": "1H",
+      "status": "FT",
       "home_team": "Motherwell",
       "away_team": "Heart of Midlothian",
-      "home_score": 0,
-      "away_score": 0,
-      "elapsed": 17,
+      "home_score": 1,
+      "away_score": 1,
+      "elapsed": null,
       "elapsed_extra": null
     }
   ]
