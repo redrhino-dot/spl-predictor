@@ -11,6 +11,24 @@ LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
 WINDOW_PRE_MINS  = 5    # minutes before first KO to start fetching
 WINDOW_POST_MINS = 120  # minutes after last scheduled KO to keep fetching
 
+STALE_LIVE_MINS  = 115  # minutes after kickoff before treating stuck LIVE as FT
+
+
+def resolve_match_status(status, kickoff, elapsed):
+    """Override stuck LIVE status if match is old enough and elapsed is null."""
+    if status not in LIVE_ST:
+        return status
+    try:
+        kickoff_dt = datetime.fromisoformat(kickoff.replace('Z', '+00:00'))
+        age = datetime.now(timezone.utc) - kickoff_dt
+        if age > timedelta(minutes=STALE_LIVE_MINS) and elapsed is None:
+            print(f'  Overriding stale LIVE → FT (age={int(age.total_seconds()//60)}m, elapsed=null)')
+            return 'FT'
+    except Exception:
+        pass
+    return status
+
+
 def espn_status(detail, clock, state):
     d = (detail or '').upper()
     if any(x in d for x in ('FINAL', 'FULL TIME', 'FT')): return 'FT'
@@ -27,12 +45,14 @@ def espn_status(detail, clock, state):
             return 'LIVE'
     return 'NS'
 
+
 def fetch_day(date_str):
     url = f'{BASE}/scoreboard?dates={date_str}&limit=20'
     r = requests.get(url, headers=HDRS, timeout=20)
     if r.status_code != 200:
         return []
     return r.json().get('events', [])
+
 
 def parse_event(ev):
     comp        = ev.get('competitions', [{}])[0]
@@ -68,15 +88,19 @@ def parse_event(ev):
     try: a_score = int(away.get('score'))
     except Exception: pass
 
-    week_num  = ev.get('week', {}).get('number')   # e.g. 35  (primary GW key)
+    kickoff  = comp.get('date') or ev.get('date')
+    week_num  = ev.get('week', {}).get('number')
     week_text = ev.get('week', {}).get('text') or ev.get('season', {}).get('slug') or 'Unknown'
+
+    # Apply stale-LIVE override after all other parsing is done
+    resolved_status = resolve_match_status(status, kickoff or '', elapsed)
 
     return {
         'id':            str(ev.get('id', '')),
         'round':         week_text,
         'week_number':   week_num,
-        'kickoff':       comp.get('date') or ev.get('date'),
-        'status':        status,
+        'kickoff':       kickoff,
+        'status':        resolved_status,
         'home_team':     home.get('team', {}).get('displayName', ''),
         'away_team':     away.get('team', {}).get('displayName', ''),
         'home_score':    h_score,
@@ -84,6 +108,7 @@ def parse_event(ev):
         'elapsed':       elapsed,
         'elapsed_extra': elapsed_extra,
     }
+
 
 def is_live_window(fixtures):
     now = datetime.now(timezone.utc)
@@ -121,6 +146,7 @@ def is_live_window(fixtures):
     print(f'Outside live window ({window_open.strftime("%H:%M")}–{window_close.strftime("%H:%M")} UTC) — skipping update.')
     return False
 
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
@@ -128,8 +154,6 @@ FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
 now    = datetime.now(timezone.utc)
 events = {}
 print('Scanning date range for current gameweek...')
-# Lookback window: extend to -4 on Fri/Sat/Sun/Mon to catch Friday evening kickoffs
-# On Tue/Wed/Thu use -1 only — avoids pulling in last weekend's completed fixtures
 _weekday     = now.weekday()   # Mon=0 Tue=1 Wed=2 Thu=3 Fri=4 Sat=5 Sun=6
 _lookback    = -4 if _weekday in (4, 5, 6, 0) else -1
 print(f'Scan window: {_lookback} to +7 days (weekday={now.strftime("%A")})')
@@ -159,10 +183,6 @@ for ev in all_events:
 parsed_all.sort(key=lambda x: x['kickoff'])
 
 # ── Cluster into gameweeks ────────────────────────────────────────────────────
-# TIER 1: group by week_number (integer) if ESPN provides it
-# TIER 2: group by round text (e.g. "Round 35") if consistent
-# TIER 3: fixed-size bucket (FIXTURES_PER_GW) — SPL always has exactly 6 per round
-# Never splits fixtures that kick off on the same calendar date (UTC)
 
 FIXTURES_PER_GW = 6   # SPL: 12 clubs = 6 matches per gameweek
 
@@ -190,13 +210,11 @@ def cluster_by_key(items, key_fn):
     return groups
 
 def cluster_by_size(items, size):
-    """Fill gameweeks up to `size` fixtures; never split same-date fixtures."""
     gameweeks = []
     current   = []
     for m in items:
         current.append(m)
         if len(current) >= size:
-            # Don't cut mid-day: keep going if next fixture is same date
             gameweeks.append(current)
             current = []
     if current:
@@ -221,7 +239,7 @@ else:
     print(f'Grouping by fixed bucket of {FIXTURES_PER_GW} (tier 3 — ESPN has no round data)')
     gameweeks = cluster_by_size(parsed_all, FIXTURES_PER_GW)
 
-# ── Select best gameweek (skip stale completed GWs) ──────────────────────────
+# ── Select best gameweek ──────────────────────────────────────────────────────
 
 def gw_is_stale(gw):
     all_done = all(m['status'] in DONE_ST for m in gw)
@@ -250,7 +268,7 @@ best_week  = fixtures[0]['week_number'] if fixtures else None
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
 print(f'Current round: {best_round} (week {best_week}) — {len(fixtures)} fixtures, {len(livescores)} live/done)')
 
-# ── Live window check (skip if FORCE_RUN is set) ─────────────────────────────
+# ── Live window check ─────────────────────────────────────────────────────────
 if not FORCE_RUN and not is_live_window(fixtures):
     sys.exit(0)
 
