@@ -1123,19 +1123,14 @@ async function forceUpdate() {
       : `Error: ${e.message}`;
   }
 
-  let seconds = 35;
+    let seconds = 60;
   const timer = setInterval(() => {
     seconds -= 1;
     btn.textContent = seconds > 0 ? `⏳ Waiting ${seconds}s…` : '⏳ Loading…';
   }, 1000);
 
-  await new Promise(r => setTimeout(r, 35000));
+  await new Promise(r => setTimeout(r, 60000));
   clearInterval(timer);
 
-  await loadAllData();
-  fullRender();
-
-  if (debugEl) debugEl.textContent = '';
-  btn.disabled    = false;
-  btn.textContent = '🔄 Force Update';
+  window.location.reload();
 }
