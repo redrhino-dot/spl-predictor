@@ -205,7 +205,7 @@ function renderFixturesTable() {
 
     const kickoff     = new Date(fixture.kickoff);
     const started     = now >= kickoff;
-    const live        = liveMap[fixture.id] || fixture;
+    const live        = liveMap[String(fixture.id)] || fixture;
     const status      = live.status || fixture.status || '';
     const isCompleted = COMPLETED.includes(status);
     const isLive      = LIVE.includes(status);
@@ -236,7 +236,9 @@ function formatGroupHeader(iso) {
 
 function buildLiveMap() {
   const map = {};
-  (livescoresData.livescores || []).forEach(l => { map[l.id] = l; });
+  (livescoresData.livescores || []).forEach(l => {
+    map[String(l.id)] = l;
+  });
   return map;
 }
 
@@ -253,12 +255,12 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
   if (h === null || a === null) return '<span class="score-vs">vs</span>';
   if (isCompleted) return `<span class="score-final">${h} – ${a}</span>`;
   if (isLive) {
-    const status = live.status || '';
+    const status  = live.status || '';
     const elapsed = live.elapsed ?? 0;
     if (status === 'HT' || (status === '1H' && elapsed >= 45 && !live.elapsed_extra)) {
       return `<span class="score-live">${h} – ${a}</span><span class="elapsed">HT</span>`;
     }
-    const timeStr = formatElapsed(live.elapsed, live.elapsed_extra);
+    const timeStr     = formatElapsed(live.elapsed, live.elapsed_extra);
     const elapsedSpan = timeStr ? `<span class="elapsed">${timeStr}</span>` : '';
     return `<span class="score-live">${h} – ${a}</span>${elapsedSpan}`;
   }
@@ -284,8 +286,8 @@ function buildPredCell(participant, fixture, preds, live, started, isCompleted, 
     return `<td class="pred-cell ${noPred ? 'pred-none' : 'pred-pending'}">${predText}</td>`;
   }
 
-  const pts = scorePrediction(predHome, predAway, h, a);
-  const cls = pts === 3 ? 'pred-exact' : pts === 1 ? 'pred-correct' : 'pred-wrong';
+  const pts      = scorePrediction(predHome, predAway, h, a);
+  const cls      = pts === 3 ? 'pred-exact' : pts === 1 ? 'pred-correct' : 'pred-wrong';
   const ptsLabel = `<span class="pts-label">${pts}</span>`;
 
   return `<td class="pred-cell ${cls}">${predText}${ptsLabel}</td>`;
@@ -321,8 +323,8 @@ function populateParticipantDropdown() {
 }
 
 function renderPredictionForm() {
-  const container  = document.getElementById('pred-form-rows');
-  const fixtures   = fixturesData.fixtures || [];
+  const container = document.getElementById('pred-form-rows');
+  const fixtures  = fixturesData.fixtures || [];
   container.innerHTML = '';
 
   if (fixtures.length === 0) {
@@ -407,7 +409,6 @@ async function submitPredictions() {
     if (!scores || scores.home === undefined || scores.away === undefined) continue;
 
     if (scores.homeRaw === '' && scores.awayRaw === '') {
-      // Blank — remove any existing prediction for this fixture
       if (predictionsData.gameweeks[gwKey]?.predictions[participant]) {
         predictionsData.gameweeks[gwKey].predictions[participant] =
           predictionsData.gameweeks[gwKey].predictions[participant]
@@ -416,7 +417,6 @@ async function submitPredictions() {
       continue;
     }
 
-    // Only add if prediction has actually changed
     const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
       predictionsData.gameweeks[gwKey]?.predictions[participant] || []);
 
@@ -509,8 +509,8 @@ function renderProjectedStandings() {
    BLOCK ENDING TABLE
    ============================================================ */
 function checkAndRenderBlockEnding() {
-  const fixtures       = fixturesData.fixtures || [];
-  const section        = document.getElementById('block-ending-section');
+  const fixtures         = fixturesData.fixtures || [];
+  const section          = document.getElementById('block-ending-section');
   const projectedSection = document.getElementById('projected-section');
 
   if (fixtures.length === 0) {
@@ -521,7 +521,7 @@ function checkAndRenderBlockEnding() {
 
   const liveMap = buildLiveMap();
   const allDone = fixtures.every(f => {
-    const status = (liveMap[f.id] || f).status || f.status || '';
+    const status = (liveMap[String(f.id)] || f).status || f.status || '';
     return COMPLETED.includes(status);
   });
 
@@ -719,9 +719,9 @@ async function archiveCurrentGW() {
   });
 
   const results = fixtures
-    .filter(f => COMPLETED.includes((liveMap[f.id] || f).status || f.status || ''))
+    .filter(f => COMPLETED.includes((liveMap[String(f.id)] || f).status || f.status || ''))
     .map(f => {
-      const live = liveMap[f.id] || f;
+      const live = liveMap[String(f.id)] || f;
       return {
         fixture_id: f.id,
         home_team:  f.home_team,
@@ -789,7 +789,7 @@ function computeEarned(participant, fixtures, gwPreds, liveMap) {
   let total = 0;
   const preds = gwPreds[participant] || [];
   for (const fixture of fixtures) {
-    const live   = liveMap[fixture.id] || fixture;
+    const live   = liveMap[String(fixture.id)] || fixture;
     const status = live.status || fixture.status || '';
     if (!IN_PLAY.includes(status)) continue;
     const h = live.home_score ?? fixture.home_score;
@@ -811,8 +811,8 @@ function buildPointsNotation(participant, fixtures, gwPreds, liveMap) {
   const preds          = gwPreds[participant] || [];
 
   for (const fixture of fixtures) {
-    const live      = liveMap[fixture.id] || fixture;
-    const status    = live.status || fixture.status || '';
+    const live       = liveMap[String(fixture.id)] || fixture;
+    const status     = live.status || fixture.status || '';
     const isComplete = COMPLETED.includes(status);
     const isLive     = LIVE.includes(status);
 
@@ -964,11 +964,11 @@ async function rollToNextGW() {
   if (pin === null) return;
   if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
 
+  const btn = document.getElementById('roll-gw-btn');
+
   const currentArchive = await fetchJSON('data/archive.json');
   if (!currentArchive || !currentArchive.gameweeks || currentArchive.gameweeks.length === 0) {
     alert('No archived gameweeks found. Archive the current one first!');
-    btn.disabled = false;
-    btn.textContent = 'Roll to Next Gameweek';
     return;
   }
 
@@ -991,7 +991,6 @@ async function rollToNextGW() {
     },
   };
 
-  const btn = document.getElementById('roll-gw-btn');
   btn.disabled = true;
   btn.textContent = 'Rolling...';
 
@@ -1128,7 +1127,7 @@ async function forceUpdate() {
       : `Error: ${e.message}`;
   }
 
-    let seconds = 60;
+  let seconds = 60;
   const timer = setInterval(() => {
     seconds -= 1;
     btn.textContent = seconds > 0 ? `⏳ Waiting ${seconds}s…` : '⏳ Loading…';
