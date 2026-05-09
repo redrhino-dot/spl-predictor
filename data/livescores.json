@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-09T15:53:19.115408+00:00",
+  "updated": "2026-05-09T15:58:37.456758+00:00",
   "livescores": [
     {
       "id": "401867708",
@@ -19,7 +19,7 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-09T14:00Z",
-      "status": "LIVE",
+      "status": "FT",
       "home_team": "Dundee",
       "away_team": "Livingston",
       "home_score": 3,
