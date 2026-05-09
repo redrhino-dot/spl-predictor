@@ -959,9 +959,11 @@ async function rollToNextGW() {
   if (pin === null) return;
   if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
 
-  const currentArchive = archiveData || await fetchJSON('data/archive.json');
+  const currentArchive = await fetchJSON('data/archive.json');
   if (!currentArchive || !currentArchive.gameweeks || currentArchive.gameweeks.length === 0) {
     alert('No archived gameweeks found. Archive the current one first!');
+    btn.disabled = false;
+    btn.textContent = 'Roll to Next Gameweek';
     return;
   }
 
@@ -1013,6 +1015,10 @@ async function rollToNextGW() {
     }
     alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
     window.location.reload();
+  } else {
+    alert('Failed to update config.js. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Roll to Next Gameweek';
   }
 }
 
