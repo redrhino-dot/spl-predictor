@@ -254,12 +254,13 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
   if (isCompleted) return `<span class="score-final">${h} – ${a}</span>`;
   if (isLive) {
     const status = live.status || '';
-    if (status === 'HT') {
+    const elapsed = live.elapsed ?? 0;
+    if (status === 'HT' || (status === '1H' && elapsed >= 45 && !live.elapsed_extra)) {
       return `<span class="score-live">${h} – ${a}</span><span class="elapsed">HT</span>`;
     }
     const timeStr = formatElapsed(live.elapsed, live.elapsed_extra);
-    const elapsed = timeStr ? `<span class="elapsed">${timeStr}</span>` : '';
-    return `<span class="score-live">${h} – ${a}</span>${elapsed}`;
+    const elapsedSpan = timeStr ? `<span class="elapsed">${timeStr}</span>` : '';
+    return `<span class="score-live">${h} – ${a}</span>${elapsedSpan}`;
   }
   return `<span class="score-live">${h} – ${a}</span>`;
 }
