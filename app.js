@@ -253,11 +253,15 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
   if (h === null || a === null) return '<span class="score-vs">vs</span>';
   if (isCompleted) return `<span class="score-final">${h} – ${a}</span>`;
   if (isLive) {
-    const timeStr  = formatElapsed(live.elapsed, live.elapsed_extra);
-    const elapsed  = timeStr ? `<span class="elapsed">${timeStr}</span>` : '';
+    const status = live.status || '';
+    if (status === 'HT') {
+      return `<span class="score-live">${h} – ${a}</span><span class="elapsed">HT</span>`;
+    }
+    const timeStr = formatElapsed(live.elapsed, live.elapsed_extra);
+    const elapsed = timeStr ? `<span class="elapsed">${timeStr}</span>` : '';
     return `<span class="score-live">${h} – ${a}</span>${elapsed}`;
   }
-  return `<span class="score-final">${h} – ${a}</span>`;
+  return `<span class="score-live">${h} – ${a}</span>`;
 }
 
 function buildPredCell(participant, fixture, preds, live, started, isCompleted, isLive) {
