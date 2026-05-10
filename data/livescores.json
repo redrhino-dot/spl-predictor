@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-10T12:09:29.962289+00:00",
+  "updated": "2026-05-10T12:12:28.213686+00:00",
   "livescores": [
     {
       "id": "401867708",
@@ -71,12 +71,12 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-10T11:00Z",
-      "status": "1H",
+      "status": "2H",
       "home_team": "Celtic",
       "away_team": "Rangers",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 45,
+      "elapsed": 49,
       "elapsed_extra": null
     }
   ]
