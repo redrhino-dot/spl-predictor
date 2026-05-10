@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-10T12:15:13.758969+00:00",
+  "updated": "2026-05-10T12:18:30.233479+00:00",
   "livescores": [
     {
       "id": "401867708",
@@ -74,9 +74,9 @@
       "status": "2H",
       "home_team": "Celtic",
       "away_team": "Rangers",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 1,
-      "elapsed": 51,
+      "elapsed": 53,
       "elapsed_extra": null
     }
   ]
