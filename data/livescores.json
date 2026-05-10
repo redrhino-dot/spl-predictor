@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-10T12:27:28.005085+00:00",
+  "updated": "2026-05-10T12:42:07.426980+00:00",
   "livescores": [
     {
       "id": "401867708",
@@ -76,7 +76,7 @@
       "away_team": "Rangers",
       "home_score": 3,
       "away_score": 1,
-      "elapsed": 58,
+      "elapsed": 66,
       "elapsed_extra": null
     }
   ]
