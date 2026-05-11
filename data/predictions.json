@@ -895,6 +895,48 @@
           }
         ]
       }
+    },
+    "37": {
+      "predictions": {
+        "Kris": [
+          {
+            "fixture_id": "401867713",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-05-11T15:41:09.519Z"
+          },
+          {
+            "fixture_id": "401867714",
+            "home_score": 2,
+            "away_score": 0,
+            "submitted_at": "2026-05-11T15:41:09.519Z"
+          },
+          {
+            "fixture_id": "401867715",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-05-11T15:41:09.519Z"
+          },
+          {
+            "fixture_id": "401867716",
+            "home_score": 2,
+            "away_score": 0,
+            "submitted_at": "2026-05-11T15:41:09.519Z"
+          },
+          {
+            "fixture_id": "401867717",
+            "home_score": 1,
+            "away_score": 2,
+            "submitted_at": "2026-05-11T15:41:09.519Z"
+          },
+          {
+            "fixture_id": "401867718",
+            "home_score": 1,
+            "away_score": 0,
+            "submitted_at": "2026-05-11T15:41:09.519Z"
+          }
+        ]
+      }
     }
   }
 }
