@@ -31,7 +31,7 @@ const CONFIG = {
     },
     {
       "name": "Jon",
-      "points": 154
+      "points": 152
     },
     {
       "name": "Doug",
