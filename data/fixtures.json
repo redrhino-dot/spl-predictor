@@ -1,5 +1,85 @@
 {
-  "updated": "2026-05-11T13:46:18.951Z",
-  "round": "",
-  "fixtures": []
+  "updated": "2026-05-11T13:46:39.821865+00:00",
+  "round": "2025-26-scottish-premiership",
+  "week_number": null,
+  "fixtures": [
+    {
+      "id": "401867713",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-12T18:45Z",
+      "status": "NS",
+      "home_team": "Aberdeen",
+      "away_team": "St Mirren",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 0,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867714",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-12T18:45Z",
+      "status": "NS",
+      "home_team": "Dundee United",
+      "away_team": "Livingston",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 0,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867715",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-12T18:45Z",
+      "status": "NS",
+      "home_team": "Kilmarnock",
+      "away_team": "Dundee",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 0,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867716",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-13T19:00Z",
+      "status": "NS",
+      "home_team": "Heart of Midlothian",
+      "away_team": "Falkirk",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 0,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867717",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-13T19:00Z",
+      "status": "NS",
+      "home_team": "Motherwell",
+      "away_team": "Celtic",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 0,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867718",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-13T19:00Z",
+      "status": "NS",
+      "home_team": "Rangers",
+      "away_team": "Hibernian",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 0,
+      "elapsed_extra": null
+    }
+  ]
 }
