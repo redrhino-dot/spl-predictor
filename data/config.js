@@ -23,19 +23,19 @@ const CONFIG = {
   "openingStandings": [
     {
       "name": "Kris",
-      "points": 150
+      "points": 156
     },
     {
       "name": "Graham",
-      "points": 149
+      "points": 155
     },
     {
       "name": "Jon",
-      "points": 149
+      "points": 154
     },
     {
       "name": "Doug",
-      "points": 115
+      "points": 117
     }
   ],
   "teamAliases": {
