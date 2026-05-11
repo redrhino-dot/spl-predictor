@@ -6,8 +6,8 @@ const CONFIG = {
   "githubRepo": "spl-predictor",
   "leagueId": 179,
   "season": 2025,
-  "currentGameweek": 36,
-  "currentGwLabel": "GW36 — TBD",
+  "currentGameweek": 37,
+  "currentGwLabel": "GW37 — TBD",
   "participants": [
     "Graham",
     "Jon",
@@ -21,10 +21,22 @@ const CONFIG = {
     "Doug": "1030"
   },
   "openingStandings": [
-    { "name": "Kris",   "points": 150 },
-    { "name": "Graham", "points": 149 },
-    { "name": "Jon",    "points": 149 },
-    { "name": "Doug",   "points": 115 }
+    {
+      "name": "Kris",
+      "points": 150
+    },
+    {
+      "name": "Graham",
+      "points": 149
+    },
+    {
+      "name": "Jon",
+      "points": 149
+    },
+    {
+      "name": "Doug",
+      "points": 115
+    }
   ],
   "teamAliases": {
     "Hibs": "Hibernian",
@@ -41,8 +53,8 @@ const CONFIG = {
     "Dundee": "Dundee"
   },
   "seededPredictions": {
-    "gw": 36,
-    "submittedAt": "2026-05-06T22:35:35.919Z",
+    "gw": 37,
+    "submittedAt": "2026-05-11T13:46:17.684Z",
     "byFixture": []
   }
 };
