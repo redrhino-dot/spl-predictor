@@ -1,4 +1,44 @@
 {
-  "updated": "2026-05-12T19:16:33.536532+00:00",
-  "livescores": []
+  "updated": "2026-05-12T20:30:18.462058+00:00",
+  "livescores": [
+    {
+      "id": "401867713",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-12T18:45Z",
+      "status": "2H",
+      "home_team": "Aberdeen",
+      "away_team": "St Mirren",
+      "home_score": 0,
+      "away_score": 2,
+      "elapsed": 88,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867714",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-12T18:45Z",
+      "status": "2H",
+      "home_team": "Dundee United",
+      "away_team": "Livingston",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 84,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867715",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-12T18:45Z",
+      "status": "2H",
+      "home_team": "Kilmarnock",
+      "away_team": "Dundee",
+      "home_score": 2,
+      "away_score": 1,
+      "elapsed": 87,
+      "elapsed_extra": null
+    }
+  ]
 }
