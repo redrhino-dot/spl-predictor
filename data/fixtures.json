@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T20:43:50.777112+00:00",
+  "updated": "2026-05-13T20:45:13.044329+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -52,7 +52,7 @@
       "away_team": "Falkirk",
       "home_score": 2,
       "away_score": 0,
-      "elapsed": 60,
+      "elapsed": 83,
       "elapsed_extra": null
     },
     {
@@ -63,9 +63,9 @@
       "status": "2H",
       "home_team": "Motherwell",
       "away_team": "Celtic",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 2,
-      "elapsed": 62,
+      "elapsed": 85,
       "elapsed_extra": null
     },
     {
@@ -78,7 +78,7 @@
       "away_team": "Hibernian",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 58,
+      "elapsed": 81,
       "elapsed_extra": null
     }
   ]
