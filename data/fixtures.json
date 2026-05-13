@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T19:43:33.132327+00:00",
+  "updated": "2026-05-13T19:55:56.142689+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -52,7 +52,7 @@
       "away_team": "Falkirk",
       "home_score": 2,
       "away_score": 0,
-      "elapsed": 41,
+      "elapsed": 42,
       "elapsed_extra": null
     },
     {
