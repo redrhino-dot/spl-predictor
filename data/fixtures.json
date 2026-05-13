@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T20:46:31.457765+00:00",
+  "updated": "2026-05-13T20:47:55.783649+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -65,7 +65,7 @@
       "away_team": "Celtic",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": 87,
+      "elapsed": 88,
       "elapsed_extra": null
     },
     {
@@ -78,7 +78,7 @@
       "away_team": "Hibernian",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 84,
+      "elapsed": 85,
       "elapsed_extra": null
     }
   ]
