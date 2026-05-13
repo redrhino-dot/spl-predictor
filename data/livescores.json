@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T20:47:55.783649+00:00",
+  "updated": "2026-05-13T20:51:19.253638+00:00",
   "livescores": [
     {
       "id": "401867713",
@@ -48,9 +48,9 @@
       "status": "2H",
       "home_team": "Heart of Midlothian",
       "away_team": "Falkirk",
-      "home_score": 2,
+      "home_score": 3,
       "away_score": 0,
-      "elapsed": 85,
+      "elapsed": 88,
       "elapsed_extra": null
     },
     {
@@ -58,12 +58,12 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-13T19:00Z",
-      "status": "2H",
+      "status": "LIVE",
       "home_team": "Motherwell",
       "away_team": "Celtic",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": 88,
+      "elapsed": null,
       "elapsed_extra": null
     },
     {
@@ -76,7 +76,7 @@
       "away_team": "Hibernian",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 85,
+      "elapsed": 87,
       "elapsed_extra": null
     }
   ]
