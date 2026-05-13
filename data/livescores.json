@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T20:57:41.225168+00:00",
+  "updated": "2026-05-13T20:58:35.998575+00:00",
   "livescores": [
     {
       "id": "401867713",
@@ -62,7 +62,7 @@
       "home_team": "Motherwell",
       "away_team": "Celtic",
       "home_score": 2,
-      "away_score": 2,
+      "away_score": 3,
       "elapsed": null,
       "elapsed_extra": null
     },

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T20:57:41.225168+00:00",
+  "updated": "2026-05-13T20:58:35.998575+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -64,7 +64,7 @@
       "home_team": "Motherwell",
       "away_team": "Celtic",
       "home_score": 2,
-      "away_score": 2,
+      "away_score": 3,
       "elapsed": null,
       "elapsed_extra": null
     },
