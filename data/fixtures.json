@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T19:38:46.942980+00:00",
+  "updated": "2026-05-13T19:41:46.733078+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -50,9 +50,9 @@
       "status": "1H",
       "home_team": "Heart of Midlothian",
       "away_team": "Falkirk",
-      "home_score": 0,
+      "home_score": 2,
       "away_score": 0,
-      "elapsed": 17,
+      "elapsed": 37,
       "elapsed_extra": null
     },
     {
@@ -65,7 +65,7 @@
       "away_team": "Celtic",
       "home_score": 1,
       "away_score": 0,
-      "elapsed": 17,
+      "elapsed": 37,
       "elapsed_extra": null
     },
     {
@@ -78,7 +78,7 @@
       "away_team": "Hibernian",
       "home_score": 0,
       "away_score": 1,
-      "elapsed": 15,
+      "elapsed": 36,
       "elapsed_extra": null
     }
   ]
