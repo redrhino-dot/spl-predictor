@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13T20:17:23.872186+00:00",
+  "updated": "2026-05-13T20:18:57.148224+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -47,12 +47,12 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-13T19:00Z",
-      "status": "FT",
+      "status": "2H",
       "home_team": "Heart of Midlothian",
       "away_team": "Falkirk",
       "home_score": 2,
       "away_score": 0,
-      "elapsed": null,
+      "elapsed": 57,
       "elapsed_extra": null
     },
     {
@@ -60,12 +60,12 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-13T19:00Z",
-      "status": "FT",
+      "status": "2H",
       "home_team": "Motherwell",
       "away_team": "Celtic",
       "home_score": 1,
-      "away_score": 1,
-      "elapsed": null,
+      "away_score": 2,
+      "elapsed": 60,
       "elapsed_extra": null
     },
     {
@@ -73,12 +73,12 @@
       "round": "2025-26-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-05-13T19:00Z",
-      "status": "FT",
+      "status": "2H",
       "home_team": "Rangers",
       "away_team": "Hibernian",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": null,
+      "elapsed": 55,
       "elapsed_extra": null
     }
   ]
