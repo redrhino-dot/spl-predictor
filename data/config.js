@@ -6,8 +6,8 @@ const CONFIG = {
   "githubRepo": "spl-predictor",
   "leagueId": 179,
   "season": 2025,
-  "currentGameweek": 37,
-  "currentGwLabel": "GW37 — TBD",
+  "currentGameweek": 38,
+  "currentGwLabel": "GW38 — TBD",
   "participants": [
     "Graham",
     "Jon",
@@ -53,8 +53,8 @@ const CONFIG = {
     "Dundee": "Dundee"
   },
   "seededPredictions": {
-    "gw": 37,
-    "submittedAt": "2026-05-11T13:46:17.684Z",
+    "gw": 38,
+    "submittedAt": "2026-05-14T22:54:40.087Z",
     "byFixture": []
   }
 };
