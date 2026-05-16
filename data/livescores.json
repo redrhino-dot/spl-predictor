@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-16T13:22:26.426790+00:00",
+  "updated": "2026-05-16T13:34:21.362098+00:00",
   "livescores": [
     {
       "id": "401867719",
@@ -11,7 +11,7 @@
       "away_team": "Heart of Midlothian",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 53,
+      "elapsed": 75,
       "elapsed_extra": null
     },
     {
@@ -23,8 +23,8 @@
       "home_team": "Falkirk",
       "away_team": "Rangers",
       "home_score": 2,
-      "away_score": 4,
-      "elapsed": 58,
+      "away_score": 5,
+      "elapsed": 79,
       "elapsed_extra": null
     },
     {
@@ -37,7 +37,7 @@
       "away_team": "Motherwell",
       "home_score": 0,
       "away_score": 1,
-      "elapsed": 55,
+      "elapsed": 76,
       "elapsed_extra": null
     }
   ]
