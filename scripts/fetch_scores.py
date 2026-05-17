@@ -249,7 +249,7 @@ def gw_is_stale(gw):
         datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
         for m in gw
     )
-    return (now - last_ko).total_seconds() > 129600  # 12 hours
+    return (now - last_ko).total_seconds() > 129600  # 36 hours
 
 fresh_gameweeks = [gw for gw in gameweeks if not gw_is_stale(gw)]
 candidates = fresh_gameweeks if fresh_gameweeks else gameweeks
