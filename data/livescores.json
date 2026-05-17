@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-17T14:36:19.764900+00:00",
+  "updated": "2026-05-17T14:45:58.996129+00:00",
   "livescores": [
     {
       "id": "401867722",
@@ -11,7 +11,7 @@
       "away_team": "Aberdeen",
       "home_score": 2,
       "away_score": 2,
-      "elapsed": 72,
+      "elapsed": 69,
       "elapsed_extra": null
     },
     {
@@ -24,7 +24,7 @@
       "away_team": "Kilmarnock",
       "home_score": 1,
       "away_score": 4,
-      "elapsed": 78,
+      "elapsed": 75,
       "elapsed_extra": null
     },
     {
@@ -37,7 +37,7 @@
       "away_team": "Dundee United",
       "home_score": 1,
       "away_score": 1,
-      "elapsed": 75,
+      "elapsed": 71,
       "elapsed_extra": null
     }
   ]
