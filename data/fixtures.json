@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-17T14:27:46.814457+00:00",
+  "updated": "2026-05-17T14:31:36.004891+00:00",
   "round": "2025-26-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -50,9 +50,9 @@
       "status": "2H",
       "home_team": "Dundee",
       "away_team": "Aberdeen",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 2,
-      "elapsed": 50,
+      "elapsed": 65,
       "elapsed_extra": null
     },
     {
@@ -64,8 +64,8 @@
       "home_team": "Livingston",
       "away_team": "Kilmarnock",
       "home_score": 1,
-      "away_score": 3,
-      "elapsed": 55,
+      "away_score": 4,
+      "elapsed": 71,
       "elapsed_extra": null
     },
     {
@@ -78,7 +78,7 @@
       "away_team": "Dundee United",
       "home_score": 0,
       "away_score": 1,
-      "elapsed": 53,
+      "elapsed": 67,
       "elapsed_extra": null
     }
   ]
