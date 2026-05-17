@@ -22,7 +22,7 @@ def resolve_match_status(status, kickoff, elapsed):
         kickoff_dt = datetime.fromisoformat(kickoff.replace('Z', '+00:00'))
         age = datetime.now(timezone.utc) - kickoff_dt
         if age > timedelta(minutes=STALE_LIVE_MINS) and elapsed is None:
-            print(f'  Overriding stale LIVE → FT (age={int(age.total_seconds()//60)}m, elapsed=null)')
+            print(f'  Overriding stale LIVE -> FT (age={int(age.total_seconds()//60)}m, elapsed=null)')
             return 'FT'
     except Exception:
         pass
@@ -32,7 +32,7 @@ def resolve_match_status(status, kickoff, elapsed):
 def espn_status(detail, clock, state):
     d = (detail or '').upper()
     if any(x in d for x in ('FINAL', 'FULL TIME', 'FT')): return 'FT'
-    if state == 'post': return 'FT'   # ESPN state=post always means finished
+    if state == 'post': return 'FT'
     if any(x in d for x in ('HALF TIME', 'HALFTIME', 'HALF-TIME')): return 'HT'
     if d in ('HT', 'HALF TIME', 'HALFTIME'): return 'HT'
     if 'POSTPONE' in d:  return 'PST'
@@ -92,7 +92,6 @@ def parse_event(ev):
     week_num  = ev.get('week', {}).get('number')
     week_text = ev.get('week', {}).get('text') or ev.get('season', {}).get('slug') or 'Unknown'
 
-    # Apply stale-LIVE override after all other parsing is done
     resolved_status = resolve_match_status(status, kickoff or '', elapsed)
 
     return {
@@ -173,7 +172,6 @@ if not all_events:
     print('ERROR: no events found from ESPN API', file=sys.stderr)
     sys.exit(1)
 
-# Parse all events
 parsed_all = []
 for ev in all_events:
     p = parse_event(ev)
@@ -271,6 +269,19 @@ print(f'Current round: {best_round} (week {best_week}) — {len(fixtures)} fixtu
 # ── Live window check ─────────────────────────────────────────────────────────
 if not FORCE_RUN and not is_live_window(fixtures):
     sys.exit(0)
+
+# ── Merge with existing fixtures to prevent completed ones dropping out ───────
+existing_path = 'data/fixtures.json'
+if os.path.exists(existing_path):
+    with open(existing_path) as fh:
+        existing_data = json.load(fh)
+    existing_map = {f['id']: f for f in existing_data.get('fixtures', [])}
+    new_ids = {f['id'] for f in fixtures}
+    for fid, fx in existing_map.items():
+        if fid not in new_ids:
+            fixtures.append(fx)
+    fixtures.sort(key=lambda x: x['kickoff'])
+    print(f'After merge: {len(fixtures)} fixtures (retained {len(fixtures) - len(new_ids)} from existing)')
 
 # ── Write data files ──────────────────────────────────────────────────────────
 os.makedirs('data', exist_ok=True)
