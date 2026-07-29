@@ -101,6 +101,7 @@ jobs:
           }
 
           const participantNames = [...participantsMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
+
           const openingStandingsBlock = participantNames
             .map(name => `    {\n      "name": "${name}",\n      "points": 0\n    }`)
             .join(',\n');
@@ -108,10 +109,12 @@ jobs:
           text = text.replace(/"season":\s*\d+/, `"season": ${seasonYear}`);
           text = text.replace(/"currentGameweek":\s*\d+/, `"currentGameweek": 1`);
           text = text.replace(/"currentGwLabel":\s*"[^"]*"/, `"currentGwLabel": "${seasonLabel}"`);
+
           text = text.replace(
             /"openingStandings":\s*\\[[\\s\\S]\*?\\],\s*"teamAliases"/,
             `"openingStandings": [\n${openingStandingsBlock}\n  ],\n  "teamAliases"`
           );
+
           text = text.replace(
             /"seededPredictions":\s*\{[\s\S]*?\}\s*\n\};/,
             `"seededPredictions": {\n    "gw": 1,\n    "submittedAt": null,\n    "byFixture": []\n  }\n};`
