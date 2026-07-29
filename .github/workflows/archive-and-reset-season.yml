@@ -11,8 +11,8 @@ on:
         description: 'Season start year for CONFIG.season, e.g. 2026'
         required: true
         default: '2026'
-      new_gameweek_label:
-        description: 'Label for the new live gameweek, e.g. GW1 — TBD'
+      new_season_label:
+        description: 'Display label for new season, e.g. GW1 — TBD'
         required: true
         default: 'GW1 — TBD'
 
@@ -101,7 +101,7 @@ jobs:
 
           config.season = Number('${{ github.event.inputs.new_season_year }}');
           config.currentGameweek = 1;
-          config.currentGwLabel = '${{ github.event.inputs.new_gameweek_label }}';
+          config.currentGwLabel = '${{ github.event.inputs.new_season_label }}';
           config.openingStandings = (config.participants || []).map(name => ({
             name,
             points: 0
@@ -128,7 +128,7 @@ jobs:
 
           Archived by GitHub Actions on $(date -u +"%Y-%m-%d %H:%M:%S UTC").
           Reset live data for season start year ${{ github.event.inputs.new_season_year }}.
-          New gameweek label: ${{ github.event.inputs.new_gameweek_label }}.
+          New gameweek label: ${{ github.event.inputs.new_season_label }}.
           EOF
 
       - name: Show changed files
