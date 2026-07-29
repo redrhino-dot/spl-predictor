@@ -11,8 +11,8 @@ on:
         description: 'Season start year for CONFIG.season, e.g. 2026'
         required: true
         default: '2026'
-      new_season_label:
-        description: 'Display label for new season, e.g. GW1 — TBD'
+      new_gameweek_label:
+        description: 'Label for the new live gameweek, e.g. GW1 — TBD'
         required: true
         default: 'GW1 — TBD'
 
@@ -36,17 +36,17 @@ jobs:
 
       - name: Create archive folders
         run: |
-          mkdir -p archive/${{ github.event.inputs.archive_season }}/data
-          mkdir -p archive/${{ github.event.inputs.archive_season }}/scripts
+          mkdir -p "archive/${{ github.event.inputs.archive_season }}/data"
+          mkdir -p "archive/${{ github.event.inputs.archive_season }}/scripts"
 
       - name: Archive current live files
         run: |
-          [ -f data/archive.json ] && cp data/archive.json archive/${{ github.event.inputs.archive_season }}/data/archive.json || true
-          [ -f data/fixtures.json ] && cp data/fixtures.json archive/${{ github.event.inputs.archive_season }}/data/fixtures.json || true
-          [ -f data/livescores.json ] && cp data/livescores.json archive/${{ github.event.inputs.archive_season }}/data/livescores.json || true
-          [ -f data/predictions.json ] && cp data/predictions.json archive/${{ github.event.inputs.archive_season }}/data/predictions.json || true
-          [ -f data/config.js ] && cp data/config.js archive/${{ github.event.inputs.archive_season }}/data/config.js || true
-          [ -f scripts/fetch_fixtures.py ] && cp scripts/fetch_fixtures.py archive/${{ github.event.inputs.archive_season }}/scripts/fetch_fixtures.py || true
+          [ -f data/archive.json ] && cp data/archive.json "archive/${{ github.event.inputs.archive_season }}/data/archive.json" || true
+          [ -f data/fixtures.json ] && cp data/fixtures.json "archive/${{ github.event.inputs.archive_season }}/data/fixtures.json" || true
+          [ -f data/livescores.json ] && cp data/livescores.json "archive/${{ github.event.inputs.archive_season }}/data/livescores.json" || true
+          [ -f data/predictions.json ] && cp data/predictions.json "archive/${{ github.event.inputs.archive_season }}/data/predictions.json" || true
+          [ -f data/config.js ] && cp data/config.js "archive/${{ github.event.inputs.archive_season }}/data/config.js" || true
+          [ -f scripts/fetch_fixtures.py ] && cp scripts/fetch_fixtures.py "archive/${{ github.event.inputs.archive_season }}/scripts/fetch_fixtures.py" || true
 
       - name: Reset fixtures.json
         run: |
@@ -84,53 +84,56 @@ jobs:
           }
           EOF
 
-            - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Update config.js for new season
         run: |
-          python <<'PY'
-          import json
-          import re
-          from pathlib import Path
+          node <<'NODE'
+          const fs = require('fs');
 
-          path = Path("data/config.js")
-          text = path.read_text(encoding="utf-8")
+          const path = 'data/config.js';
+          const text = fs.readFileSync(path, 'utf8');
 
-          match = re.search(r'const CONFIG = (\{.*\});\s*$', text, re.S)
-          if not match:
-              raise SystemExit("Could not parse data/config.js")
-
-          config = json.loads(match.group(1))
-
-          config["season"] = int("${{ github.event.inputs.new_season_year }}")
-          config["currentGameweek"] = 1
-          config["currentGwLabel"] = "${{ github.event.inputs.new_season_label }}"
-          config["openingStandings"] = [
-              {"name": name, "points": 0}
-              for name in config.get("participants", [])
-          ]
-          config["seededPredictions"] = {
-              "gw": 1,
-              "submittedAt": None,
-              "byFixture": []
+          const match = text.match(/const CONFIG = (\{[\s\S]*\});\s*$/);
+          if (!match) {
+            throw new Error('Could not parse data/config.js');
           }
 
-          new_text = "// auto-updated config\n\nconst CONFIG = " + json.dumps(config, indent=2) + ";\n"
-          path.write_text(new_text, encoding="utf-8")
-          PY
+          const config = JSON.parse(match[1]);
+
+          config.season = Number('${{ github.event.inputs.new_season_year }}');
+          config.currentGameweek = 1;
+          config.currentGwLabel = '${{ github.event.inputs.new_gameweek_label }}';
+          config.openingStandings = (config.participants || []).map(name => ({
+            name,
+            points: 0
+          }));
+          config.seededPredictions = {
+            gw: 1,
+            submittedAt: null,
+            byFixture: []
+          };
+
+          const newText =
+            '// auto-updated config\n\n' +
+            'const CONFIG = ' +
+            JSON.stringify(config, null, 2) +
+            ';\n';
+
+          fs.writeFileSync(path, newText, 'utf8');
+          NODE
 
       - name: Write archive README
         run: |
-          cat > archive/${{ github.event.inputs.archive_season }}/README.md <<EOF
+          cat > "archive/${{ github.event.inputs.archive_season }}/README.md" <<EOF
           # Archived season ${{ github.event.inputs.archive_season }}
 
           Archived by GitHub Actions on $(date -u +"%Y-%m-%d %H:%M:%S UTC").
           Reset live data for season start year ${{ github.event.inputs.new_season_year }}.
-          New gameweek label: ${{ github.event.inputs.new_season_label }}.
+          New gameweek label: ${{ github.event.inputs.new_gameweek_label }}.
           EOF
+
+      - name: Show changed files
+        run: |
+          git status --short
 
       - name: Commit and push changes
         run: |
