@@ -90,35 +90,34 @@ jobs:
           const fs = require('fs');
 
           const path = 'data/config.js';
-          const text = fs.readFileSync(path, 'utf8');
+          let text = fs.readFileSync(path, 'utf8');
 
-          const match = text.match(/const CONFIG = (\{[\s\S]*\});\s*$/);
-          if (!match) {
-            throw new Error('Could not parse data/config.js');
+          const seasonYear = '${{ github.event.inputs.new_season_year }}';
+          const seasonLabel = '${{ github.event.inputs.new_season_label }}';
+
+          const participantsMatch = text.match(/"participants":\s*\\[([\\s\\S]\*?)\\]/);
+          if (!participantsMatch) {
+            throw new Error('Could not find participants array in data/config.js');
           }
 
-          const config = JSON.parse(match[1]);
+          const participantNames = [...participantsMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
+          const openingStandingsBlock = participantNames
+            .map(name => `    {\n      "name": "${name}",\n      "points": 0\n    }`)
+            .join(',\n');
 
-          config.season = Number('${{ github.event.inputs.new_season_year }}');
-          config.currentGameweek = 1;
-          config.currentGwLabel = '${{ github.event.inputs.new_season_label }}';
-          config.openingStandings = (config.participants || []).map(name => ({
-            name,
-            points: 0
-          }));
-          config.seededPredictions = {
-            gw: 1,
-            submittedAt: null,
-            byFixture: []
-          };
+          text = text.replace(/"season":\s*\d+/, `"season": ${seasonYear}`);
+          text = text.replace(/"currentGameweek":\s*\d+/, `"currentGameweek": 1`);
+          text = text.replace(/"currentGwLabel":\s*"[^"]*"/, `"currentGwLabel": "${seasonLabel}"`);
+          text = text.replace(
+            /"openingStandings":\s*\\[[\\s\\S]\*?\\],\s*"teamAliases"/,
+            `"openingStandings": [\n${openingStandingsBlock}\n  ],\n  "teamAliases"`
+          );
+          text = text.replace(
+            /"seededPredictions":\s*\{[\s\S]*?\}\s*\n\};/,
+            `"seededPredictions": {\n    "gw": 1,\n    "submittedAt": null,\n    "byFixture": []\n  }\n};`
+          );
 
-          const newText =
-            '// auto-updated config\n\n' +
-            'const CONFIG = ' +
-            JSON.stringify(config, null, 2) +
-            ';\n';
-
-          fs.writeFileSync(path, newText, 'utf8');
+          fs.writeFileSync(path, text, 'utf8');
           NODE
 
       - name: Write archive README
