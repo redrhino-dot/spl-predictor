@@ -86,42 +86,60 @@ jobs:
 
       - name: Update config.js for new season
         run: |
-          node <<'NODE'
-          const fs = require('fs');
+          python3 <<'PY'
+          from pathlib import Path
+          import re
 
-          const path = 'data/config.js';
-          let text = fs.readFileSync(path, 'utf8');
+          path = Path("data/config.js")
+          text = path.read_text(encoding="utf-8")
 
-          const seasonYear = '${{ github.event.inputs.new_season_year }}';
-          const seasonLabel = '${{ github.event.inputs.new_season_label }}';
+          season_year = "${{ github.event.inputs.new_season_year }}"
+          season_label = "${{ github.event.inputs.new_season_label }}"
 
-          const participantsMatch = text.match(/"participants":\s*\\[([\\s\\S]\*?)\\]/);
-          if (!participantsMatch) {
-            throw new Error('Could not find participants array in data/config.js');
-          }
+          participants_match = re.search(r'"participants":\s*\[(.*?)\]', text, re.S)
+          if not participants_match:
+              raise SystemExit("Could not find participants array in data/config.js")
 
-          const participantNames = [...participantsMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
+          participant_names = re.findall(r'"([^"]+)"', participants_match.group(1))
 
-          const openingStandingsBlock = participantNames
-            .map(name => `    {\n      "name": "${name}",\n      "points": 0\n    }`)
-            .join(',\n');
+          opening_standings = ',
+'.join(
+              f'    {{
+      "name": "{name}",
+      "points": 0
+    }}'
+              for name in participant_names
+          )
 
-          text = text.replace(/"season":\s*\d+/, `"season": ${seasonYear}`);
-          text = text.replace(/"currentGameweek":\s*\d+/, `"currentGameweek": 1`);
-          text = text.replace(/"currentGwLabel":\s*"[^"]*"/, `"currentGwLabel": "${seasonLabel}"`);
+          text = re.sub(r'"season":\s*\d+', f'"season": {season_year}', text)
+          text = re.sub(r'"currentGameweek":\s*\d+', '"currentGameweek": 1', text)
+          text = re.sub(r'"currentGwLabel":\s*"[^"]*"', f'"currentGwLabel": "{season_label}"', text)
 
-          text = text.replace(
-            /"openingStandings":\s*\\[[\\s\\S]\*?\\],\s*"teamAliases"/,
-            `"openingStandings": [\n${openingStandingsBlock}\n  ],\n  "teamAliases"`
-          );
+          text = re.sub(
+              r'"openingStandings":\s*\[.*?\],\s*"teamAliases"',
+              f'"openingStandings": [
+{opening_standings}
+  ],
+  "teamAliases"',
+              text,
+              flags=re.S
+          )
 
-          text = text.replace(
-            /"seededPredictions":\s*\{[\s\S]*?\}\s*\n\};/,
-            `"seededPredictions": {\n    "gw": 1,\n    "submittedAt": null,\n    "byFixture": []\n  }\n};`
-          );
+          text = re.sub(
+              r'"seededPredictions":\s*\{.*?\}\s*
+\};',
+              '"seededPredictions": {
+    "gw": 1,
+    "submittedAt": null,
+    "byFixture": []
+  }
+};',
+              text,
+              flags=re.S
+          )
 
-          fs.writeFileSync(path, text, 'utf8');
-          NODE
+          path.write_text(text, encoding="utf-8")
+          PY
 
       - name: Write archive README
         run: |
