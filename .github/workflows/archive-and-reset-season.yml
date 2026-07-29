@@ -84,9 +84,14 @@ jobs:
           }
           EOF
 
+            - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Update config.js for new season
-        shell: python
         run: |
+          python <<'PY'
           import json
           import re
           from pathlib import Path
@@ -115,6 +120,7 @@ jobs:
 
           new_text = "// auto-updated config\n\nconst CONFIG = " + json.dumps(config, indent=2) + ";\n"
           path.write_text(new_text, encoding="utf-8")
+          PY
 
       - name: Write archive README
         run: |
