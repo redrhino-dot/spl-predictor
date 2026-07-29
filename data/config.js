@@ -43,6 +43,7 @@ const CONFIG = {
     "Huns": "Rangers",
     "Celtic": "Celtic",
     "St M": "St Mirren",
+    "St J": "St Johnstone";
     "Dons": "Aberdeen",
     "Yinited": "Dundee United",
     "Utd": "Dundee United",
