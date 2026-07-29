@@ -1,0 +1,85 @@
+{
+  "updated": "2026-05-17T15:37:43.161603+00:00",
+  "round": "2025-26-scottish-premiership",
+  "week_number": null,
+  "fixtures": [
+    {
+      "id": "401867719",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-16T11:00Z",
+      "status": "FT",
+      "home_team": "Celtic",
+      "away_team": "Heart of Midlothian",
+      "home_score": 3,
+      "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867720",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-16T11:00Z",
+      "status": "FT",
+      "home_team": "Falkirk",
+      "away_team": "Rangers",
+      "home_score": 2,
+      "away_score": 5,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867721",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-16T11:00Z",
+      "status": "FT",
+      "home_team": "Hibernian",
+      "away_team": "Motherwell",
+      "home_score": 0,
+      "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867722",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-17T13:00Z",
+      "status": "FT",
+      "home_team": "Dundee",
+      "away_team": "Aberdeen",
+      "home_score": 3,
+      "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867723",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-17T13:00Z",
+      "status": "FT",
+      "home_team": "Livingston",
+      "away_team": "Kilmarnock",
+      "home_score": 1,
+      "away_score": 4,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401867724",
+      "round": "2025-26-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-05-17T13:00Z",
+      "status": "FT",
+      "home_team": "St Mirren",
+      "away_team": "Dundee United",
+      "home_score": 1,
+      "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    }
+  ]
+}
