@@ -856,5 +856,17 @@ input[type=number] { -moz-appearance: textfield; }
   margin-left: 3px;
 }
 
+.honours-table td.honours-cell {
+  text-align: left;
+}
+.trophy {
+  display: inline-block;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+.honours-year {
+  font-size: 0.85em;
+  color: var(--text-muted, #9aa5b1);
+}
 
 
