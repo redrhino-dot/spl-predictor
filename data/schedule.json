@@ -1,0 +1,432 @@
+{
+  "season": 2026,
+  "fixtures": [
+    {
+      "gameweek": 1,
+      "home_team": "Dundee United",
+      "away_team": "Rangers",
+      "scheduled_date": "Fri 31 July 2026"
+    },
+    {
+      "gameweek": 1,
+      "home_team": "Falkirk",
+      "away_team": "St Mirren",
+      "scheduled_date": "Sat 1 August 2026"
+    },
+    {
+      "gameweek": 1,
+      "home_team": "Aberdeen",
+      "away_team": "Hearts",
+      "scheduled_date": "Sat 1 August 2026"
+    },
+    {
+      "gameweek": 1,
+      "home_team": "St Johnstone",
+      "away_team": "Kilmarnock",
+      "scheduled_date": "Sun 2 August 2026"
+    },
+    {
+      "gameweek": 1,
+      "home_team": "Hibernian",
+      "away_team": "Motherwell",
+      "scheduled_date": "Sun 2 August 2026"
+    },
+    {
+      "gameweek": 1,
+      "home_team": "Celtic",
+      "away_team": "Dundee",
+      "scheduled_date": "Mon 3 August 2026"
+    },
+    {
+      "gameweek": 2,
+      "home_team": "Dundee",
+      "away_team": "Aberdeen",
+      "scheduled_date": "Sat 8 August 2026"
+    },
+    {
+      "gameweek": 2,
+      "home_team": "Hearts",
+      "away_team": "Dundee United",
+      "scheduled_date": "Sat 8 August 2026"
+    },
+    {
+      "gameweek": 2,
+      "home_team": "Motherwell",
+      "away_team": "Falkirk",
+      "scheduled_date": "Sat 8 August 2026"
+    },
+    {
+      "gameweek": 2,
+      "home_team": "St Mirren",
+      "away_team": "St Johnstone",
+      "scheduled_date": "Sat 8 August 2026"
+    },
+    {
+      "gameweek": 2,
+      "home_team": "Kilmarnock",
+      "away_team": "Celtic",
+      "scheduled_date": "Sun 9 August 2026"
+    },
+    {
+      "gameweek": 2,
+      "home_team": "Rangers",
+      "away_team": "Hibernian",
+      "scheduled_date": "Sun 9 August 2026"
+    },
+    {
+      "gameweek": 3,
+      "home_team": "Dundee United",
+      "away_team": "Dundee",
+      "scheduled_date": "Sat 22 August 2026"
+    },
+    {
+      "gameweek": 3,
+      "home_team": "Falkirk",
+      "away_team": "Hearts",
+      "scheduled_date": "Sat 22 August 2026"
+    },
+    {
+      "gameweek": 3,
+      "home_team": "Hibernian",
+      "away_team": "Kilmarnock",
+      "scheduled_date": "Sat 22 August 2026"
+    },
+    {
+      "gameweek": 3,
+      "home_team": "Motherwell",
+      "away_team": "Aberdeen",
+      "scheduled_date": "Sat 22 August 2026"
+    },
+    {
+      "gameweek": 3,
+      "home_team": "Rangers",
+      "away_team": "St Mirren",
+      "scheduled_date": "Sat 22 August 2026"
+    },
+    {
+      "gameweek": 3,
+      "home_team": "St Johnstone",
+      "away_team": "Celtic",
+      "scheduled_date": "Sat 22 August 2026"
+    },
+    {
+      "gameweek": 4,
+      "home_team": "Aberdeen",
+      "away_team": "Rangers",
+      "scheduled_date": "Sat 29 August 2026"
+    },
+    {
+      "gameweek": 4,
+      "home_team": "Celtic",
+      "away_team": "Falkirk",
+      "scheduled_date": "Sat 29 August 2026"
+    },
+    {
+      "gameweek": 4,
+      "home_team": "Dundee",
+      "away_team": "Hibernian",
+      "scheduled_date": "Sat 29 August 2026"
+    },
+    {
+      "gameweek": 4,
+      "home_team": "Hearts",
+      "away_team": "St Johnstone",
+      "scheduled_date": "Sat 29 August 2026"
+    },
+    {
+      "gameweek": 4,
+      "home_team": "Kilmarnock",
+      "away_team": "Dundee United",
+      "scheduled_date": "Sat 29 August 2026"
+    },
+    {
+      "gameweek": 4,
+      "home_team": "St Mirren",
+      "away_team": "Motherwell",
+      "scheduled_date": "Sat 29 August 2026"
+    },
+    {
+      "gameweek": 5,
+      "home_team": "Celtic",
+      "away_team": "Aberdeen",
+      "scheduled_date": "Wed 2 September 2026"
+    },
+    {
+      "gameweek": 5,
+      "home_team": "Dundee",
+      "away_team": "St Johnstone",
+      "scheduled_date": "Wed 2 September 2026"
+    },
+    {
+      "gameweek": 5,
+      "home_team": "Falkirk",
+      "away_team": "Rangers",
+      "scheduled_date": "Wed 2 September 2026"
+    },
+    {
+      "gameweek": 5,
+      "home_team": "Hibernian",
+      "away_team": "Hearts",
+      "scheduled_date": "Wed 2 September 2026"
+    },
+    {
+      "gameweek": 5,
+      "home_team": "Kilmarnock",
+      "away_team": "St Mirren",
+      "scheduled_date": "Wed 2 September 2026"
+    },
+    {
+      "gameweek": 5,
+      "home_team": "Motherwell",
+      "away_team": "Dundee United",
+      "scheduled_date": "Wed 2 September 2026"
+    },
+    {
+      "gameweek": 6,
+      "home_team": "Aberdeen",
+      "away_team": "Kilmarnock",
+      "scheduled_date": "Sat 5 September 2026"
+    },
+    {
+      "gameweek": 6,
+      "home_team": "Dundee United",
+      "away_team": "Falkirk",
+      "scheduled_date": "Sat 5 September 2026"
+    },
+    {
+      "gameweek": 6,
+      "home_team": "Hearts",
+      "away_team": "Dundee",
+      "scheduled_date": "Sat 5 September 2026"
+    },
+    {
+      "gameweek": 6,
+      "home_team": "Rangers",
+      "away_team": "Motherwell",
+      "scheduled_date": "Sat 5 September 2026"
+    },
+    {
+      "gameweek": 6,
+      "home_team": "St Johnstone",
+      "away_team": "Hibernian",
+      "scheduled_date": "Sat 5 September 2026"
+    },
+    {
+      "gameweek": 6,
+      "home_team": "St Mirren",
+      "away_team": "Celtic",
+      "scheduled_date": "Sat 5 September 2026"
+    },
+    {
+      "gameweek": 7,
+      "home_team": "Dundee",
+      "away_team": "Motherwell",
+      "scheduled_date": "Sat 19 September 2026"
+    },
+    {
+      "gameweek": 7,
+      "home_team": "Hibernian",
+      "away_team": "Aberdeen",
+      "scheduled_date": "Sat 19 September 2026"
+    },
+    {
+      "gameweek": 7,
+      "home_team": "Kilmarnock",
+      "away_team": "Hearts",
+      "scheduled_date": "Sat 19 September 2026"
+    },
+    {
+      "gameweek": 7,
+      "home_team": "St Johnstone",
+      "away_team": "Falkirk",
+      "scheduled_date": "Sat 19 September 2026"
+    },
+    {
+      "gameweek": 7,
+      "home_team": "St Mirren",
+      "away_team": "Dundee United",
+      "scheduled_date": "Sat 19 September 2026"
+    },
+    {
+      "gameweek": 7,
+      "home_team": "Celtic",
+      "away_team": "Rangers",
+      "scheduled_date": "Sun 20 September 2026"
+    },
+    {
+      "gameweek": 8,
+      "home_team": "Aberdeen",
+      "away_team": "St Johnstone",
+      "scheduled_date": "Sat 10 October 2026"
+    },
+    {
+      "gameweek": 8,
+      "home_team": "Dundee United",
+      "away_team": "Hibernian",
+      "scheduled_date": "Sat 10 October 2026"
+    },
+    {
+      "gameweek": 8,
+      "home_team": "Falkirk",
+      "away_team": "Dundee",
+      "scheduled_date": "Sat 10 October 2026"
+    },
+    {
+      "gameweek": 8,
+      "home_team": "Hearts",
+      "away_team": "St Mirren",
+      "scheduled_date": "Sat 10 October 2026"
+    },
+    {
+      "gameweek": 8,
+      "home_team": "Motherwell",
+      "away_team": "Celtic",
+      "scheduled_date": "Sat 10 October 2026"
+    },
+    {
+      "gameweek": 8,
+      "home_team": "Rangers",
+      "away_team": "Kilmarnock",
+      "scheduled_date": "Sat 10 October 2026"
+    },
+    {
+      "gameweek": 9,
+      "home_team": "Aberdeen",
+      "away_team": "St Mirren",
+      "scheduled_date": "Sat 17 October 2026"
+    },
+    {
+      "gameweek": 9,
+      "home_team": "Celtic",
+      "away_team": "Hearts",
+      "scheduled_date": "Sat 17 October 2026"
+    },
+    {
+      "gameweek": 9,
+      "home_team": "Dundee",
+      "away_team": "Rangers",
+      "scheduled_date": "Sat 17 October 2026"
+    },
+    {
+      "gameweek": 9,
+      "home_team": "Hibernian",
+      "away_team": "Falkirk",
+      "scheduled_date": "Sat 17 October 2026"
+    },
+    {
+      "gameweek": 9,
+      "home_team": "Kilmarnock",
+      "away_team": "Motherwell",
+      "scheduled_date": "Sat 17 October 2026"
+    },
+    {
+      "gameweek": 9,
+      "home_team": "St Johnstone",
+      "away_team": "Dundee United",
+      "scheduled_date": "Sat 17 October 2026"
+    },
+    {
+      "gameweek": 10,
+      "home_team": "Dundee United",
+      "away_team": "Aberdeen",
+      "scheduled_date": "Sat 24 October 2026"
+    },
+    {
+      "gameweek": 10,
+      "home_team": "Falkirk",
+      "away_team": "Kilmarnock",
+      "scheduled_date": "Sat 24 October 2026"
+    },
+    {
+      "gameweek": 10,
+      "home_team": "Hibernian",
+      "away_team": "Celtic",
+      "scheduled_date": "Sat 24 October 2026"
+    },
+    {
+      "gameweek": 10,
+      "home_team": "Motherwell",
+      "away_team": "Hearts",
+      "scheduled_date": "Sat 24 October 2026"
+    },
+    {
+      "gameweek": 10,
+      "home_team": "Rangers",
+      "away_team": "St Johnstone",
+      "scheduled_date": "Sat 24 October 2026"
+    },
+    {
+      "gameweek": 10,
+      "home_team": "St Mirren",
+      "away_team": "Dundee",
+      "scheduled_date": "Sat 24 October 2026"
+    },
+    {
+      "gameweek": 11,
+      "home_team": "Aberdeen",
+      "away_team": "Falkirk",
+      "scheduled_date": "Wed 28 October 2026"
+    },
+    {
+      "gameweek": 11,
+      "home_team": "Celtic",
+      "away_team": "Dundee United",
+      "scheduled_date": "Wed 28 October 2026"
+    },
+    {
+      "gameweek": 11,
+      "home_team": "Dundee",
+      "away_team": "Kilmarnock",
+      "scheduled_date": "Wed 28 October 2026"
+    },
+    {
+      "gameweek": 11,
+      "home_team": "Hearts",
+      "away_team": "Rangers",
+      "scheduled_date": "Wed 28 October 2026"
+    },
+    {
+      "gameweek": 11,
+      "home_team": "St Johnstone",
+      "away_team": "Motherwell",
+      "scheduled_date": "Wed 28 October 2026"
+    },
+    {
+      "gameweek": 11,
+      "home_team": "St Mirren",
+      "away_team": "Hibernian",
+      "scheduled_date": "Wed 28 October 2026"
+    },
+    {
+      "gameweek": 12,
+      "home_team": "Dundee United",
+      "away_team": "Hearts",
+      "scheduled_date": "Sat 31 October 2026"
+    },
+    {
+      "gameweek": 12,
+      "home_team": "Falkirk",
+      "away_team": "Celtic",
+      "scheduled_date": "Sat 31 October 2026"
+    },
+    {
+      "gameweek": 12,
+      "home_team": "Hibernian",
+      "away_team": "Dundee",
+      "scheduled_date": "Sat 31 October 2026"
+    },
+    {
+      "gameweek": 12,
+      "home_team": "Kilmarnock",
+      "away_team": "St Johnstone",
+      "scheduled_date": "Sat 31 October 2026"
+    },
+    {
+      "gameweek": 12,
+      "home_team": "Motherwell",
+      "away_team": "St Mirren",
+      "scheduled_date": "Sat 31 October 2026"
+    },
+    {
+      "gameweek": 12,
+     
