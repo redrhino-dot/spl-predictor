@@ -38,20 +38,20 @@ const CONFIG = {
       "points": 0
     }
   ],
-  "teamAliases": {
-    "Hibs": "Hibernian",
-    "Huns": "Rangers",
-    "Celtic": "Celtic",
-    "St M": "St Mirren",
-    "Dons": "Aberdeen",
-    "Yinited": "Dundee United",
-    "Utd": "Dundee United",
-    "Livi": "Livingston",
-    "Well": "Motherwell",
-    "Killie": "Kilmarnock",
-    "Hearts": "Heart of Midlothian",
-    "Dundee": "Dundee"
-  },
+  teamAliases: {
+  "Hibs": "Hibernian",
+  "Huns": "Rangers",
+  "Celtic": "Celtic",
+  "St M": "St Mirren",
+  "Dons": "Aberdeen",
+  "Yinited": "Dundee United",
+  "Well": "Motherwell",
+  "Killie": "Kilmarnock",
+  "Hearts": "Heart of Midlothian",
+  "Dundee": "Dundee",
+  "Falkirk": "Falkirk",
+  "St J": "St Johnstone"
+},
   "seededPredictions": {
     "gw": 1,
     "submittedAt": null,
