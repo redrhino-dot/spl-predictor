@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderOpeningStandings();
   populateParticipantDropdown();
   setupSettingsTab();
+  renderHonoursBoard();
 
   await loadAllData();
   await seedPredictionsIfNeeded();
@@ -58,6 +59,7 @@ function setupNavigation() {
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       if (btn.dataset.tab === 'stats') renderStatsTab();
+      if (btn.dataset.tab === 'honours') renderHonoursBoard();
     });
   });
 
@@ -767,6 +769,36 @@ async function archiveCurrentGW() {
   } else {
     alert('Archive failed — please try again.');
   }
+}
+
+/* ============================================================
+   HALL OF FAME
+   ============================================================ */
+function renderHonoursBoard() {
+  const container = document.getElementById('honours-board');
+  if (!container) return;
+  const honours = CONFIG.honours || [];
+  const sorted  = [...honours].sort((a, b) => b.titles.length - a.titles.length);
+
+  container.innerHTML = `
+    <table class="data-table honours-table">
+      <thead>
+        <tr><th>Participant</th><th>Titles</th><th>Total</th></tr>
+      </thead>
+      <tbody>
+        ${sorted.map(p => `
+          <tr>
+            <td>${displayName(p.name)}</td>
+            <td class="honours-cell">
+              ${p.titles.length > 0
+                ? p.titles.map(y => `<span class="trophy">🏆 <span class="honours-year">(${y})</span></span>`).join(' ')
+                : '<span class="no-data">—</span>'}
+            </td>
+            <td><strong>${p.titles.length}</strong></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
 }
 
 /* ============================================================
