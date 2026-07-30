@@ -858,7 +858,7 @@ function getAlias(apiName) {
   for (const [alias, team] of Object.entries(CONFIG.teamAliases)) {
     if (team === apiName) return alias;
   }
-  return apiName.split(' ')[0];
+  return apiName;
 }
 
 /* ============================================================
