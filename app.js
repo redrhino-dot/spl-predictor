@@ -6,10 +6,11 @@ const COMPLETED = ['FT', 'AET', 'PEN'];
 const LIVE      = ['1H', 'HT', '2H', 'ET', 'P', 'LIVE'];
 const IN_PLAY   = [...LIVE, ...COMPLETED];
 
-let fixturesData   = { fixtures: [], updated: null };
-let livescoresData = { livescores: [] };
+let fixturesData    = { fixtures: [], updated: null };
+let livescoresData  = { livescores: [] };
 let predictionsData = null;
-let archiveData     = null;
+let archiveData      = null;
+let scheduleData      = { fixtures: [] };
 
 let predFormDirty = false;
 
@@ -87,14 +88,46 @@ async function fetchJSON(url) {
 }
 
 async function loadAllData() {
-  const [f, l, p] = await Promise.all([
+  const [f, l, p, s] = await Promise.all([
     fetchJSON('data/fixtures.json'),
     fetchJSON('data/livescores.json'),
     fetchJSON('data/predictions.json'),
+    fetchJSON('data/schedule.json'),
   ]);
-  if (f) fixturesData   = f;
-  if (l) livescoresData = l;
+  if (f) fixturesData    = f;
+  if (l) livescoresData  = l;
   if (p) predictionsData = p;
+  if (s) scheduleData    = s;
+
+  tagFixturesWithScheduledGameweek();
+}
+
+/* ============================================================
+   SCHEDULE MAP — TRUE GAMEWEEK ASSIGNMENT
+   ============================================================ */
+function getScheduledGameweek(homeTeam, awayTeam) {
+  const list = scheduleData.fixtures || [];
+  const match = list.find(
+    f => f.home_team === homeTeam && f.away_team === awayTeam
+  );
+  return match ? match.gameweek : null;
+}
+
+function tagFixturesWithScheduledGameweek() {
+  const fixtures = fixturesData.fixtures || [];
+  fixtures.forEach(fixture => {
+    const scheduled = getScheduledGameweek(fixture.home_team, fixture.away_team);
+    fixture.assigned_gameweek = scheduled !== null ? scheduled : CONFIG.currentGameweek;
+  });
+}
+
+function getFixturesForGameweek(gwNum) {
+  return (fixturesData.fixtures || []).filter(f => f.assigned_gameweek === gwNum);
+}
+
+function getDistinctGameweeksInFixtures() {
+  const set = new Set((fixturesData.fixtures || []).map(f => f.assigned_gameweek));
+  return [...set].sort((a, b) => a - b);
 }
 
 /* ============================================================
@@ -189,38 +222,52 @@ function renderFixturesTable() {
     return;
   }
 
-  const now     = new Date();
-  const gwKey   = String(CONFIG.currentGameweek);
-  const gwPreds = predictionsData?.gameweeks[gwKey]?.predictions || {};
-  const liveMap = buildLiveMap();
-  let lastGroup = null;
+  const now       = new Date();
+  const liveMap   = buildLiveMap();
+  const gwNumbers = getDistinctGameweeksInFixtures();
+  let lastGroup   = null;
 
-  fixtures.forEach(fixture => {
-    const groupKey = formatGroupHeader(fixture.kickoff);
-    if (groupKey !== lastGroup) {
-      const headerRow = document.createElement('tr');
-      headerRow.className = 'date-group-header';
-      headerRow.innerHTML = `<td colspan="${3 + CONFIG.participants.length}">${groupKey}</td>`;
-      tbody.appendChild(headerRow);
-      lastGroup = groupKey;
+  gwNumbers.forEach(gwNum => {
+    const gwKey       = String(gwNum);
+    const gwPreds     = predictionsData?.gameweeks[gwKey]?.predictions || {};
+    const gwFixtures  = getFixturesForGameweek(gwNum);
+
+    if (gwNumbers.length > 1) {
+      const gwHeaderRow = document.createElement('tr');
+      gwHeaderRow.className = 'gw-group-header';
+      gwHeaderRow.innerHTML = `<td colspan="${3 + CONFIG.participants.length}"><strong>Gameweek ${gwNum}</strong></td>`;
+      tbody.appendChild(gwHeaderRow);
     }
 
-    const kickoff     = new Date(fixture.kickoff);
-    const started     = now >= kickoff;
-    const live        = liveMap[String(fixture.id)] || fixture;
-    const status      = live.status || fixture.status || '';
-    const isCompleted = COMPLETED.includes(status);
-    const isLive      = LIVE.includes(status);
+    lastGroup = null;
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="team-name home-team">${getAlias(fixture.home_team)}</td>
-      <td class="team-name away-team">${getAlias(fixture.away_team)}</td>
-      <td class="score-cell">${buildScoreCell(live, fixture, started, isLive, isCompleted)}</td>
-      ${CONFIG.participants.map(p =>
-        buildPredCell(p, fixture, gwPreds[p] || [], live, started, isCompleted, isLive)
-      ).join('')}`;
-    tbody.appendChild(tr);
+    gwFixtures.forEach(fixture => {
+      const groupKey = formatGroupHeader(fixture.kickoff);
+      if (groupKey !== lastGroup) {
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'date-group-header';
+        headerRow.innerHTML = `<td colspan="${3 + CONFIG.participants.length}">${groupKey}</td>`;
+        tbody.appendChild(headerRow);
+        lastGroup = groupKey;
+      }
+
+      const kickoff     = new Date(fixture.kickoff);
+      const started     = now >= kickoff;
+      const live        = liveMap[String(fixture.id)] || fixture;
+      const status      = live.status || fixture.status || '';
+      const isCompleted = COMPLETED.includes(status);
+      const isLive      = LIVE.includes(status);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="team-name home-team">${getAlias(fixture.home_team)}</td>
+        <td class="team-name away-team">${getAlias(fixture.away_team)}</td>
+        <td class="score-cell">${buildScoreCell(live, fixture, started, isLive, isCompleted)}</td>
+        ${CONFIG.participants.map(p =>
+          buildPredCell(p, fixture, gwPreds[p] || [], live, started, isCompleted, isLive)
+        ).join('')}`;
+      tbody.appendChild(tr);
+    });
   });
 
   updateTimestamp();
@@ -337,16 +384,16 @@ function renderPredictionForm() {
   const participant = document.getElementById('pred-participant').value;
   const pin         = document.getElementById('pred-pin').value.trim();
   const pinCorrect  = CONFIG.pins[participant] === pin;
-  const gwKey       = String(CONFIG.currentGameweek);
-  const preds       = predictionsData?.gameweeks[gwKey]?.predictions[participant] || [];
   const now         = new Date();
 
   fixtures.forEach(fixture => {
-    const kickoff = new Date(fixture.kickoff);
-    const locked  = now >= kickoff;
-    const active  = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
-    const homeVal = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
-    const awayVal = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
+    const gwKey    = String(fixture.assigned_gameweek);
+    const preds    = predictionsData?.gameweeks[gwKey]?.predictions[participant] || [];
+    const kickoff  = new Date(fixture.kickoff);
+    const locked   = now >= kickoff;
+    const active   = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+    const homeVal  = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
+    const awayVal  = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
 
     let submittedLabel = '';
     if (pinCorrect && participant && active && active.submitted_at) {
@@ -360,12 +407,12 @@ function renderPredictionForm() {
     row.innerHTML = `
       <span class="pred-team pred-home">${fixture.home_team}</span>
       <input type="number" class="pred-score-input"
-             data-fixture-id="${fixture.id}" data-side="home"
+             data-fixture-id="${fixture.id}" data-gw="${fixture.assigned_gameweek}" data-side="home"
              min="0" max="20" value="${homeVal}" placeholder="0"
              ${locked ? 'disabled' : ''} />
       <span class="pred-separator">–</span>
       <input type="number" class="pred-score-input"
-             data-fixture-id="${fixture.id}" data-side="away"
+             data-fixture-id="${fixture.id}" data-gw="${fixture.assigned_gameweek}" data-side="away"
              min="0" max="20" value="${awayVal}" placeholder="0"
              ${locked ? 'disabled' : ''} />
       <span class="pred-team pred-away">${fixture.away_team}</span>
@@ -390,44 +437,51 @@ async function submitPredictions() {
   if (CONFIG.pins[participant] !== pin) { showStatus(statusEl, 'Incorrect PIN.', 'error'); return; }
 
   const now      = new Date();
-  const gwKey    = String(CONFIG.currentGameweek);
   const fixtures = fixturesData.fixtures || [];
 
   const byFixture = {};
   document.querySelectorAll('.pred-score-input').forEach(input => {
     const fid  = parseInt(input.dataset.fixtureId);
     const side = input.dataset.side;
-    if (!byFixture[fid]) byFixture[fid] = {};
+    const gw   = input.dataset.gw;
+    if (!byFixture[fid]) byFixture[fid] = { gw };
     byFixture[fid][side]         = input.value === '' ? 0 : parseInt(input.value) || 0;
     byFixture[fid][side + 'Raw'] = input.value;
   });
 
   const submittedAt = new Date().toISOString();
-  const newEntries  = [];
+  const newEntriesByGw = {};
 
   for (const fixture of fixtures) {
     if (now >= new Date(fixture.kickoff)) continue;
     const scores = byFixture[fixture.id];
     if (!scores || scores.home === undefined || scores.away === undefined) continue;
 
+    const gwKey = String(fixture.assigned_gameweek);
+    if (!predictionsData.gameweeks[gwKey]) {
+      predictionsData.gameweeks[gwKey] = { predictions: {} };
+    }
+    if (!predictionsData.gameweeks[gwKey].predictions[participant]) {
+      predictionsData.gameweeks[gwKey].predictions[participant] = [];
+    }
+
     if (scores.homeRaw === '' && scores.awayRaw === '') {
-      if (predictionsData.gameweeks[gwKey]?.predictions[participant]) {
-        predictionsData.gameweeks[gwKey].predictions[participant] =
-          predictionsData.gameweeks[gwKey].predictions[participant]
-            .filter(p => String(p.fixture_id) !== String(fixture.id));
-      }
+      predictionsData.gameweeks[gwKey].predictions[participant] =
+        predictionsData.gameweeks[gwKey].predictions[participant]
+          .filter(p => String(p.fixture_id) !== String(fixture.id));
       continue;
     }
 
     const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
-      predictionsData.gameweeks[gwKey]?.predictions[participant] || []);
+      predictionsData.gameweeks[gwKey].predictions[participant] || []);
 
     const unchanged = existing &&
       existing.home_score === scores.home &&
       existing.away_score === scores.away;
 
     if (!unchanged) {
-      newEntries.push({
+      if (!newEntriesByGw[gwKey]) newEntriesByGw[gwKey] = [];
+      newEntriesByGw[gwKey].push({
         fixture_id:   fixture.id,
         home_score:   scores.home,
         away_score:   scores.away,
@@ -436,22 +490,18 @@ async function submitPredictions() {
     }
   }
 
-  if (newEntries.length === 0) {
+  const totalNew = Object.values(newEntriesByGw).reduce((sum, arr) => sum + arr.length, 0);
+  if (totalNew === 0) {
     showStatus(statusEl, 'No changes to save.', 'info');
     return;
   }
 
-  if (!predictionsData.gameweeks[gwKey]) {
-    predictionsData.gameweeks[gwKey] = { predictions: {} };
-  }
-  if (!predictionsData.gameweeks[gwKey].predictions[participant]) {
-    predictionsData.gameweeks[gwKey].predictions[participant] = [];
-  }
-  newEntries.forEach(e => predictionsData.gameweeks[gwKey].predictions[participant].push(e));
+  Object.entries(newEntriesByGw).forEach(([gwKey, entries]) => {
+    entries.forEach(e => predictionsData.gameweeks[gwKey].predictions[participant].push(e));
+  });
 
   showStatus(statusEl, 'Saving…', 'info');
   document.getElementById('pred-submit-btn').disabled = true;
-
   const ok = await writeFileToGitHub('data/predictions.json', predictionsData);
   document.getElementById('pred-submit-btn').disabled = false;
 
@@ -461,9 +511,11 @@ async function submitPredictions() {
     renderFixturesTable();
     renderProjectedStandings();
   } else {
-    const arr = predictionsData.gameweeks[gwKey].predictions[participant];
-    predictionsData.gameweeks[gwKey].predictions[participant] =
-      arr.slice(0, arr.length - newEntries.length);
+    Object.entries(newEntriesByGw).forEach(([gwKey, entries]) => {
+      const arr = predictionsData.gameweeks[gwKey].predictions[participant];
+      predictionsData.gameweeks[gwKey].predictions[participant] =
+        arr.slice(0, arr.length - entries.length);
+    });
     showStatus(statusEl, 'Save failed — please try again.', 'error');
   }
 }
@@ -480,18 +532,30 @@ function renderProjectedStandings() {
   const tbody = document.getElementById('projected-body');
   if (!tbody) return;
 
-  const gwKey    = String(CONFIG.currentGameweek);
-  const fixtures = fixturesData.fixtures || [];
-  const preds    = predictionsData?.gameweeks?.[gwKey]?.predictions || {};
-  const liveMap  = buildLiveMap();
+  const liveMap   = buildLiveMap();
+  const gwNumbers = getDistinctGameweeksInFixtures();
 
   const rows = CONFIG.participants.map(name => {
     const entry      = CONFIG.openingStandings.find(s => s.name === name) || {};
     const openingPts = entry.points || 0;
-    const gwPoints   = computeEarned(name, fixtures, preds, liveMap);
-    const notation   = buildPointsNotation(name, fixtures, preds, liveMap);
-    const projected  = openingPts + gwPoints;
-    return { name, openingPts, gwPoints, notation, projected };
+
+    let gwPoints = 0;
+    const notationParts = [];
+
+    gwNumbers.forEach(gwNum => {
+      const gwKey      = String(gwNum);
+      const gwFixtures = getFixturesForGameweek(gwNum);
+      const gwPreds    = predictionsData?.gameweeks?.[gwKey]?.predictions || {};
+      const earned     = computeEarned(name, gwFixtures, gwPreds, liveMap);
+      gwPoints += earned;
+      if (earned > 0) {
+        const notation = buildPointsNotation(name, gwFixtures, gwPreds, liveMap);
+        notationParts.push(gwNumbers.length > 1 ? `GW${gwNum}: ${notation}` : notation);
+      }
+    });
+
+    const projected = openingPts + gwPoints;
+    return { name, openingPts, gwPoints, notation: notationParts.join(' | '), projected };
   });
 
   rows.sort((a, b) => b.projected - a.projected);
@@ -522,7 +586,11 @@ function checkAndRenderBlockEnding() {
   }
 
   const liveMap = buildLiveMap();
-  const allDone = fixtures.every(f => {
+
+  const currentGwFixtures = getFixturesForGameweek(CONFIG.currentGameweek);
+  const relevantFixtures  = currentGwFixtures.length > 0 ? currentGwFixtures : fixtures;
+
+  const allDone = relevantFixtures.every(f => {
     const status = (liveMap[String(f.id)] || f).status || f.status || '';
     return COMPLETED.includes(status);
   });
@@ -535,7 +603,7 @@ function checkAndRenderBlockEnding() {
 
   projectedSection.style.display = 'none';
   section.style.display          = 'block';
-  renderBlockEnding(fixtures, liveMap);
+  renderBlockEnding(relevantFixtures, liveMap);
 
   document.getElementById('archive-btn-container').style.display = 'block';
   document.getElementById('archive-gw-btn').onclick = archiveCurrentGW;
@@ -702,25 +770,27 @@ async function archiveCurrentGW() {
   if (pin === null) return;
   if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
 
-  const fixtures = fixturesData.fixtures || [];
+  const fixtures = getFixturesForGameweek(CONFIG.currentGameweek);
+  const allFixtures = fixturesData.fixtures || [];
+  const targetFixtures = fixtures.length > 0 ? fixtures : allFixtures;
   const liveMap  = buildLiveMap();
   const gwKey    = String(CONFIG.currentGameweek);
   const gwPreds  = predictionsData?.gameweeks[gwKey]?.predictions || {};
 
   const closingStandings = CONFIG.openingStandings.map(entry => ({
     name:   entry.name,
-    points: entry.points + computeEarned(entry.name, fixtures, gwPreds, liveMap),
+    points: entry.points + computeEarned(entry.name, targetFixtures, gwPreds, liveMap),
   }));
 
   const pointsBreakdown = {};
   CONFIG.participants.forEach(p => {
     pointsBreakdown[p] = {
-      points:   computeEarned(p, fixtures, gwPreds, liveMap),
-      notation: buildPointsNotation(p, fixtures, gwPreds, liveMap),
+      points:   computeEarned(p, targetFixtures, gwPreds, liveMap),
+      notation: buildPointsNotation(p, targetFixtures, gwPreds, liveMap),
     };
   });
 
-  const results = fixtures
+  const results = targetFixtures
     .filter(f => COMPLETED.includes((liveMap[String(f.id)] || f).status || f.status || ''))
     .map(f => {
       const live = liveMap[String(f.id)] || f;
@@ -735,7 +805,7 @@ async function archiveCurrentGW() {
 
   const archivedPredictions = {};
   CONFIG.participants.forEach(p => {
-    archivedPredictions[p] = fixtures.map(f => {
+    archivedPredictions[p] = targetFixtures.map(f => {
       const pred = getActivePrediction(p, f.id, f.kickoff, gwPreds[p] || []);
       if (!pred) return null;
       return { fixture_id: f.id, home_score: pred.home_score, away_score: pred.away_score };
