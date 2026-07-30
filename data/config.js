@@ -1,7 +1,7 @@
 // auto-updated config
 
 const CONFIG = {
-  "githubPAT": ['github_pat_11B4JHOFQ', '00M5KnxT8h4jU_BCRac2McVqIi8kKAhKCM1pG4WCpg3XVcRcC2yiN00lB2D3Q7WG39xz8u0Og'].join(''),
+  "githubPAT": ['github_pat_11B4JHOFQ0HGdNOhAN4V4L_ciN5nyZXLib30A9SMQaxj2O14vNoh', 'kpd16jdDv7EBE9GCZJVIENleUKpH76'].join(''),
   "githubOwner": "redrhino-dot",
   "githubRepo": "spl-predictor",
   "leagueId": 179,
