@@ -57,4 +57,10 @@ const CONFIG = {
     "submittedAt": null,
     "byFixture": []
   }
+  honours: [
+  { name: 'Smith', titles: ['24/25', '22/23', '21/22'] },
+  { name: 'Jon',   titles: ['23/24'] },
+  { name: 'Kris',  titles: ['25/26'] },
+  { name: 'Doug',  titles: [] },
+],
 };
