@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-01T18:24:50.758116+00:00",
+  "updated": "2026-08-01T18:27:31.417891+00:00",
   "livescores": [
     {
       "id": "401878416",
@@ -32,10 +32,10 @@
       "round": "2026-27-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-08-01T16:30Z",
-      "status": "LIVE",
+      "status": "FT",
       "home_team": "Aberdeen",
       "away_team": "Heart of Midlothian",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
