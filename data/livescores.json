@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-01T16:31:32.090118+00:00",
+  "updated": "2026-08-01T16:54:45.290802+00:00",
   "livescores": [
     {
       "id": "401878416",
@@ -19,12 +19,25 @@
       "round": "2026-27-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-08-01T14:00Z",
-      "status": "2H",
+      "status": "FT",
       "home_team": "Falkirk",
       "away_team": "St Mirren",
       "home_score": 0,
-      "away_score": 1,
-      "elapsed": 74,
+      "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401878414",
+      "round": "2026-27-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-08-01T16:30Z",
+      "status": "1H",
+      "home_team": "Aberdeen",
+      "away_team": "Heart of Midlothian",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 3,
       "elapsed_extra": null
     }
   ]
