@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-01T14:16:57.318381+00:00",
+  "updated": "2026-08-01T15:31:11.836626+00:00",
   "round": "2026-27-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -21,12 +21,12 @@
       "round": "2026-27-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-08-01T14:00Z",
-      "status": "1H",
+      "status": "2H",
       "home_team": "Falkirk",
       "away_team": "St Mirren",
       "home_score": 0,
       "away_score": 1,
-      "elapsed": 16,
+      "elapsed": 74,
       "elapsed_extra": null
     },
     {
