@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-02T13:46:04.957604+00:00",
+  "updated": "2026-08-02T13:50:31.682293+00:00",
   "livescores": [
     {
       "id": "401878416",
@@ -38,6 +38,19 @@
       "home_score": 2,
       "away_score": 1,
       "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401878413",
+      "round": "2026-27-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-08-02T13:00Z",
+      "status": "1H",
+      "home_team": "St Johnstone",
+      "away_team": "Kilmarnock",
+      "home_score": 1,
+      "away_score": 1,
+      "elapsed": 45,
       "elapsed_extra": null
     }
   ]
