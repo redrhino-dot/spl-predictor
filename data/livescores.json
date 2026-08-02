@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-02T16:40:02.998699+00:00",
+  "updated": "2026-08-02T16:49:30.457241+00:00",
   "livescores": [
     {
       "id": "401878416",
@@ -51,6 +51,19 @@
       "home_score": 4,
       "away_score": 3,
       "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "401878412",
+      "round": "2026-27-scottish-premiership",
+      "week_number": null,
+      "kickoff": "2026-08-02T15:30Z",
+      "status": "1H",
+      "home_team": "Hibernian",
+      "away_team": "Motherwell",
+      "home_score": 0,
+      "away_score": 0,
+      "elapsed": 17,
       "elapsed_extra": null
     }
   ]
