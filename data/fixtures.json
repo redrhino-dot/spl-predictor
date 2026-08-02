@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-02T14:50:23.420485+00:00",
+  "updated": "2026-08-02T14:59:23.921907+00:00",
   "round": "2026-27-scottish-premiership",
   "week_number": null,
   "fixtures": [
@@ -47,12 +47,12 @@
       "round": "2026-27-scottish-premiership",
       "week_number": null,
       "kickoff": "2026-08-02T13:00Z",
-      "status": "FT",
+      "status": "2H",
       "home_team": "St Johnstone",
       "away_team": "Kilmarnock",
-      "home_score": 1,
-      "away_score": 1,
-      "elapsed": null,
+      "home_score": 2,
+      "away_score": 3,
+      "elapsed": 58,
       "elapsed_extra": null
     },
     {
