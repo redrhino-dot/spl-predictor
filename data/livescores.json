@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-02T14:59:23.921907+00:00",
+  "updated": "2026-08-02T15:03:56.119588+00:00",
   "livescores": [
     {
       "id": "401878416",
@@ -48,9 +48,9 @@
       "status": "2H",
       "home_team": "St Johnstone",
       "away_team": "Kilmarnock",
-      "home_score": 2,
+      "home_score": 4,
       "away_score": 3,
-      "elapsed": 58,
+      "elapsed": 90,
       "elapsed_extra": null
     }
   ]
