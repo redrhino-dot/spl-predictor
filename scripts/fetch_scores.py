@@ -59,12 +59,16 @@ def espn_status(detail, clock, state):
 
 
 def fetch_day(date_str):
-    url = f'{BASE}/scoreboard?dates={date_str}&limit=20'
+    target = f'{BASE}/scoreboard?dates={date_str}&limit=20'
+    url = f'https://corsproxy.io/?url={requests.utils.quote(target, safe="")}'
     r = requests.get(url, headers=HDRS, timeout=20)
     print(f'  {date_str}: HTTP {r.status_code}')
     if r.status_code != 200:
         return []
-    return r.json().get('events', [])
+    try:
+        return r.json().get('events', [])
+    except Exception:
+        return []
 
 
 def parse_event(ev):
