@@ -60,9 +60,13 @@ def espn_status(detail, clock, state):
 
 def fetch_day(date_str):
     target = f'{BASE}/scoreboard?dates={date_str}&limit=20'
-    url = f'https://corsproxy.io/?url={requests.utils.quote(target, safe="")}'
-    r = requests.get(url, headers=HDRS, timeout=20)
-    print(f'  {date_str}: HTTP {r.status_code}')
+    url = f'https://api.allorigins.win/raw?url={requests.utils.quote(target, safe="")}'
+    try:
+        r = requests.get(url, headers=HDRS, timeout=20)
+    except Exception as e:
+        print(f'  {date_str}: request failed — {e}')
+        return []
+    print(f'  {date_str}: HTTP {r.status_code} | body: {r.text[:200]}')
     if r.status_code != 200:
         return []
     try:
