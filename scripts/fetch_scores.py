@@ -3,18 +3,7 @@ from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1'
-HDRS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                   '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'en-GB,en;q=0.9',
-    'Referer': 'https://www.espn.co.uk/football/fixtures/_/league/sco.1',
-    'Origin': 'https://www.espn.co.uk',
-    'Connection': 'keep-alive',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-site',
-}
+HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
 
 DONE_ST = {'FT', 'AET', 'PEN'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
@@ -23,6 +12,8 @@ WINDOW_PRE_MINS  = 5    # minutes before first KO to start fetching
 WINDOW_POST_MINS = 120  # minutes after last scheduled KO to keep fetching
 
 STALE_LIVE_MINS  = 115  # minutes after kickoff before treating stuck LIVE as FT
+
+PRECHECK_HORIZON_SECS = 7200  # 2 hours — how close to kickoff counts as "imminent"
 
 
 def resolve_match_status(status, kickoff, elapsed):
@@ -58,20 +49,11 @@ def espn_status(detail, clock, state):
 
 
 def fetch_day(date_str):
-    target = f'{BASE}/scoreboard?dates={date_str}&limit=20'
-    url = f'https://api.allorigins.win/raw?url={requests.utils.quote(target, safe="")}'
-    try:
-        r = requests.get(url, headers=HDRS, timeout=20)
-    except Exception as e:
-        print(f'  {date_str}: request failed — {e}')
-        return []
-    print(f'  {date_str}: HTTP {r.status_code} | body: {r.text[:200]}')
+    url = f'{BASE}/scoreboard?dates={date_str}&limit=20'
+    r = requests.get(url, headers=HDRS, timeout=20)
     if r.status_code != 200:
         return []
-    try:
-        return r.json().get('events', [])
-    except Exception:
-        return []
+    return r.json().get('events', [])
 
 
 def parse_event(ev):
@@ -170,7 +152,35 @@ def is_live_window(fixtures):
 
 FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
 
-now    = datetime.now(timezone.utc)
+now = datetime.now(timezone.utc)
+
+# ── Cheap pre-check: only today's date, ONE request ───────────────────────────
+if not FORCE_RUN:
+    print('Running lightweight pre-check (today only)...')
+    today_str = now.strftime('%Y%m%d')
+    today_raw_events = fetch_day(today_str)
+    today_parsed = [p for p in (parse_event(e) for e in today_raw_events) if p and p['kickoff']]
+
+    has_relevant_activity = False
+    for p in today_parsed:
+        if p['status'] in LIVE_ST:
+            has_relevant_activity = True
+            break
+        try:
+            ko = datetime.fromisoformat(p['kickoff'].replace('Z', '+00:00'))
+            if abs((ko - now).total_seconds()) < PRECHECK_HORIZON_SECS:
+                has_relevant_activity = True
+                break
+        except Exception:
+            continue
+
+    if not has_relevant_activity:
+        print('Pre-check: no live or imminent match today — skipping full scan.')
+        sys.exit(0)
+
+    print('Pre-check: relevant activity detected — proceeding with full scan.')
+
+# ── Full scan (only reached if FORCE_RUN or pre-check found activity) ────────
 events = {}
 print('Scanning date range for current gameweek...')
 _weekday     = now.weekday()   # Mon=0 Tue=1 Wed=2 Thu=3 Fri=4 Sat=5 Sun=6
