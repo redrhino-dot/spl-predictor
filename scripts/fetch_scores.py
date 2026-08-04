@@ -8,7 +8,6 @@ HDRS = {
                    '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
     'Accept': 'application/json, text/plain, */*',
     'Accept-Language': 'en-GB,en;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br',
     'Referer': 'https://www.espn.co.uk/football/fixtures/_/league/sco.1',
     'Origin': 'https://www.espn.co.uk',
     'Connection': 'keep-alive',
