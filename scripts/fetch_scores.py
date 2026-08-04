@@ -3,7 +3,19 @@ from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1'
-HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
+HDRS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                   '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-GB,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Referer': 'https://www.espn.co.uk/football/fixtures/_/league/sco.1',
+    'Origin': 'https://www.espn.co.uk',
+    'Connection': 'keep-alive',
+    'Sec-Fetch-Dest': 'empty',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Site': 'same-site',
+}
 
 DONE_ST = {'FT', 'AET', 'PEN'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
