@@ -1,13 +1,13 @@
 // auto-updated config
 
 const CONFIG = {
-  "githubPAT": ['github_pat_11B4JHOFQ0HGdNOhAN4V4L_ciN5nyZXLib30A9SMQaxj2O14vNoh', 'kpd16jdDv7EBE9GCZJVIENleUKpH76'].join(''),
+  "githubPAT": ['github_pat_11B4JHOFQ', '0HGdNOhAN4V4L_ciN5nyZXLib30A9SMQaxj2O14vNohkpd16jdDv7EBE9GCZJVIENleUKpH76'].join(''),
   "githubOwner": "redrhino-dot",
   "githubRepo": "spl-predictor",
   "leagueId": 179,
   "season": 2026,
-  "currentGameweek": 1,
-  "currentGwLabel": "GW1 — TBD",
+  "currentGameweek": 2,
+  "currentGwLabel": "GW2 — TBD",
   "participants": [
     "Graham",
     "Jon",
@@ -22,45 +22,65 @@ const CONFIG = {
   },
   "openingStandings": [
     {
-      "name": "Graham",
-      "points": 0
+      "name": "Doug",
+      "points": 6
     },
     {
       "name": "Jon",
-      "points": 0
+      "points": 5
+    },
+    {
+      "name": "Graham",
+      "points": 2
     },
     {
       "name": "Kris",
-      "points": 0
+      "points": 2
+    }
+  ],
+  "teamAliases": {
+    "Hibs": "Hibernian",
+    "Huns": "Rangers",
+    "Celtic": "Celtic",
+    "St M": "St Mirren",
+    "Dons": "Aberdeen",
+    "Yinited": "Dundee United",
+    "Well": "Motherwell",
+    "Killie": "Kilmarnock",
+    "Hearts": "Heart of Midlothian",
+    "Dundee": "Dundee",
+    "Falkirk": "Falkirk",
+    "St J": "St Johnstone"
+  },
+  "seededPredictions": {
+    "gw": 2,
+    "submittedAt": "2026-08-04T19:52:12.794Z",
+    "byFixture": []
+  },
+  "honours": [
+    {
+      "name": "Smith",
+      "titles": [
+        "24/25",
+        "22/23",
+        "21/22"
+      ]
+    },
+    {
+      "name": "Jon",
+      "titles": [
+        "23/24"
+      ]
+    },
+    {
+      "name": "Kris",
+      "titles": [
+        "25/26"
+      ]
     },
     {
       "name": "Doug",
-      "points": 0
+      "titles": []
     }
-  ],
-  teamAliases: {
-  "Hibs": "Hibernian",
-  "Huns": "Rangers",
-  "Celtic": "Celtic",
-  "St M": "St Mirren",
-  "Dons": "Aberdeen",
-  "Yinited": "Dundee United",
-  "Well": "Motherwell",
-  "Killie": "Kilmarnock",
-  "Hearts": "Heart of Midlothian",
-  "Dundee": "Dundee",
-  "Falkirk": "Falkirk",
-  "St J": "St Johnstone"
-},
-  "seededPredictions": {
-    "gw": 1,
-    "submittedAt": null,
-    "byFixture": []
-  },
-  honours: [
-  { name: 'Smith', titles: ['24/25', '22/23', '21/22'] },
-  { name: 'Jon',   titles: ['23/24'] },
-  { name: 'Kris',  titles: ['25/26'] },
-  { name: 'Doug',  titles: [] },
-],
+  ]
 };
