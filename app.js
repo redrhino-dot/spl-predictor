@@ -13,6 +13,7 @@ let archiveData      = null;
 let scheduleData      = { fixtures: [] };
 
 let predFormDirty = false;
+let scoreFormDirty = false;
 
 /* ============================================================
    BOOT
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupNavigation();
   renderOpeningStandings();
   populateParticipantDropdown();
+  populateScoreParticipantDropdown();
   setupSettingsTab();
   renderHonoursBoard();
 
@@ -39,12 +41,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!predFormDirty) {
       renderPredictionForm();
     }
+    if (!scoreFormDirty) {
+      renderScoreForm();
+    }
   }, 30000);
 });
 
 function fullRender() {
   renderFixturesTable();
   renderPredictionForm();
+  renderScoreForm();
   renderProjectedStandings();
   checkAndRenderBlockEnding();
 }
@@ -523,6 +529,142 @@ async function submitPredictions() {
 function showStatus(el, msg, type) {
   el.textContent = msg;
   el.className   = 'pred-status status-' + type;
+}
+
+/* ============================================================
+   LIVE SCORE UPDATE FORM (mirrors prediction form UX)
+   ============================================================ */
+const SCORE_STATUS_OPTIONS = ['NS', '1H', 'HT', '2H', 'FT'];
+
+function populateScoreParticipantDropdown() {
+  const sel = document.getElementById('score-participant');
+  if (!sel) return;
+  CONFIG.participants.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => {
+    scoreFormDirty = false;
+    renderScoreForm();
+  });
+  document.getElementById('score-pin').addEventListener('input', () => {
+    scoreFormDirty = false;
+    renderScoreForm();
+  });
+}
+
+function renderScoreForm() {
+  const container = document.getElementById('score-form-rows');
+  if (!container) return;
+  const fixtures = fixturesData.fixtures || [];
+  container.innerHTML = '';
+
+  if (fixtures.length === 0) {
+    container.innerHTML = '<p class="no-data">No fixtures available.</p>';
+    return;
+  }
+
+  const participant = document.getElementById('score-participant').value;
+  const pin         = document.getElementById('score-pin').value.trim();
+  const pinCorrect  = participant && CONFIG.pins[participant] === pin;
+  const liveMap     = buildLiveMap();
+
+  fixtures.forEach(fixture => {
+    const live = liveMap[String(fixture.id)] || fixture;
+    const status = live.status || fixture.status || 'NS';
+
+    const row = document.createElement('div');
+    row.className = 'pred-row';
+    row.innerHTML = `
+      <span class="pred-team pred-home">${fixture.home_team}</span>
+      <input type="number" class="pred-score-input score-home-input"
+             data-fixture-id="${fixture.id}"
+             min="0" max="20" value="${live.home_score ?? ''}" placeholder="0"
+             ${pinCorrect ? '' : 'disabled'} />
+      <span class="pred-separator">–</span>
+      <input type="number" class="pred-score-input score-away-input"
+             data-fixture-id="${fixture.id}"
+             min="0" max="20" value="${live.away_score ?? ''}" placeholder="0"
+             ${pinCorrect ? '' : 'disabled'} />
+      <span class="pred-team pred-away">${fixture.away_team}</span>
+      <select class="score-status-select" data-fixture-id="${fixture.id}" ${pinCorrect ? '' : 'disabled'}>
+        ${SCORE_STATUS_OPTIONS.map(s => `<option value="${s}" ${status === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>`;
+    container.appendChild(row);
+  });
+
+  container.querySelectorAll('.score-home-input, .score-away-input, .score-status-select').forEach(input => {
+    input.addEventListener('input', () => { scoreFormDirty = true; });
+    input.addEventListener('change', () => { scoreFormDirty = true; });
+  });
+
+  const lastBy = livescoresData.last_updated_by;
+  const lastAt = livescoresData.updated;
+  const lbl = document.getElementById('score-last-updated');
+  if (lbl) {
+    lbl.textContent = lastBy
+      ? `Scores last updated by ${lastBy} at ${formatTimeBST(lastAt)} BST`
+      : '';
+  }
+
+  document.getElementById('score-submit-btn').onclick = submitScoreUpdates;
+}
+
+async function submitScoreUpdates() {
+  const participant = document.getElementById('score-participant').value;
+  const pin         = document.getElementById('score-pin').value.trim();
+  const statusEl    = document.getElementById('score-status');
+
+  if (!participant) { showStatus(statusEl, 'Please select a participant.', 'error'); return; }
+  if (CONFIG.pins[participant] !== pin) { showStatus(statusEl, 'Incorrect PIN.', 'error'); return; }
+
+  const fixtures  = fixturesData.fixtures || [];
+  const updatedAt = new Date().toISOString();
+
+  document.querySelectorAll('.score-home-input').forEach(homeInput => {
+    const fid   = homeInput.dataset.fixtureId;
+    const fixture = fixtures.find(f => String(f.id) === String(fid));
+    if (!fixture) return;
+
+    const awayInput     = document.querySelector(`.score-away-input[data-fixture-id="${fid}"]`);
+    const statusSelect  = document.querySelector(`.score-status-select[data-fixture-id="${fid}"]`);
+
+    const homeVal = homeInput.value !== '' ? parseInt(homeInput.value, 10) : null;
+    const awayVal = awayInput.value !== '' ? parseInt(awayInput.value, 10) : null;
+    const statusVal = statusSelect.value;
+
+    fixture.home_score = homeVal;
+    fixture.away_score = awayVal;
+    fixture.status      = statusVal;
+  });
+
+  fixturesData.updated = updatedAt;
+
+  livescoresData.livescores = fixtures
+    .filter(f => (f.status || 'NS') !== 'NS')
+    .map(f => ({ ...f }));
+  livescoresData.updated         = updatedAt;
+  livescoresData.last_updated_by = participant;
+
+  showStatus(statusEl, 'Saving…', 'info');
+  document.getElementById('score-submit-btn').disabled = true;
+
+  const okFixtures = await writeFileToGitHub('data/fixtures.json', fixturesData);
+  const okLive     = await writeFileToGitHub('data/livescores.json', livescoresData);
+
+  document.getElementById('score-submit-btn').disabled = false;
+
+  if (okFixtures === true && okLive === true) {
+    scoreFormDirty = false;
+    showStatus(statusEl, `Saved at ${formatTimeBST(updatedAt)} BST ✓`, 'success');
+    renderFixturesTable();
+    renderProjectedStandings();
+    checkAndRenderBlockEnding();
+    renderScoreForm();
+  } else {
+    showStatus(statusEl, 'Save failed — please try again.', 'error');
+  }
 }
 
 /* ============================================================
