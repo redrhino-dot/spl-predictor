@@ -1,4 +1,31 @@
 {
-  "updated": "2026-08-04T19:52:14.293Z",
-  "livescores": []
+  "updated": "2026-08-08T16:51:00.000Z",
+  "livescores": [
+    {
+      "id": "2001",
+      "round": "Matchweek 2",
+      "week_number": 2,
+      "kickoff": "2026-08-08T14:00:00Z",
+      "status": "FT",
+      "home_team": "Dundee",
+      "away_team": "Aberdeen",
+      "home_score": 2,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2002",
+      "round": "Matchweek 2",
+      "week_number": 2,
+      "kickoff": "2026-08-08T14:00:00Z",
+      "status": "FT",
+      "home_team": "St Mirren",
+      "away_team": "St Johnstone",
+      "home_score": 1,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null
+    }
+  ]
 }
