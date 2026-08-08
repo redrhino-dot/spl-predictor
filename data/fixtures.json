@@ -15,7 +15,8 @@
   "away_score": 0,
   "elapsed": null,
   "elapsed_extra": null
-}{
+},
+    {
   "id": "2002",
   "round": "Matchweek 2",
   "week_number": 2,
@@ -27,7 +28,7 @@
   "away_score": 0,
   "elapsed": null,
   "elapsed_extra": null
-}
+},
     {
       "id": "2003",
       "round": "Matchweek 2",
