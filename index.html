@@ -37,6 +37,7 @@
       <div class="sub-tabs">
         <button class="sub-tab-btn active" data-subtab="results">Results</button>
         <button class="sub-tab-btn" data-subtab="predictions">My Predictions</button>
+        <button class="sub-tab-btn" data-subtab="scores">Update Scores</button>
       </div>
 
       <!-- ---- RESULTS SUB-TAB ---- -->
@@ -121,6 +122,33 @@
           </div>
         </section>
       </div><!-- end #subtab-predictions -->
+
+      <!-- ---- UPDATE SCORES SUB-TAB ---- -->
+      <div id="subtab-scores" class="sub-tab-content">
+        <section class="card">
+          <h2>Update Live Fixtures &amp; Results</h2>
+          <p class="score-hint">
+            Enter the current score and match state for each fixture. Status options: NS (not started),
+            1H (first half), HT (half-time), 2H (second half), FT (full-time).
+          </p>
+          <div class="pred-header-controls">
+            <div class="pred-control-group">
+              <label for="score-participant">Updated By</label>
+              <select id="score-participant"><option value="">— Select —</option></select>
+            </div>
+            <div class="pred-control-group">
+              <label for="score-pin">PIN</label>
+              <input type="password" id="score-pin" maxlength="4" placeholder="4-digit PIN" autocomplete="off" />
+            </div>
+          </div>
+          <div id="score-last-updated" class="last-updated"></div>
+          <div id="score-form-rows" class="pred-form-rows"></div>
+          <div class="pred-actions">
+            <button id="score-submit-btn" class="btn-primary">Save Scores</button>
+            <span id="score-status" class="pred-status"></span>
+          </div>
+        </section>
+      </div><!-- end #subtab-scores -->
 
     </div><!-- end #tab-main -->
 
