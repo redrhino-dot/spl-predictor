@@ -141,10 +141,10 @@ def is_live_window(fixtures):
     window_close = latest   + timedelta(minutes=WINDOW_POST_MINS)
 
     if window_open <= now <= window_close:
-        print(f'Within live window ({window_open.strftime("%H:%M")}–{window_close.strftime("%H:%M")} UTC) — running update.')
+        print(f'Within live window ({window_open.strftime("%H:%M")}\u2013{window_close.strftime("%H:%M")} UTC) — running update.')
         return True
 
-    print(f'Outside live window ({window_open.strftime("%H:%M")}–{window_close.strftime("%H:%M")} UTC) — skipping update.')
+    print(f'Outside live window ({window_open.strftime("%H:%M")}\u2013{window_close.strftime("%H:%M")} UTC) — skipping update.')
     return False
 
 
@@ -301,17 +301,29 @@ if not FORCE_RUN and not is_live_window(fixtures):
     sys.exit(0)
 
 # ── Merge with existing fixtures to prevent completed ones dropping out ───────
+# Keyed by (home_team, away_team) instead of id, so ESPN's real event IDs
+# always take precedence over placeholder IDs used for manual score entries
+# (e.g. 2001, 2002...). This prevents duplicate rows once ESPN starts
+# reporting a match that was previously entered manually.
 existing_path = 'data/fixtures.json'
 if os.path.exists(existing_path):
     with open(existing_path) as fh:
         existing_data = json.load(fh)
-    existing_map = {f['id']: f for f in existing_data.get('fixtures', [])}
-    new_ids = {f['id'] for f in fixtures}
-    for fid, fx in existing_map.items():
-        if fid not in new_ids:
+
+    def team_key(f):
+        return (f.get('home_team', ''), f.get('away_team', ''))
+
+    existing_map = {team_key(f): f for f in existing_data.get('fixtures', [])}
+    new_keys     = {team_key(f) for f in fixtures}
+
+    retained = 0
+    for key, fx in existing_map.items():
+        if key not in new_keys:
             fixtures.append(fx)
+            retained += 1
+
     fixtures.sort(key=lambda x: x['kickoff'])
-    print(f'After merge: {len(fixtures)} fixtures (retained {len(fixtures) - len(new_ids)} from existing)')
+    print(f'After merge: {len(fixtures)} fixtures (retained {retained} from existing, ESPN provided {len(new_keys)})')
 
 # ── Write data files ──────────────────────────────────────────────────────────
 os.makedirs('data', exist_ok=True)
