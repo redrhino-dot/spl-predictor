@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T15:14:55.625Z",
+  "updated": "2026-08-09T15:25:33.207Z",
   "round": "Matchweek 2",
   "week_number": 2,
   "fixtures": [
@@ -53,7 +53,7 @@
       "status": "2H",
       "home_team": "Hearts",
       "away_team": "Dundee United",
-      "home_score": 3,
+      "home_score": 4,
       "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null,
