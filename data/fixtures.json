@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T15:56:11.046Z",
+  "updated": "2026-08-09T16:51:34.523Z",
   "round": "Matchweek 2",
   "week_number": 2,
   "fixtures": [
@@ -78,10 +78,10 @@
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T15:00:00Z",
-      "status": "HT",
+      "status": "2H",
       "home_team": "Rangers",
       "away_team": "Hibernian",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null,
