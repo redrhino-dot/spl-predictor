@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T14:13:43.541Z",
+  "updated": "2026-08-09T14:46:50.384Z",
   "livescores": [
     {
       "id": "2001",
@@ -34,7 +34,7 @@
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T12:30:00Z",
-      "status": "2H",
+      "status": "FT",
       "home_team": "Kilmarnock",
       "away_team": "Celtic",
       "home_score": 1,
@@ -62,7 +62,7 @@
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T14:00:00Z",
-      "status": "1H",
+      "status": "HT",
       "home_team": "Motherwell",
       "away_team": "Falkirk",
       "home_score": 0,
