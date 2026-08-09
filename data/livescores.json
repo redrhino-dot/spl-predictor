@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T14:49:05.531Z",
+  "updated": "2026-08-09T15:07:54.856Z",
   "livescores": [
     {
       "id": "2001",
@@ -48,7 +48,7 @@
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T14:00:00Z",
-      "status": "HT",
+      "status": "2H",
       "home_team": "Hearts",
       "away_team": "Dundee United",
       "home_score": 2,
@@ -62,7 +62,7 @@
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T14:00:00Z",
-      "status": "HT",
+      "status": "2H",
       "home_team": "Motherwell",
       "away_team": "Falkirk",
       "home_score": 0,
