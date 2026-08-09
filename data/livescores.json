@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T14:46:50.384Z",
+  "updated": "2026-08-09T14:49:05.531Z",
   "livescores": [
     {
       "id": "2001",
@@ -48,7 +48,7 @@
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T14:00:00Z",
-      "status": "1H",
+      "status": "HT",
       "home_team": "Hearts",
       "away_team": "Dundee United",
       "home_score": 2,
