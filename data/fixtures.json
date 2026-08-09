@@ -1,72 +1,77 @@
 {
-  "updated": "2026-08-04T20:55:00.000Z",
+  "updated": "2026-08-09T14:12:20.672Z",
   "round": "Matchweek 2",
   "week_number": 2,
   "fixtures": [
     {
-  "id": "2001",
-  "round": "Matchweek 2",
-  "week_number": 2,
-  "kickoff": "2026-08-08T14:00:00Z",
-  "status": "FT",
-  "home_team": "Dundee",
-  "away_team": "Aberdeen",
-  "home_score": 2,
-  "away_score": 0,
-  "elapsed": null,
-  "elapsed_extra": null
-},
+      "id": "2001",
+      "round": "Matchweek 2",
+      "week_number": 2,
+      "kickoff": "2026-08-08T14:00:00Z",
+      "status": "FT",
+      "home_team": "Dundee",
+      "away_team": "Aberdeen",
+      "home_score": 2,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
+    },
     {
-  "id": "2002",
-  "round": "Matchweek 2",
-  "week_number": 2,
-  "kickoff": "2026-08-08T14:00:00Z",
-  "status": "FT",
-  "home_team": "St Mirren",
-  "away_team": "St Johnstone",
-  "home_score": 1,
-  "away_score": 0,
-  "elapsed": null,
-  "elapsed_extra": null
-},
+      "id": "2002",
+      "round": "Matchweek 2",
+      "week_number": 2,
+      "kickoff": "2026-08-08T14:00:00Z",
+      "status": "FT",
+      "home_team": "St Mirren",
+      "away_team": "St Johnstone",
+      "home_score": 1,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
+    },
     {
       "id": "2003",
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T12:30:00Z",
-      "status": "NS",
+      "status": "2H",
       "home_team": "Kilmarnock",
       "away_team": "Celtic",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 5,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2004",
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T14:00:00Z",
-      "status": "NS",
+      "status": "1H",
       "home_team": "Hearts",
       "away_team": "Dundee United",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2005",
       "round": "Matchweek 2",
       "week_number": 2,
       "kickoff": "2026-08-09T14:00:00Z",
-      "status": "NS",
+      "status": "1H",
       "home_team": "Motherwell",
       "away_team": "Falkirk",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2006",
@@ -79,7 +84,8 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     }
   ]
 }
