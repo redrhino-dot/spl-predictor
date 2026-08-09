@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-09T15:25:33.207Z",
+  "updated": "2026-08-09T15:26:12.650Z",
   "livescores": [
     {
       "id": "2001",
@@ -51,7 +51,7 @@
       "status": "2H",
       "home_team": "Hearts",
       "away_team": "Dundee United",
-      "home_score": 4,
+      "home_score": 3,
       "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null,
@@ -67,6 +67,20 @@
       "away_team": "Falkirk",
       "home_score": 0,
       "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
+    },
+    {
+      "id": "2006",
+      "round": "Matchweek 2",
+      "week_number": 2,
+      "kickoff": "2026-08-09T15:00:00Z",
+      "status": "1H",
+      "home_team": "Rangers",
+      "away_team": "Hibernian",
+      "home_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null,
       "assigned_gameweek": 2
