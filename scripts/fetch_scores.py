@@ -2,7 +2,7 @@ import json, os, sys, requests
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
-BASE = 'https://site.api.espn.com/apis/site/v3/sports/soccer/sco.1'
+BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1'
 HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
 
 DONE_ST = {'FT', 'AET', 'PEN'}
@@ -31,7 +31,7 @@ def resolve_match_status(status, kickoff, elapsed):
     return status
 
 
-def espn_status(detail, clock, state):
+def espn_status(detail, clock, state, period=None):
     d = (detail or '').upper()
     if any(x in d for x in ('FINAL', 'FULL TIME', 'FT')): return 'FT'
     if state == 'post': return 'FT'
@@ -40,6 +40,11 @@ def espn_status(detail, clock, state):
     if 'POSTPONE' in d:  return 'PST'
     if 'CANCEL'   in d:  return 'CANC'
     if state == 'in' or 'HALF' in d or 'PROGRESS' in d or 'LIVE' in d:
+        if period is not None:
+            try:
+                return '2H' if int(period) >= 2 else '1H'
+            except Exception:
+                pass
         try:
             mins = int((clock or '0:00').split(':')[0].replace("'", ""))
             return '2H' if mins > 45 else '1H'
@@ -67,7 +72,8 @@ def parse_event(ev):
     detail     = status_obj.get('type', {}).get('description', '')
     state      = status_obj.get('type', {}).get('state', '')
     clock      = status_obj.get('displayClock', '')
-    status     = espn_status(detail, clock, state)
+    period     = status_obj.get('period')
+    status     = espn_status(detail, clock, state, period)
 
     elapsed       = None
     elapsed_extra = None
@@ -141,10 +147,10 @@ def is_live_window(fixtures):
     window_close = latest   + timedelta(minutes=WINDOW_POST_MINS)
 
     if window_open <= now <= window_close:
-        print(f'Within live window ({window_open.strftime("%H:%M")}\u2013{window_close.strftime("%H:%M")} UTC) — running update.')
+        print(f'Within live window ({window_open.strftime("%H:%M")}–{window_close.strftime("%H:%M")} UTC) — running update.')
         return True
 
-    print(f'Outside live window ({window_open.strftime("%H:%M")}\u2013{window_close.strftime("%H:%M")} UTC) — skipping update.')
+    print(f'Outside live window ({window_open.strftime("%H:%M")}–{window_close.strftime("%H:%M")} UTC) — skipping update.')
     return False
 
 
