@@ -2,7 +2,7 @@ import json, os, sys, requests
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
-BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1'
+BASE = 'https://site.api.espn.com/apis/site/v3/sports/soccer/sco.1'
 HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
 
 DONE_ST = {'FT', 'AET', 'PEN'}
