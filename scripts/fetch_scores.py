@@ -56,23 +56,35 @@ def espn_status(detail, clock, state, period=None):
     return 'NS'
 
 
-def fetch_day_cdn(date_str):
+def fetch_day_cdn(date_str, retries=2):
     """Best-effort fallback via cdn.espn.com — different Akamai path/config,
-    may not be subject to the same IP/ASN block as site.api.espn.com."""
+    may not be subject to the same IP/ASN block as site.api.espn.com.
+    A 202 typically means the edge cache is cold and warming from origin —
+    worth a short retry rather than failing immediately."""
     url = f'https://cdn.espn.com/core/soccer/scoreboard?xhr=1&league=sco.1&dates={date_str}'
-    try:
-        r = requests.get(url, headers=HDRS, timeout=20)
-        if r.status_code != 200:
-            print(f'  CDN fallback: HTTP {r.status_code} for {date_str}', file=sys.stderr)
+    for attempt in range(retries):
+        try:
+            r = requests.get(url, headers=HDRS, timeout=20)
+            if r.status_code in (200, 202):
+                try:
+                    data = r.json()
+                    events = data.get('content', {}).get('sbData', {}).get('events')
+                    if events is None:
+                        events = data.get('events')
+                    if events is not None:
+                        return events
+                    print(f'  CDN fallback: HTTP {r.status_code} but no events yet for {date_str}', file=sys.stderr)
+                except ValueError:
+                    print(f'  CDN fallback: HTTP {r.status_code}, non-JSON body for {date_str}', file=sys.stderr)
+            else:
+                print(f'  CDN fallback: HTTP {r.status_code} for {date_str}', file=sys.stderr)
+                return None
+        except Exception as e:
+            print(f'  CDN fallback error for {date_str}: {e}', file=sys.stderr)
             return None
-        data = r.json()
-        events = data.get('content', {}).get('sbData', {}).get('events')
-        if events is None:
-            events = data.get('events')
-        return events or []
-    except Exception as e:
-        print(f'  CDN fallback error for {date_str}: {e}', file=sys.stderr)
-        return None
+        if attempt < retries - 1:
+            time.sleep(1.5)
+    return None
 
 
 def fetch_day(date_str, retries=3):
@@ -218,7 +230,7 @@ if not FORCE_RUN:
 _weekday = now.weekday()
 _lookback = -4 if _weekday in (4, 5, 6, 0) else -1
 
-LOOKAHEAD_STEPS = [7, 14, 21, 30]  # expand only if the narrower window comes up empty
+LOOKAHEAD_STEPS = [7, 14, 21, 30]
 
 events = {}
 scanned_up_to = _lookback - 1
