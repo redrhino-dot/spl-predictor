@@ -1,4 +1,4 @@
-import json, os, sys, requests, time
+import json, os, sys, requests, time, urllib.parse
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
@@ -10,6 +10,8 @@ HDRS = {
     'Referer': 'https://www.espn.com/',
     'Origin': 'https://www.espn.com',
 }
+
+PROXY_PREFIX = 'https://api.allorigins.win/raw?url='
 
 DONE_ST = {'FT', 'AET', 'PEN'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
@@ -56,34 +58,25 @@ def espn_status(detail, clock, state, period=None):
     return 'NS'
 
 
-def fetch_day_cdn(date_str, retries=2):
-    """Best-effort fallback via cdn.espn.com — different Akamai path/config,
-    may not be subject to the same IP/ASN block as site.api.espn.com.
-    A 202 typically means the edge cache is cold and warming from origin —
-    worth a short retry rather than failing immediately."""
-    url = f'https://cdn.espn.com/core/soccer/scoreboard?xhr=1&league=sco.1&dates={date_str}'
+def fetch_via_proxy(target_url, retries=2):
+    """Relay the request through a third-party server so it doesn't originate
+    from a GitHub Actions IP. Used only after the primary domain is confirmed
+    blocked (403) on this runner."""
+    proxied_url = PROXY_PREFIX + urllib.parse.quote(target_url, safe='')
     for attempt in range(retries):
         try:
-            r = requests.get(url, headers=HDRS, timeout=20)
-            if r.status_code in (200, 202):
+            r = requests.get(proxied_url, headers=HDRS, timeout=25)
+            if r.status_code == 200:
                 try:
-                    data = r.json()
-                    events = data.get('content', {}).get('sbData', {}).get('events')
-                    if events is None:
-                        events = data.get('events')
-                    if events is not None:
-                        return events
-                    print(f'  CDN fallback: HTTP {r.status_code} but no events yet for {date_str}', file=sys.stderr)
+                    return r.json()
                 except ValueError:
-                    print(f'  CDN fallback: HTTP {r.status_code}, non-JSON body for {date_str}', file=sys.stderr)
+                    print(f'  Proxy: HTTP 200 but non-JSON body (attempt {attempt + 1})', file=sys.stderr)
             else:
-                print(f'  CDN fallback: HTTP {r.status_code} for {date_str}', file=sys.stderr)
-                return None
+                print(f'  Proxy: HTTP {r.status_code} (attempt {attempt + 1})', file=sys.stderr)
         except Exception as e:
-            print(f'  CDN fallback error for {date_str}: {e}', file=sys.stderr)
-            return None
+            print(f'  Proxy error (attempt {attempt + 1}): {e}', file=sys.stderr)
         if attempt < retries - 1:
-            time.sleep(1.5)
+            time.sleep(2)
     return None
 
 
@@ -101,8 +94,15 @@ def fetch_day(date_str, retries=3):
             print(f'  Attempt {attempt + 1} error for {date_str}: {e}', file=sys.stderr)
         if attempt < retries - 1:
             time.sleep(2 ** attempt)
-    print(f'  Primary domain exhausted for {date_str} — trying CDN fallback...', file=sys.stderr)
-    return fetch_day_cdn(date_str)
+
+    print(f'  Primary domain exhausted for {date_str} — trying proxy relay...', file=sys.stderr)
+    data = fetch_via_proxy(url)
+    if data is not None:
+        events = data.get('events', [])
+        print(f'  Proxy relay succeeded for {date_str} ({len(events)} events)', file=sys.stderr)
+        return events
+    print(f'  Proxy relay failed for {date_str}', file=sys.stderr)
+    return None
 
 
 def parse_event(ev):
