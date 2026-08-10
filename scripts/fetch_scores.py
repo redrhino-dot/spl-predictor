@@ -11,7 +11,11 @@ HDRS = {
     'Origin': 'https://www.espn.com',
 }
 
-PROXY_PREFIX = 'https://api.allorigins.win/raw?url='
+PROXY_BUILDERS = [
+    lambda u: 'https://api.allorigins.win/raw?url=' + urllib.parse.quote(u, safe=''),
+    lambda u: 'https://corsproxy.io/?url=' + urllib.parse.quote(u, safe=''),
+    lambda u: 'https://api.codetabs.com/v1/proxy?quest=' + urllib.parse.quote(u, safe=''),
+]
 
 DONE_ST = {'FT', 'AET', 'PEN'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
@@ -58,25 +62,23 @@ def espn_status(detail, clock, state, period=None):
     return 'NS'
 
 
-def fetch_via_proxy(target_url, retries=2):
-    """Relay the request through a third-party server so it doesn't originate
-    from a GitHub Actions IP. Used only after the primary domain is confirmed
-    blocked (403) on this runner."""
-    proxied_url = PROXY_PREFIX + urllib.parse.quote(target_url, safe='')
-    for attempt in range(retries):
+def fetch_via_proxy(target_url):
+    """Try each proxy relay in turn. Diversifying providers means a single
+    proxy outage (e.g. a Cloudflare 522) doesn't take down the whole fallback."""
+    for i, build_url in enumerate(PROXY_BUILDERS):
+        proxied_url = build_url(target_url)
+        proxy_host = proxied_url.split('/')[2]
         try:
-            r = requests.get(proxied_url, headers=HDRS, timeout=25)
+            r = requests.get(proxied_url, headers=HDRS, timeout=15)
             if r.status_code == 200:
                 try:
                     return r.json()
                 except ValueError:
-                    print(f'  Proxy: HTTP 200 but non-JSON body (attempt {attempt + 1})', file=sys.stderr)
+                    print(f'  Proxy {proxy_host}: HTTP 200 but non-JSON body', file=sys.stderr)
             else:
-                print(f'  Proxy: HTTP {r.status_code} (attempt {attempt + 1})', file=sys.stderr)
+                print(f'  Proxy {proxy_host}: HTTP {r.status_code}', file=sys.stderr)
         except Exception as e:
-            print(f'  Proxy error (attempt {attempt + 1}): {e}', file=sys.stderr)
-        if attempt < retries - 1:
-            time.sleep(2)
+            print(f'  Proxy {proxy_host} error: {e}', file=sys.stderr)
     return None
 
 
@@ -95,13 +97,13 @@ def fetch_day(date_str, retries=3):
         if attempt < retries - 1:
             time.sleep(2 ** attempt)
 
-    print(f'  Primary domain exhausted for {date_str} — trying proxy relay...', file=sys.stderr)
+    print(f'  Primary domain exhausted for {date_str} — trying proxy relays...', file=sys.stderr)
     data = fetch_via_proxy(url)
     if data is not None:
         events = data.get('events', [])
         print(f'  Proxy relay succeeded for {date_str} ({len(events)} events)', file=sys.stderr)
         return events
-    print(f'  Proxy relay failed for {date_str}', file=sys.stderr)
+    print(f'  All proxy relays failed for {date_str}', file=sys.stderr)
     return None
 
 
