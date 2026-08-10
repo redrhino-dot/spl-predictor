@@ -195,27 +195,41 @@ if not FORCE_RUN:
 
     print('Pre-check: relevant activity detected — proceeding with full scan.')
 
-events = {}
-print('Scanning date range for current gameweek...')
 _weekday = now.weekday()
 _lookback = -4 if _weekday in (4, 5, 6, 0) else -1
-print(f'Scan window: {_lookback} to +7 days (weekday={now.strftime("%A")})')
 
-for delta in range(_lookback, 7):
-    day = (now + timedelta(days=delta)).strftime('%Y%m%d')
-    evs = fetch_day(day)
-    if evs is None:
-        print(f'ERROR: ESPN API unavailable for {day}', file=sys.stderr)
-        sys.exit(2)
-    for e in evs:
-        events[str(e.get('id'))] = e
-    if evs:
-        print(f'  {day}: {len(evs)} events')
+LOOKAHEAD_STEPS = [7, 14, 21, 30]  # expand only if the narrower window comes up empty
+
+events = {}
+scanned_up_to = _lookback - 1
+
+for lookahead in LOOKAHEAD_STEPS:
+    print(f'Scanning day {scanned_up_to + 1} to +{lookahead} (weekday={now.strftime("%A")})...')
+    for delta in range(scanned_up_to + 1, lookahead + 1):
+        day = (now + timedelta(days=delta)).strftime('%Y%m%d')
+        evs = fetch_day(day)
+        if evs is None:
+            print(f'ERROR: ESPN API unavailable for {day}', file=sys.stderr)
+            sys.exit(2)
+        for e in evs:
+            events[str(e.get('id'))] = e
+        if evs:
+            print(f'  {day}: {len(evs)} events')
+    scanned_up_to = lookahead
+    if events:
+        print(f'Found {len(events)} unique events within +{lookahead}-day window — stopping expansion.')
+        break
+    print(f'No events found within +{lookahead} days — expanding window...')
 
 all_events = list(events.values())
 print(f'Total unique events found: {len(all_events)}')
 if not all_events:
-    print('ERROR: no events found from ESPN API', file=sys.stderr)
+    print(
+        f'ERROR: no events found from ESPN API even after expanding to +{LOOKAHEAD_STEPS[-1]} days. '
+        f'This most likely means ESPN is blocking/failing requests rather than a genuine fixture gap — '
+        f'check the HTTP status codes logged above by fetch_day().',
+        file=sys.stderr
+    )
     sys.exit(1)
 
 parsed_all = []
