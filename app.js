@@ -1204,44 +1204,51 @@ async function doPut(apiBase, newContent, sha) {
    ROLL TO NEXT GAMEWEEK
    ============================================================ */
 async function rollToNextGW() {
-  const pin = prompt('Enter Kris\'s admin PIN to roll to the next gameweek:');
+  const pin = prompt("Enter Kris's admin PIN to roll to the next gameweek:");
   if (pin === null) return;
   if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
 
   const btn = document.getElementById('roll-gw-btn');
 
-  const currentArchive = await fetchJSON('data/archive.json');
+  // Use the in-memory archive first — it was just updated by archiveCurrentGW()
+  // and is guaranteed fresh. Falling back to a network fetch risks reading a
+  // stale/cached copy of archive.json immediately after writing to it.
+  const currentArchive = (archiveData && archiveData.gameweeks && archiveData.gameweeks.length > 0)
+    ? archiveData
+    : await fetchJSON('data/archive.json');
+
   if (!currentArchive || !currentArchive.gameweeks || currentArchive.gameweeks.length === 0) {
     alert('No archived gameweeks found. Archive the current one first!');
     return;
   }
 
-  const lastGW    = currentArchive.gameweeks[currentArchive.gameweeks.length - 1];
-  const nextGWNum = CONFIG.currentGameweek + 1;
+  // Pick the entry with the highest gameweek number, not the last array index —
+  // this avoids relying on insertion order.
+  const lastGW = currentArchive.gameweeks.reduce(
+    (max, gw) => (gw.gameweek > max.gameweek ? gw : max),
+    currentArchive.gameweeks[0]
+  );
 
-  const newOpeningStandings = [...lastGW.closing_standings]
+  const nextGWNum = CONFIG.currentGameweek + 1;
+  const newOpeningStandings = [...lastGW.closingstandings]
     .sort((a, b) => b.points - a.points)
     .map(s => ({ name: s.name, points: s.points }));
 
   const newConfigObj = {
     ...CONFIG,
     currentGameweek: nextGWNum,
-    currentGwLabel:  `GW${nextGWNum} — TBD`,
+    currentGwLabel: `GW${nextGWNum} — TBD`,
     openingStandings: newOpeningStandings,
-    seededPredictions: {
-      gw: nextGWNum,
-      submittedAt: new Date().toISOString(),
-      byFixture: [],
-    },
+    seededPredictions: { gw: nextGWNum, submittedAt: new Date().toISOString(), byFixture: {} },
   };
 
   btn.disabled = true;
-  btn.textContent = 'Rolling...';
+  btn.textContent = 'Rolling…';
 
   const ok = await saveSafeConfig(newConfigObj);
 
   if (ok === true) {
-    const emptyFixtures   = { updated: new Date().toISOString(), round: '', fixtures: [] };
+    const emptyFixtures = { updated: new Date().toISOString(), round: '', fixtures: [] };
     const emptyLivescores = { updated: new Date().toISOString(), livescores: [] };
     await writeFileToGitHub('data/fixtures.json', emptyFixtures);
     await writeFileToGitHub('data/livescores.json', emptyLivescores);
@@ -1256,11 +1263,12 @@ async function rollToNextGW() {
         },
         body: JSON.stringify({ ref: 'main', inputs: { force_run: 'true' } }),
       });
-      btn.textContent = 'Fetching fixtures...';
+      btn.textContent = 'Fetching fixtures…';
       await new Promise(r => setTimeout(r, 35000));
     } catch (e) {
-      console.warn('Could not trigger fixture fetch:', e);
+      console.warn('Could not trigger fixture fetch', e);
     }
+
     alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
     window.location.reload();
   } else {
