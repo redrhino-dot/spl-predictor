@@ -56,6 +56,25 @@ def espn_status(detail, clock, state, period=None):
     return 'NS'
 
 
+def fetch_day_cdn(date_str):
+    """Best-effort fallback via cdn.espn.com — different Akamai path/config,
+    may not be subject to the same IP/ASN block as site.api.espn.com."""
+    url = f'https://cdn.espn.com/core/soccer/scoreboard?xhr=1&league=sco.1&dates={date_str}'
+    try:
+        r = requests.get(url, headers=HDRS, timeout=20)
+        if r.status_code != 200:
+            print(f'  CDN fallback: HTTP {r.status_code} for {date_str}', file=sys.stderr)
+            return None
+        data = r.json()
+        events = data.get('content', {}).get('sbData', {}).get('events')
+        if events is None:
+            events = data.get('events')
+        return events or []
+    except Exception as e:
+        print(f'  CDN fallback error for {date_str}: {e}', file=sys.stderr)
+        return None
+
+
 def fetch_day(date_str, retries=3):
     url = f'{BASE}/scoreboard?dates={date_str}&limit=20'
     for attempt in range(retries):
@@ -70,7 +89,8 @@ def fetch_day(date_str, retries=3):
             print(f'  Attempt {attempt + 1} error for {date_str}: {e}', file=sys.stderr)
         if attempt < retries - 1:
             time.sleep(2 ** attempt)
-    return None
+    print(f'  Primary domain exhausted for {date_str} — trying CDN fallback...', file=sys.stderr)
+    return fetch_day_cdn(date_str)
 
 
 def parse_event(ev):
