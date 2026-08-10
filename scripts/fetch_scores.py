@@ -1,23 +1,26 @@
-import json, os, sys, requests
+import json, os, sys, requests, time
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1'
-HDRS = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
+HDRS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Referer': 'https://www.espn.com/',
+    'Origin': 'https://www.espn.com',
+}
 
 DONE_ST = {'FT', 'AET', 'PEN'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
 
-WINDOW_PRE_MINS  = 5    # minutes before first KO to start fetching
-WINDOW_POST_MINS = 120  # minutes after last scheduled KO to keep fetching
-
-STALE_LIVE_MINS  = 115  # minutes after kickoff before treating stuck LIVE as FT
-
-PRECHECK_HORIZON_SECS = 7200  # 2 hours — how close to kickoff counts as "imminent"
+WINDOW_PRE_MINS  = 5
+WINDOW_POST_MINS = 120
+STALE_LIVE_MINS  = 115
+PRECHECK_HORIZON_SECS = 7200
 
 
 def resolve_match_status(status, kickoff, elapsed):
-    """Override stuck LIVE status if match is old enough and elapsed is null."""
     if status not in LIVE_ST:
         return status
     try:
@@ -53,40 +56,49 @@ def espn_status(detail, clock, state, period=None):
     return 'NS'
 
 
-def fetch_day(date_str):
+def fetch_day(date_str, retries=3):
     url = f'{BASE}/scoreboard?dates={date_str}&limit=20'
-    r = requests.get(url, headers=HDRS, timeout=20)
-    if r.status_code != 200:
-        return []
-    return r.json().get('events', [])
+    for attempt in range(retries):
+        try:
+            r = requests.get(url, headers=HDRS, timeout=20)
+            if r.status_code == 200:
+                return r.json().get('events', [])
+            print(f'  Attempt {attempt + 1}: HTTP {r.status_code} for {date_str}', file=sys.stderr)
+            if r.status_code == 403:
+                print(f'  Body: {r.text[:300]}', file=sys.stderr)
+        except requests.RequestException as e:
+            print(f'  Attempt {attempt + 1} error for {date_str}: {e}', file=sys.stderr)
+        if attempt < retries - 1:
+            time.sleep(2 ** attempt)
+    return None
 
 
 def parse_event(ev):
-    comp        = ev.get('competitions', [{}])[0]
+    comp = ev.get('competitions', [{}])[0]
     competitors = comp.get('competitors', [])
     if len(competitors) < 2:
         return None
     home = next((c for c in competitors if c.get('homeAway') == 'home'), competitors[0])
     away = next((c for c in competitors if c.get('homeAway') == 'away'), competitors[1])
     status_obj = comp.get('status', {})
-    detail     = status_obj.get('type', {}).get('description', '')
-    state      = status_obj.get('type', {}).get('state', '')
-    clock      = status_obj.get('displayClock', '')
-    period     = status_obj.get('period')
-    status     = espn_status(detail, clock, state, period)
+    detail = status_obj.get('type', {}).get('description', '')
+    state = status_obj.get('type', {}).get('state', '')
+    clock = status_obj.get('displayClock', '')
+    period = status_obj.get('period')
+    status = espn_status(detail, clock, state, period)
 
-    elapsed       = None
+    elapsed = None
     elapsed_extra = None
     try:
         if clock and clock != '0:00':
             plus_idx = clock.find('+')
             if plus_idx >= 0:
                 elapsed_extra = int(clock[plus_idx + 1:].strip())
-                base_clock    = clock[:plus_idx]
+                base_clock = clock[:plus_idx]
             else:
                 base_clock = clock
             mins_str = base_clock.split(':')[0].replace("'", "").strip()
-            elapsed  = int(mins_str)
+            elapsed = int(mins_str)
     except Exception:
         pass
 
@@ -96,30 +108,29 @@ def parse_event(ev):
     try: a_score = int(away.get('score'))
     except Exception: pass
 
-    kickoff  = comp.get('date') or ev.get('date')
-    week_num  = ev.get('week', {}).get('number')
+    kickoff = comp.get('date') or ev.get('date')
+    week_num = ev.get('week', {}).get('number')
     week_text = ev.get('week', {}).get('text') or ev.get('season', {}).get('slug') or 'Unknown'
 
     resolved_status = resolve_match_status(status, kickoff or '', elapsed)
 
     return {
-        'id':            str(ev.get('id', '')),
-        'round':         week_text,
-        'week_number':   week_num,
-        'kickoff':       kickoff,
-        'status':        resolved_status,
-        'home_team':     home.get('team', {}).get('displayName', ''),
-        'away_team':     away.get('team', {}).get('displayName', ''),
-        'home_score':    h_score,
-        'away_score':    a_score,
-        'elapsed':       elapsed,
+        'id': str(ev.get('id', '')),
+        'round': week_text,
+        'week_number': week_num,
+        'kickoff': kickoff,
+        'status': resolved_status,
+        'home_team': home.get('team', {}).get('displayName', ''),
+        'away_team': away.get('team', {}).get('displayName', ''),
+        'home_score': h_score,
+        'away_score': a_score,
+        'elapsed': elapsed,
         'elapsed_extra': elapsed_extra,
     }
 
 
 def is_live_window(fixtures):
     now = datetime.now(timezone.utc)
-
     for f in fixtures:
         if f.get('status') in LIVE_ST:
             print('Live match detected — running update.')
@@ -141,10 +152,9 @@ def is_live_window(fixtures):
         return False
 
     earliest = min(todays_kos)
-    latest   = max(todays_kos)
-
-    window_open  = earliest - timedelta(minutes=WINDOW_PRE_MINS)
-    window_close = latest   + timedelta(minutes=WINDOW_POST_MINS)
+    latest = max(todays_kos)
+    window_open = earliest - timedelta(minutes=WINDOW_PRE_MINS)
+    window_close = latest + timedelta(minutes=WINDOW_POST_MINS)
 
     if window_open <= now <= window_close:
         print(f'Within live window ({window_open.strftime("%H:%M")}–{window_close.strftime("%H:%M")} UTC) — running update.')
@@ -154,19 +164,18 @@ def is_live_window(fixtures):
     return False
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
-
 FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
-
 now = datetime.now(timezone.utc)
 
-# ── Cheap pre-check: only today's date, ONE request ───────────────────────────
 if not FORCE_RUN:
     print('Running lightweight pre-check (today only)...')
     today_str = now.strftime('%Y%m%d')
     today_raw_events = fetch_day(today_str)
-    today_parsed = [p for p in (parse_event(e) for e in today_raw_events) if p and p['kickoff']]
+    if today_raw_events is None:
+        print('Pre-check failed: could not reach ESPN API for today.', file=sys.stderr)
+        sys.exit(2)
 
+    today_parsed = [p for p in (parse_event(e) for e in today_raw_events) if p and p['kickoff']]
     has_relevant_activity = False
     for p in today_parsed:
         if p['status'] in LIVE_ST:
@@ -186,16 +195,18 @@ if not FORCE_RUN:
 
     print('Pre-check: relevant activity detected — proceeding with full scan.')
 
-# ── Full scan (only reached if FORCE_RUN or pre-check found activity) ────────
 events = {}
 print('Scanning date range for current gameweek...')
-_weekday     = now.weekday()   # Mon=0 Tue=1 Wed=2 Thu=3 Fri=4 Sat=5 Sun=6
-_lookback    = -4 if _weekday in (4, 5, 6, 0) else -1
+_weekday = now.weekday()
+_lookback = -4 if _weekday in (4, 5, 6, 0) else -1
 print(f'Scan window: {_lookback} to +7 days (weekday={now.strftime("%A")})')
 
 for delta in range(_lookback, 7):
     day = (now + timedelta(days=delta)).strftime('%Y%m%d')
     evs = fetch_day(day)
+    if evs is None:
+        print(f'ERROR: ESPN API unavailable for {day}', file=sys.stderr)
+        sys.exit(2)
     for e in evs:
         events[str(e.get('id'))] = e
     if evs:
@@ -203,7 +214,6 @@ for delta in range(_lookback, 7):
 
 all_events = list(events.values())
 print(f'Total unique events found: {len(all_events)}')
-
 if not all_events:
     print('ERROR: no events found from ESPN API', file=sys.stderr)
     sys.exit(1)
@@ -216,9 +226,7 @@ for ev in all_events:
 
 parsed_all.sort(key=lambda x: x['kickoff'])
 
-# ── Cluster into gameweeks ────────────────────────────────────────────────────
-
-FIXTURES_PER_GW = 6   # SPL: 12 clubs = 6 matches per gameweek
+FIXTURES_PER_GW = 6
 
 def cluster_by_key(items, key_fn):
     gw_map = defaultdict(list)
@@ -235,17 +243,14 @@ def cluster_by_key(items, key_fn):
             groups.append([m])
             continue
         mt = datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-        closest = min(groups, key=lambda gw: min(
-            abs((datetime.fromisoformat(f['kickoff'].replace('Z', '+00:00')) - mt).total_seconds())
-            for f in gw
-        ))
+        closest = min(groups, key=lambda gw: min(abs((datetime.fromisoformat(f['kickoff'].replace('Z', '+00:00')) - mt).total_seconds()) for f in gw))
         closest.append(m)
         closest.sort(key=lambda x: x['kickoff'])
     return groups
 
 def cluster_by_size(items, size):
     gameweeks = []
-    current   = []
+    current = []
     for m in items:
         current.append(m)
         if len(current) >= size:
@@ -256,12 +261,8 @@ def cluster_by_size(items, size):
     return gameweeks
 
 use_week_number = any(m['week_number'] is not None for m in parsed_all)
-round_texts     = [m['round'] for m in parsed_all if m['round'] and m['round'] != 'Unknown']
-use_round_text  = (
-    not use_week_number and
-    len(round_texts) > 0 and
-    any(rt.lower().startswith('round') for rt in round_texts)
-)
+round_texts = [m['round'] for m in parsed_all if m['round'] and m['round'] != 'Unknown']
+use_round_text = (not use_week_number and len(round_texts) > 0 and any(rt.lower().startswith('round') for rt in round_texts))
 
 if use_week_number:
     print('Grouping by ESPN week.number (tier 1)')
@@ -273,71 +274,47 @@ else:
     print(f'Grouping by fixed bucket of {FIXTURES_PER_GW} (tier 3 — ESPN has no round data)')
     gameweeks = cluster_by_size(parsed_all, FIXTURES_PER_GW)
 
-# ── Select best gameweek ──────────────────────────────────────────────────────
-
 def gw_is_stale(gw):
     all_done = all(m['status'] in DONE_ST for m in gw)
     if not all_done:
         return False
-    last_ko = max(
-        datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00'))
-        for m in gw
-    )
-    return (now - last_ko).total_seconds() > 129600  # 36 hours
+    last_ko = max(datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) for m in gw)
+    return (now - last_ko).total_seconds() > 129600
 
 fresh_gameweeks = [gw for gw in gameweeks if not gw_is_stale(gw)]
 candidates = fresh_gameweeks if fresh_gameweeks else gameweeks
-
 print(f'Gameweeks found: {len(gameweeks)}, fresh: {len(fresh_gameweeks)}')
 
-best_gw = min(candidates, key=lambda gw: min(
-    abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds())
-    for m in gw
-))
-
-fixtures   = best_gw
+best_gw = min(candidates, key=lambda gw: min(abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds()) for m in gw))
+fixtures = best_gw
 best_round = fixtures[0]['round'] if fixtures else 'Unknown'
-best_week  = fixtures[0]['week_number'] if fixtures else None
-
+best_week = fixtures[0]['week_number'] if fixtures else None
 livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
 print(f'Current round: {best_round} (week {best_week}) — {len(fixtures)} fixtures, {len(livescores)} live/done)')
 
-# ── Live window check ─────────────────────────────────────────────────────────
 if not FORCE_RUN and not is_live_window(fixtures):
     sys.exit(0)
 
-# ── Merge with existing fixtures to prevent completed ones dropping out ───────
-# Keyed by (home_team, away_team) instead of id, so ESPN's real event IDs
-# always take precedence over placeholder IDs used for manual score entries
-# (e.g. 2001, 2002...). This prevents duplicate rows once ESPN starts
-# reporting a match that was previously entered manually.
 existing_path = 'data/fixtures.json'
 if os.path.exists(existing_path):
     with open(existing_path) as fh:
         existing_data = json.load(fh)
-
     def team_key(f):
         return (f.get('home_team', ''), f.get('away_team', ''))
-
     existing_map = {team_key(f): f for f in existing_data.get('fixtures', [])}
-    new_keys     = {team_key(f) for f in fixtures}
-
+    new_keys = {team_key(f) for f in fixtures}
     retained = 0
     for key, fx in existing_map.items():
         if key not in new_keys:
             fixtures.append(fx)
             retained += 1
-
     fixtures.sort(key=lambda x: x['kickoff'])
     print(f'After merge: {len(fixtures)} fixtures (retained {retained} from existing, ESPN provided {len(new_keys)})')
 
-# ── Write data files ──────────────────────────────────────────────────────────
 os.makedirs('data', exist_ok=True)
 ts = datetime.now(timezone.utc).isoformat()
-
 with open('data/fixtures.json', 'w') as fh:
     json.dump({'updated': ts, 'round': best_round, 'week_number': best_week, 'fixtures': fixtures}, fh, indent=2)
 with open('data/livescores.json', 'w') as fh:
     json.dump({'updated': ts, 'livescores': livescores}, fh, indent=2)
-
 print(f'Done: {len(fixtures)} fixtures, {len(livescores)} live/completed.')
