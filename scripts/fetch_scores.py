@@ -61,7 +61,7 @@ def parse_event(ev):
         try:
             ko_dt = datetime.fromisoformat(kickoff.replace('Z', '+00:00'))
             if datetime.now(timezone.utc) >= ko_dt:
-                status = 'LIVE'  # kicked off, no score yet — defer to manual entry for detail
+                status = 'LIVE'
             else:
                 status = 'NS'
         except Exception:
@@ -159,10 +159,18 @@ fresh_rounds = {k: v for k, v in rounds.items() if not round_is_stale(v)}
 candidates = fresh_rounds if fresh_rounds else rounds
 print(f'Rounds found: {len(rounds)}, fresh: {len(fresh_rounds)}')
 
-best_round_num = min(
-    candidates,
-    key=lambda k: min(abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds()) for m in candidates[k])
-)
+incomplete_candidates = {k: v for k, v in candidates.items() if any(m['status'] not in DONE_ST for m in v)}
+
+if incomplete_candidates:
+    best_round_num = min(incomplete_candidates)
+    print(f'Selecting round {best_round_num}: has unplayed fixtures — takes priority over completed rounds.')
+else:
+    best_round_num = min(
+        candidates,
+        key=lambda k: min(abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds()) for m in candidates[k])
+    )
+    print(f'All fresh rounds complete — falling back to nearest-in-time: round {best_round_num}.')
+
 fixtures = candidates[best_round_num]
 best_round = fixtures[0]['round']
 best_week = best_round_num
@@ -192,7 +200,7 @@ if os.path.exists(existing_path):
             new_rank = STATUS_RANK.get(new_fx['status'], 0)
             existing_rank = STATUS_RANK.get(existing_fx.get('status'), 0)
             if existing_rank > new_rank:
-                merged.append(existing_fx)  # protect manual live/finished entry
+                merged.append(existing_fx)
             else:
                 merged.append(new_fx)
         else:
