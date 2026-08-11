@@ -1,5 +1,46 @@
 {
-  "updated": "2026-08-10T21:58:28.165Z",
-  "round": "",
-  "fixtures": []
+  "updated": "2026-08-11T00:02:38.846285+00:00",
+  "round": "Round 3",
+  "week_number": 3,
+  "fixtures": [
+    {
+      "id": "2494422",
+      "round": "Round 3",
+      "week_number": 3,
+      "kickoff": "2026-08-22T14:00:00Z",
+      "status": "NS",
+      "home_team": "Hibernian",
+      "away_team": "Kilmarnock",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494423",
+      "round": "Round 3",
+      "week_number": 3,
+      "kickoff": "2026-08-22T14:00:00Z",
+      "status": "NS",
+      "home_team": "Motherwell",
+      "away_team": "Aberdeen",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494424",
+      "round": "Round 3",
+      "week_number": 3,
+      "kickoff": "2026-08-22T14:00:00Z",
+      "status": "NS",
+      "home_team": "Rangers",
+      "away_team": "St Mirren",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    }
+  ]
 }
