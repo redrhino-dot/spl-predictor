@@ -1,8 +1,21 @@
 {
-  "updated": "2026-08-11T00:02:38.846285+00:00",
+  "updated": "2026-08-11T01:13:00+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
+    {
+      "id": "manual-9002",
+      "round": "Round 3",
+      "week_number": 3,
+      "kickoff": "2026-08-22T14:00:00Z",
+      "status": "PST",
+      "home_team": "Falkirk",
+      "away_team": "Heart of Midlothian",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
     {
       "id": "2494422",
       "round": "Round 3",
@@ -37,6 +50,32 @@
       "status": "NS",
       "home_team": "Rangers",
       "away_team": "St Mirren",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "manual-9003",
+      "round": "Round 3",
+      "week_number": 3,
+      "kickoff": "2026-08-22T14:00:00Z",
+      "status": "NS",
+      "home_team": "St Johnstone",
+      "away_team": "Celtic",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "manual-9001",
+      "round": "Round 3",
+      "week_number": 3,
+      "kickoff": "2026-08-22T16:45:00Z",
+      "status": "NS",
+      "home_team": "Dundee United",
+      "away_team": "Dundee",
       "home_score": null,
       "away_score": null,
       "elapsed": null,
