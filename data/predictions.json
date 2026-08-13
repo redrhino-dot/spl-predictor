@@ -347,6 +347,30 @@
           }
         ]
       }
+    },
+    "3": {
+      "predictions": {
+        "Doug": [
+          {
+            "fixture_id": "2494422",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-08-13T15:18:16.697Z"
+          },
+          {
+            "fixture_id": "2494423",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-08-13T15:18:16.697Z"
+          },
+          {
+            "fixture_id": "2494424",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-08-13T15:18:16.697Z"
+          }
+        ]
+      }
     }
   }
 }
