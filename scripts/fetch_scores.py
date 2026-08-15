@@ -19,7 +19,7 @@ def current_season_str(now):
     return f'{now.year - 1}-{now.year}'
 
 
-def fetch_season(season, retries=3):
+def fetch_season(season, retries=5):
     url = f'{TSDB_BASE}/eventsseason.php?id={LEAGUE_ID}&s={season}'
     for attempt in range(retries):
         try:
@@ -31,7 +31,9 @@ def fetch_season(season, retries=3):
         except Exception as e:
             print(f'  Attempt {attempt + 1} error: {e}', file=sys.stderr)
         if attempt < retries - 1:
-            time.sleep(2 ** attempt)
+            backoff = min(2 ** attempt, 20)
+            print(f'  Retrying in {backoff}s...', file=sys.stderr)
+            time.sleep(backoff)
     return None
 
 
@@ -132,8 +134,8 @@ season = current_season_str(now)
 print(f'Fetching season {season} for league {LEAGUE_ID}...')
 raw_events = fetch_season(season)
 if raw_events is None:
-    print('ERROR: TheSportsDB API unavailable', file=sys.stderr)
-    sys.exit(2)
+    print('WARNING: TheSportsDB API unavailable after all retries — skipping this run, data/fixtures.json left unchanged.', file=sys.stderr)
+    sys.exit(0)
 
 print(f'Total events in season: {len(raw_events)}')
 if not raw_events:
