@@ -12,6 +12,9 @@ STATUS_RANK = {'NS': 0, 'LIVE': 1, '1H': 1, 'HT': 1, '2H': 1, 'ET': 1, 'FT': 2, 
 WINDOW_PRE_MINS  = 5
 WINDOW_POST_MINS = 120
 
+ROUND_LOOKBACK  = 2
+ROUND_LOOKAHEAD = 3
+
 
 def current_season_str(now):
     if now.month >= 7:
@@ -19,20 +22,20 @@ def current_season_str(now):
     return f'{now.year - 1}-{now.year}'
 
 
-def fetch_season(season, retries=5):
-    url = f'{TSDB_BASE}/eventsseason.php?id={LEAGUE_ID}&s={season}'
+def fetch_round(season, round_num, retries=5):
+    url = f'{TSDB_BASE}/eventsround.php?id={LEAGUE_ID}&r={round_num}&s={season}'
     for attempt in range(retries):
         try:
             r = requests.get(url, timeout=25)
             if r.status_code == 200:
                 data = r.json()
                 return data.get('events') or []
-            print(f'  Attempt {attempt + 1}: HTTP {r.status_code}', file=sys.stderr)
+            print(f'  Round {round_num} attempt {attempt + 1}: HTTP {r.status_code}', file=sys.stderr)
         except Exception as e:
-            print(f'  Attempt {attempt + 1} error: {e}', file=sys.stderr)
+            print(f'  Round {round_num} attempt {attempt + 1} error: {e}', file=sys.stderr)
         if attempt < retries - 1:
             backoff = min(2 ** attempt, 20)
-            print(f'  Retrying in {backoff}s...', file=sys.stderr)
+            print(f'  Retrying round {round_num} in {backoff}s...', file=sys.stderr)
             time.sleep(backoff)
     return None
 
@@ -127,102 +130,98 @@ def is_live_window(fixtures):
     return False
 
 
+def determine_focus_round(existing_fixtures):
+    incomplete_rounds = [
+        f['week_number'] for f in existing_fixtures
+        if f.get('week_number') is not None and f.get('status') not in DONE_ST
+    ]
+    if incomplete_rounds:
+        return min(incomplete_rounds)
+    all_rounds = [f['week_number'] for f in existing_fixtures if f.get('week_number') is not None]
+    return (max(all_rounds) + 1) if all_rounds else 1
+
+
 FORCE_RUN = os.getenv('FORCE_RUN', '').lower() in ('1', 'true', 'yes')
 now = datetime.now(timezone.utc)
-
 season = current_season_str(now)
-print(f'Fetching season {season} for league {LEAGUE_ID}...')
-raw_events = fetch_season(season)
-if raw_events is None:
-    print('WARNING: TheSportsDB API unavailable after all retries — skipping this run, data/fixtures.json left unchanged.', file=sys.stderr)
+
+existing_path = 'data/fixtures.json'
+existing_fixtures = []
+if os.path.exists(existing_path):
+    with open(existing_path) as fh:
+        existing_fixtures = json.load(fh).get('fixtures', [])
+
+focus_round = determine_focus_round(existing_fixtures)
+round_range = list(range(max(1, focus_round - ROUND_LOOKBACK), focus_round + ROUND_LOOKAHEAD + 1))
+print(f'Focus round: {focus_round}. Fetching rounds {round_range} for season {season}...')
+
+all_new_fixtures = []
+any_success = False
+for rn in round_range:
+    raw = fetch_round(season, rn)
+    if raw is None:
+        print(f'WARNING: round {rn} unavailable after all retries — skipping this round this run.', file=sys.stderr)
+        continue
+    any_success = True
+    print(f'  Round {rn}: {len(raw)} events')
+    for ev in raw:
+        p = parse_event(ev)
+        if p and p['kickoff']:
+            all_new_fixtures.append(p)
+
+if not any_success:
+    print('WARNING: TheSportsDB unavailable for all requested rounds — skipping this run, data/fixtures.json left unchanged.', file=sys.stderr)
     sys.exit(0)
 
-print(f'Total events in season: {len(raw_events)}')
-if not raw_events:
-    print('ERROR: no events returned for season', file=sys.stderr)
-    sys.exit(1)
+print(f'Total fixtures fetched this run: {len(all_new_fixtures)}')
 
-parsed_all = [parse_event(ev) for ev in raw_events]
-parsed_all = [p for p in parsed_all if p['kickoff']]
-parsed_all.sort(key=lambda x: x['kickoff'])
+def team_key(f):
+    return (f.get('home_team', ''), f.get('away_team', ''))
 
-rounds = defaultdict(list)
-for m in parsed_all:
-    rounds[m['week_number']].append(m)
+existing_map = {team_key(f): f for f in existing_fixtures}
+new_map = {team_key(f): f for f in all_new_fixtures}
 
-def round_is_stale(matches):
-    all_done = all(m['status'] in DONE_ST for m in matches)
-    if not all_done:
-        return False
-    last_ko = max(datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) for m in matches)
-    return (now - last_ko).total_seconds() > 129600  # 36 hours
+merged = []
+seen_keys = set()
 
-fresh_rounds = {k: v for k, v in rounds.items() if not round_is_stale(v)}
-candidates = fresh_rounds if fresh_rounds else rounds
-print(f'Rounds found: {len(rounds)}, fresh: {len(fresh_rounds)}')
+for key, new_fx in new_map.items():
+    existing_fx = existing_map.get(key)
+    if existing_fx:
+        new_rank = STATUS_RANK.get(new_fx['status'], 0)
+        existing_rank = STATUS_RANK.get(existing_fx.get('status'), 0)
+        if existing_rank > new_rank:
+            merged.append(existing_fx)
+        else:
+            new_fx['id'] = existing_fx['id']
+            merged.append(new_fx)
+    else:
+        merged.append(new_fx)
+    seen_keys.add(key)
 
-incomplete_candidates = {k: v for k, v in candidates.items() if any(m['status'] not in DONE_ST for m in v)}
+retained = 0
+for key, existing_fx in existing_map.items():
+    if key not in seen_keys:
+        merged.append(existing_fx)
+        retained += 1
 
-if incomplete_candidates:
-    best_round_num = min(incomplete_candidates)
-    print(f'Selecting round {best_round_num}: has unplayed fixtures — takes priority over completed rounds.')
-else:
-    best_round_num = min(
-        candidates,
-        key=lambda k: min(abs((datetime.fromisoformat(m['kickoff'].replace('Z', '+00:00')) - now).total_seconds()) for m in candidates[k])
-    )
-    print(f'All fresh rounds complete — falling back to nearest-in-time: round {best_round_num}.')
-
-fixtures = candidates[best_round_num]
-best_round = fixtures[0]['round']
-best_week = best_round_num
-livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
-print(f'Current round: {best_round} — {len(fixtures)} fixtures, {len(livescores)} live/done')
+fixtures = merged
+fixtures.sort(key=lambda x: x['kickoff'])
+print(f'After merge: {len(fixtures)} fixtures total (retained {retained} not refetched this run)')
 
 if not FORCE_RUN and not is_live_window(fixtures):
     sys.exit(0)
 
-existing_path = 'data/fixtures.json'
-if os.path.exists(existing_path):
-    with open(existing_path) as fh:
-        existing_data = json.load(fh)
-
-    def team_key(f):
-        return (f.get('home_team', ''), f.get('away_team', ''))
-
-    existing_map = {team_key(f): f for f in existing_data.get('fixtures', [])}
-    new_map = {team_key(f): f for f in fixtures}
-
-    merged = []
-    seen_keys = set()
-
-    for key, new_fx in new_map.items():
-        existing_fx = existing_map.get(key)
-        if existing_fx:
-            new_rank = STATUS_RANK.get(new_fx['status'], 0)
-            existing_rank = STATUS_RANK.get(existing_fx.get('status'), 0)
-            if existing_rank > new_rank:
-                merged.append(existing_fx)
-            else:
-                merged.append(new_fx)
-        else:
-            merged.append(new_fx)
-        seen_keys.add(key)
-
-    retained = 0
-    for key, existing_fx in existing_map.items():
-        if key not in seen_keys:
-            merged.append(existing_fx)
-            retained += 1
-
-    fixtures = merged
-    fixtures.sort(key=lambda x: x['kickoff'])
-    print(f'After merge: {len(fixtures)} fixtures (retained {retained} not in new round)')
+livescores = [m for m in fixtures if m['status'] in (DONE_ST | LIVE_ST)]
 
 os.makedirs('data', exist_ok=True)
 ts = datetime.now(timezone.utc).isoformat()
 with open('data/fixtures.json', 'w') as fh:
-    json.dump({'updated': ts, 'round': best_round, 'week_number': best_week, 'fixtures': fixtures}, fh, indent=2)
+    json.dump({
+        'updated': ts,
+        'round': f'Round {focus_round}',
+        'week_number': focus_round,
+        'fixtures': fixtures,
+    }, fh, indent=2)
 with open('data/livescores.json', 'w') as fh:
     json.dump({'updated': ts, 'livescores': livescores}, fh, indent=2)
 print(f'Done: {len(fixtures)} fixtures, {len(livescores)} live/completed.')
