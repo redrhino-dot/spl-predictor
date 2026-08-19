@@ -14,3 +14,45 @@ let scheduleData      = { fixtures: [] };
 
 let predFormDirty = false;
 let scoreFormDirty = false;
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', async () => {
+  setupNavigation();
+  renderOpeningStandings();
+  populateParticipantDropdown();
+  populateScoreParticipantDropdown();
+  setupSettingsTab();
+  renderHonoursBoard();
+
+  await loadAllData();
+  await seedPredictionsIfNeeded();
+
+  fullRender();
+  await loadArchiveData();
+
+  setInterval(async () => {
+    await loadAllData();
+    renderFixturesTable();
+    renderProjectedStandings();
+    checkAndRenderBlockEnding();
+
+    if (!predFormDirty) {
+      renderPredictionForm();
+    }
+    if (!scoreFormDirty) {
+      renderScoreForm();
+    }
+  }, 30000);
+});
+
+function fullRender() {
+  renderFixturesTable();
+  renderPredictionForm();
+  renderScoreForm();
+  renderProjectedStandings();
+  checkAndRenderBlockEnding();
+}
+
+/* PLACEHOLDER_MARKER_FOR_LENGTH_CHECK */
