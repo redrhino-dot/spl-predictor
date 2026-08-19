@@ -5,9 +5,9 @@ from collections import defaultdict
 LEAGUE_ID = '4330'
 TSDB_BASE = 'https://www.thesportsdb.com/api/v1/json/123'
 
-DONE_ST = {'FT', 'AET', 'PEN'}
+DONE_ST = {'FT', 'AET', 'PEN', 'PPD'}
 LIVE_ST = {'1H', 'HT', '2H', 'ET', 'LIVE'}
-STATUS_RANK = {'NS': 0, 'LIVE': 1, '1H': 1, 'HT': 1, '2H': 1, 'ET': 1, 'FT': 2, 'AET': 2, 'PEN': 2}
+STATUS_RANK = {'NS': 0, 'LIVE': 1, '1H': 1, 'HT': 1, '2H': 1, 'ET': 1, 'FT': 2, 'AET': 2, 'PEN': 2, 'PPD': 0}
 
 WINDOW_PRE_MINS  = 5
 WINDOW_POST_MINS = 120
@@ -60,7 +60,11 @@ def parse_event(ev):
         pass
 
     raw_status = (ev.get('strStatus') or '').upper()
-    if h_score is not None and a_score is not None:
+    POSTPONED_MARKERS = ('PST', 'PPD', 'POSTPON', 'CANC', 'ABD', 'ABANDON', 'SUSP')
+
+    if any(marker in raw_status for marker in POSTPONED_MARKERS):
+        status = 'PPD'
+    elif h_score is not None and a_score is not None:
         status = 'FT'
     elif kickoff:
         try:
