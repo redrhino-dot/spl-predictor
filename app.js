@@ -1390,3 +1390,97 @@ async function forceUpdate() {
 
   window.location.reload();
 }
+
+
+/* ============================================================
+   DATE-WINDOW UTILITIES (added for multi-gameweek fixture congestion)
+   Not yet wired into any render function — utility only, for the
+   upcoming window-based archiving/rolling rewrite.
+   ============================================================ */
+
+// Clusters fixtures into chronological "windows" (e.g. a Fri-Mon weekend,
+// or a Tue-Thu midweek slate), regardless of which gameweek(s) they belong
+// to. A new window starts whenever the gap between one fixture's kickoff
+// date and the next exceeds one calendar day.
+function computeWindows(fixtures) {
+  const withDates = (fixtures || [])
+    .filter(f => f.kickoff)
+    .map(f => ({ fixture: f, date: new Date(f.kickoff) }))
+    .sort((a, b) => a.date - b.date);
+
+  const windows = [];
+  let current = null;
+  let lastDay = null;
+
+  const toDayNumber = d => Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 86400000);
+
+  withDates.forEach(({ fixture, date }) => {
+    const dayNum = toDayNumber(date);
+    if (current === null || (dayNum - lastDay) > 1) {
+      current = { windowIndex: windows.length + 1, fixtures: [] };
+      windows.push(current);
+    }
+    current.fixtures.push(fixture);
+    lastDay = dayNum;
+  });
+
+  windows.forEach(w => {
+    const dates = w.fixtures.map(f => new Date(f.kickoff));
+    w.startDate = new Date(Math.min(...dates));
+    w.endDate   = new Date(Math.max(...dates));
+    w.label     = formatWindowLabel(w.startDate, w.endDate);
+  });
+
+  return windows;
+}
+
+function formatWindowLabel(startDate, endDate) {
+  const opts = { day: 'numeric', month: 'short', timeZone: 'Europe/London' };
+  const startStr = startDate.toLocaleDateString('en-GB', opts);
+  const endStr   = endDate.toLocaleDateString('en-GB', { ...opts, year: 'numeric' });
+  if (startDate.toDateString() === endDate.toDateString()) return endStr;
+  return `${startStr}–${endStr}`;
+}
+
+// Returns whether every fixture in a window has reached a completed status.
+function isWindowComplete(window, liveMap) {
+  return window.fixtures.every(f => {
+    const status = (liveMap[String(f.id)] || f).status || f.status || '';
+    return COMPLETED.includes(status);
+  });
+}
+
+// Builds the composite standings-table header, e.g.:
+//   "GW10 (GW6 4/6, GW9 5/6, GW15 1/6)"
+// Headline = highest gameweek number where ALL of that gw's fixtures are complete.
+// Parenthetical = every other gameweek currently present with 1-5 of 6 fixtures complete.
+function buildGwCompositeLabel() {
+  const gwNumbers = getDistinctGameweeksInFixtures();
+  const liveMap   = buildLiveMap();
+
+  const gwStatus = gwNumbers.map(gwNum => {
+    const gwFixtures = getFixturesForGameweek(gwNum);
+    const total = gwFixtures.length;
+    const completed = gwFixtures.filter(f => {
+      const status = (liveMap[String(f.id)] || f).status || f.status || '';
+      return COMPLETED.includes(status);
+    }).length;
+    return { gwNum, completed, total };
+  });
+
+  const fullyDone = gwStatus.filter(g => g.total > 0 && g.completed === g.total);
+  const partial   = gwStatus.filter(g => g.completed > 0 && g.completed < g.total);
+
+  const headlineGw = fullyDone.length > 0
+    ? Math.max(...fullyDone.map(g => g.gwNum))
+    : (gwNumbers.length > 0 ? Math.min(...gwNumbers) : CONFIG.currentGameweek);
+
+  if (partial.length === 0) return `GW${headlineGw}`;
+
+  const parenthetical = partial
+    .sort((a, b) => a.gwNum - b.gwNum)
+    .map(g => `GW${g.gwNum} ${g.completed}/${g.total}`)
+    .join(', ');
+
+  return `GW${headlineGw} (${parenthetical})`;
+}
