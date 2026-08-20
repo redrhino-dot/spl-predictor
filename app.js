@@ -185,6 +185,31 @@ function getGwLabel() {
 }
 
 /* ============================================================
+   ACTIVE WINDOW SCOPING
+   Ensures the app always shows exactly one date-window's fixtures
+   at a time (a weekend block, a midweek block, etc.) — regardless
+   of how many rounds fetch_scores.py has buffered into
+   fixtures.json. A window may span more than one gameweek (e.g. a
+   rescheduled fixture landing alongside the current round); that's
+   fine — both are shown, grouped by gameweek header, because they
+   share the same playing window.
+   ============================================================ */
+function getActiveWindowFixtures() {
+  const fixtures = fixturesData.fixtures || [];
+  if (fixtures.length === 0) return [];
+
+  const windows = computeWindows(fixtures);
+  const archivedKeys = new Set(
+    (archiveData?.windows || []).map(w => `${w.window_start}|${w.window_end}`)
+  );
+  const openWindows = windows.filter(
+    w => !archivedKeys.has(`${w.startDate.toISOString()}|${w.endDate.toISOString()}`)
+  );
+
+  return openWindows.length > 0 ? openWindows[0].fixtures : [];
+}
+
+/* ============================================================
    SECTION 1 — OPENING STANDINGS
    ============================================================ */
 function renderOpeningStandings() {
@@ -208,7 +233,7 @@ function renderOpeningStandings() {
    ============================================================ */
 function renderFixturesTable() {
   const tbody    = document.getElementById('fixtures-body');
-  const fixtures = fixturesData.fixtures || [];
+  const fixtures = getActiveWindowFixtures();
   tbody.innerHTML = '';
 
   document.getElementById('gw-label').textContent = getGwLabel();
@@ -223,13 +248,13 @@ function renderFixturesTable() {
 
   const now       = new Date();
   const liveMap   = buildLiveMap();
-  const gwNumbers = getDistinctGameweeksInFixtures();
+  const gwNumbers = [...new Set(fixtures.map(f => f.assigned_gameweek))].sort((a, b) => a - b);
   let lastGroup   = null;
 
   gwNumbers.forEach(gwNum => {
     const gwKey       = String(gwNum);
     const gwPreds     = predictionsData?.gameweeks[gwKey]?.predictions || {};
-    const gwFixtures  = getFixturesForGameweek(gwNum);
+    const gwFixtures  = fixtures.filter(f => f.assigned_gameweek === gwNum);
 
     if (gwNumbers.length > 1) {
       const gwHeaderRow = document.createElement('tr');
@@ -374,7 +399,7 @@ function populateParticipantDropdown() {
 
 function renderPredictionForm() {
   const container = document.getElementById('pred-form-rows');
-  const fixtures  = fixturesData.fixtures || [];
+  const fixtures  = getActiveWindowFixtures();
   container.innerHTML = '';
 
   if (fixtures.length === 0) {
@@ -387,39 +412,52 @@ function renderPredictionForm() {
   const pinCorrect  = CONFIG.pins[participant] === pin;
   const now         = new Date();
 
-  fixtures.forEach(fixture => {
-    const gwKey    = String(fixture.assigned_gameweek);
-    const preds    = predictionsData?.gameweeks[gwKey]?.predictions[participant] || [];
-    const kickoff  = new Date(fixture.kickoff);
-    const locked   = now >= kickoff;
-    const active   = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
-    const homeVal  = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
-    const awayVal  = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
+  const gwNumbers = [...new Set(fixtures.map(f => f.assigned_gameweek))].sort((a, b) => a - b);
 
-    let submittedLabel = '';
-    if (pinCorrect && participant && active && active.submitted_at) {
-      submittedLabel = `<span class="pred-submitted-at">Submitted: ${formatTimestampBST(active.submitted_at)}</span>`;
-    } else if (pinCorrect && participant && !active) {
-      submittedLabel = `<span class="pred-submitted-at pred-submitted-missing">Not yet submitted</span>`;
+  gwNumbers.forEach(gwNum => {
+    const gwFixtures = fixtures.filter(f => f.assigned_gameweek === gwNum);
+
+    if (gwNumbers.length > 1) {
+      const gwHeader = document.createElement('div');
+      gwHeader.className = 'gw-group-header';
+      gwHeader.innerHTML = `<strong>Gameweek ${gwNum}</strong>`;
+      container.appendChild(gwHeader);
     }
 
-    const row = document.createElement('div');
-    row.className = 'pred-row' + (locked ? ' pred-row-disabled' : '');
-    row.innerHTML = `
-      <span class="pred-team pred-home">${fixture.home_team}</span>
-      <input type="number" class="pred-score-input"
-             data-fixture-id="${fixture.id}" data-gw="${fixture.assigned_gameweek}" data-side="home"
-             min="0" max="20" value="${homeVal}" placeholder="0"
-             ${locked ? 'disabled' : ''} />
-      <span class="pred-separator">–</span>
-      <input type="number" class="pred-score-input"
-             data-fixture-id="${fixture.id}" data-gw="${fixture.assigned_gameweek}" data-side="away"
-             min="0" max="20" value="${awayVal}" placeholder="0"
-             ${locked ? 'disabled' : ''} />
-      <span class="pred-team pred-away">${fixture.away_team}</span>
-      ${locked ? '<span class="pred-locked">🔒 Locked</span>' : ''}
-      ${submittedLabel}`;
-    container.appendChild(row);
+    gwFixtures.forEach(fixture => {
+      const gwKey    = String(fixture.assigned_gameweek);
+      const preds    = predictionsData?.gameweeks[gwKey]?.predictions[participant] || [];
+      const kickoff  = new Date(fixture.kickoff);
+      const locked   = now >= kickoff;
+      const active   = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+      const homeVal  = (active !== null && (locked || pinCorrect)) ? active.home_score : '';
+      const awayVal  = (active !== null && (locked || pinCorrect)) ? active.away_score : '';
+
+      let submittedLabel = '';
+      if (pinCorrect && participant && active && active.submitted_at) {
+        submittedLabel = `<span class="pred-submitted-at">Submitted: ${formatTimestampBST(active.submitted_at)}</span>`;
+      } else if (pinCorrect && participant && !active) {
+        submittedLabel = `<span class="pred-submitted-at pred-submitted-missing">Not yet submitted</span>`;
+      }
+
+      const row = document.createElement('div');
+      row.className = 'pred-row' + (locked ? ' pred-row-disabled' : '');
+      row.innerHTML = `
+        <span class="pred-team pred-home">${fixture.home_team}</span>
+        <input type="number" class="pred-score-input"
+               data-fixture-id="${fixture.id}" data-gw="${fixture.assigned_gameweek}" data-side="home"
+               min="0" max="20" value="${homeVal}" placeholder="0"
+               ${locked ? 'disabled' : ''} />
+        <span class="pred-separator">–</span>
+        <input type="number" class="pred-score-input"
+               data-fixture-id="${fixture.id}" data-gw="${fixture.assigned_gameweek}" data-side="away"
+               min="0" max="20" value="${awayVal}" placeholder="0"
+               ${locked ? 'disabled' : ''} />
+        <span class="pred-team pred-away">${fixture.away_team}</span>
+        ${locked ? '<span class="pred-locked">🔒 Locked</span>' : ''}
+        ${submittedLabel}`;
+      container.appendChild(row);
+    });
   });
 
   container.querySelectorAll('.pred-score-input').forEach(input => {
@@ -1428,8 +1466,6 @@ async function forceUpdate() {
 
 /* ============================================================
    DATE-WINDOW UTILITIES (added for multi-gameweek fixture congestion)
-   Not yet wired into any render function — utility only, for the
-   upcoming window-based archiving/rolling rewrite.
    ============================================================ */
 
 // Clusters fixtures into chronological "windows" (e.g. a Fri-Mon weekend,
