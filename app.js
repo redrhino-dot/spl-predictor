@@ -10,7 +10,6 @@ let fixturesData    = { fixtures: [], updated: null };
 let livescoresData  = { livescores: [] };
 let predictionsData = null;
 let archiveData      = null;
-let scheduleData      = { fixtures: [] };
 
 let predFormDirty = false;
 let scoreFormDirty = false;
@@ -94,36 +93,30 @@ async function fetchJSON(url) {
 }
 
 async function loadAllData() {
-  const [f, l, p, s] = await Promise.all([
+  const [f, l, p] = await Promise.all([
     fetchJSON('data/fixtures.json'),
     fetchJSON('data/livescores.json'),
     fetchJSON('data/predictions.json'),
-    fetchJSON('data/schedule.json'),
   ]);
   if (f) fixturesData    = f;
   if (l) livescoresData  = l;
   if (p) predictionsData = p;
-  if (s) scheduleData    = s;
 
   tagFixturesWithScheduledGameweek();
 }
 
 /* ============================================================
-   SCHEDULE MAP — TRUE GAMEWEEK ASSIGNMENT
+   GAMEWEEK ASSIGNMENT — sourced directly from TheSportsDB's own
+   round number (fixture.week_number, set by fetch_scores.py).
+   schedule.json is retired: it required exact team-name matching
+   against TheSportsDB's names (e.g. "Heart of Midlothian" vs the
+   old schedule's "Hearts"), which silently misassigned any fixture
+   whose name didn't match — orphaning its predictions.
    ============================================================ */
-function getScheduledGameweek(homeTeam, awayTeam) {
-  const list = scheduleData.fixtures || [];
-  const match = list.find(
-    f => f.home_team === homeTeam && f.away_team === awayTeam
-  );
-  return match ? match.gameweek : null;
-}
-
 function tagFixturesWithScheduledGameweek() {
   const fixtures = fixturesData.fixtures || [];
   fixtures.forEach(fixture => {
-    const scheduled = getScheduledGameweek(fixture.home_team, fixture.away_team);
-    fixture.assigned_gameweek = scheduled !== null ? scheduled : CONFIG.currentGameweek;
+    fixture.assigned_gameweek = fixture.week_number ?? CONFIG.currentGameweek;
   });
 }
 
