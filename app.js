@@ -199,13 +199,39 @@ function getActiveWindowFixtures() {
   if (fixtures.length === 0) return [];
 
   const windows = computeWindows(fixtures);
+  const archiveWindows = archiveData?.windows || [];
 
-  // New-format archive entries can match the computed window timestamp exactly.
+  // Normal post-migration archive entries use exact kickoff timestamps.
   const archivedKeys = new Set(
-    (archiveData?.windows || []).map(
-      w => `${w.window_start}|${w.window_end}`
-    )
+    archiveWindows.map(w => `${w.window_start}|${w.window_end}`)
   );
+
+  // GW1/GW2 were migrated with date-only midnight timestamps. Match their
+  // start calendar day to the computed window's start day instead.
+  const migratedStartDays = new Set(
+    archiveWindows
+      .filter(w =>
+        w.window_start?.endsWith('T00:00:00.000Z') &&
+        w.window_end?.endsWith('T00:00:00.000Z')
+      )
+      .map(w => w.window_start.slice(0, 10))
+  );
+
+  const openWindows = windows.filter(window => {
+    const exactTimestampMatch = archivedKeys.has(
+      `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
+    );
+
+    const migratedDayMatch = migratedStartDays.has(
+      window.startDate.toISOString().slice(0, 10)
+    );
+
+    return !exactTimestampMatch && !migratedDayMatch;
+  });
+
+  return openWindows.length > 0 ? openWindows[0].fixtures : [];
+}
+
 
   // Migrated GW1/GW2 archive entries use date-only timestamps that do not
   // match actual fixture kickoff times. Their fixture IDs are authoritative.
