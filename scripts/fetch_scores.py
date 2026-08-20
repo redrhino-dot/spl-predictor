@@ -202,15 +202,28 @@ for key, new_fx in new_map.items():
         merged.append(new_fx)
     seen_keys.add(key)
 
+# Only retain a not-refetched fixture if it's still within the active
+# round window or not yet resolved. Fully-played/postponed fixtures whose
+# round has scrolled outside round_range are dropped here — they're either
+# already safely archived, or (if postponed) will reappear once TheSportsDB
+# assigns them a round back inside range. Without this, fixtures.json grows
+# forever since nothing else ever prunes it.
 retained = 0
+dropped = 0
 for key, existing_fx in existing_map.items():
-    if key not in seen_keys:
+    if key in seen_keys:
+        continue
+    wn = existing_fx.get('week_number')
+    is_resolved = existing_fx.get('status') in DONE_ST
+    if wn is None or wn in round_range or not is_resolved:
         merged.append(existing_fx)
         retained += 1
+    else:
+        dropped += 1
 
 fixtures = merged
 fixtures.sort(key=lambda x: x['kickoff'])
-print(f'After merge: {len(fixtures)} fixtures total (retained {retained} not refetched this run)')
+print(f'After merge: {len(fixtures)} fixtures total (retained {retained}, dropped {dropped} stale not refetched this run)')
 
 if not FORCE_RUN and not is_live_window(fixtures):
     sys.exit(0)
