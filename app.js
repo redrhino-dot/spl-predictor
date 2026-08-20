@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
   await seedPredictionsIfNeeded();
 
+    await loadArchiveData();
   fullRender();
-  await loadArchiveData();
 
   setInterval(async () => {
     await loadAllData();
@@ -881,6 +881,11 @@ async function loadArchiveData() {
     const w = archiveData.windows.find(x => x.window_start === val);
     if (w) renderArchiveGW(w);
   });
+  
+    renderFixturesTable();
+  renderPredictionForm();
+  renderProjectedStandings();
+  checkAndRenderBlockEnding();
 }
 
 function renderArchiveGW(gw) {
