@@ -2,7 +2,7 @@
    app.js — Scottish Premiership Predictor
    ============================================================ */
 
-const COMPLETED = ['FT', 'AET', 'PEN'];
+const COMPLETED = ['FT', 'AET', 'PEN', 'PPD'];
 const LIVE      = ['1H', 'HT', '2H', 'ET', 'P', 'LIVE'];
 const IN_PLAY   = [...LIVE, ...COMPLETED];
 
@@ -304,6 +304,8 @@ function formatElapsed(elapsed, extraTime) {
 }
 
 function buildScoreCell(live, fixture, started, isLive, isCompleted) {
+  const status = live.status || fixture.status || '';
+  if (status === 'PPD') return '<span class="score-postponed">Postponed</span>';
   if (!started) return '<span class="score-vs">vs</span>';
   const h = live.home_score ?? fixture.home_score;
   const a = live.away_score ?? fixture.away_score;
@@ -534,7 +536,7 @@ function showStatus(el, msg, type) {
 /* ============================================================
    LIVE SCORE UPDATE FORM (mirrors prediction form UX)
    ============================================================ */
-const SCORE_STATUS_OPTIONS = ['NS', '1H', 'HT', '2H', 'FT'];
+const SCORE_STATUS_OPTIONS = ['NS', '1H', 'HT', '2H', 'FT', 'PPD'];
 
 function populateScoreParticipantDropdown() {
   const sel = document.getElementById('score-participant');
