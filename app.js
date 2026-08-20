@@ -201,13 +201,13 @@ function getActiveWindowFixtures() {
   const windows = computeWindows(fixtures);
   const archiveWindows = archiveData?.windows || [];
 
-  // Normal post-migration archive entries use exact kickoff timestamps.
+  // New archive entries use actual kickoff timestamps.
   const archivedKeys = new Set(
     archiveWindows.map(w => `${w.window_start}|${w.window_end}`)
   );
 
-  // GW1/GW2 were migrated with date-only midnight timestamps. Match their
-  // start calendar day to the computed window's start day instead.
+  // GW1/GW2 were migrated with midnight date-only timestamps, so their
+  // start calendar day must be matched instead of exact kickoff timestamps.
   const migratedStartDays = new Set(
     archiveWindows
       .filter(w =>
@@ -229,10 +229,8 @@ function getActiveWindowFixtures() {
     return !exactTimestampMatch && !migratedDayMatch;
   });
 
-  return openWindows.length > 0 ? openWindows[0].
-
-
-  
+  return openWindows.length > 0 ? openWindows[0].fixtures : [];
+}
 
 /* ============================================================
    SECTION 1 — OPENING STANDINGS
