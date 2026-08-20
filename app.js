@@ -199,12 +199,35 @@ function getActiveWindowFixtures() {
   if (fixtures.length === 0) return [];
 
   const windows = computeWindows(fixtures);
+
+  // New-format archive entries can match the computed window timestamp exactly.
   const archivedKeys = new Set(
-    (archiveData?.windows || []).map(w => `${w.window_start}|${w.window_end}`)
+    (archiveData?.windows || []).map(
+      w => `${w.window_start}|${w.window_end}`
+    )
   );
-  const openWindows = windows.filter(
-    w => !archivedKeys.has(`${w.startDate.toISOString()}|${w.endDate.toISOString()}`)
+
+  // Migrated GW1/GW2 archive entries use date-only timestamps that do not
+  // match actual fixture kickoff times. Their fixture IDs are authoritative.
+  const archivedFixtureIds = new Set(
+    (archiveData?.windows || [])
+      .flatMap(w => w.results || [])
+      .map(r => String(r.fixture_id))
   );
+
+  const openWindows = windows.filter(window => {
+    const exactDateMatch = archivedKeys.has(
+      `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
+    );
+
+    const everyFixtureArchived =
+      window.fixtures.length > 0 &&
+      window.fixtures.every(f =>
+        archivedFixtureIds.has(String(f.id))
+      );
+
+    return !exactDateMatch && !everyFixtureArchived;
+  });
 
   return openWindows.length > 0 ? openWindows[0].fixtures : [];
 }
