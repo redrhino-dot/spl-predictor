@@ -229,34 +229,10 @@ function getActiveWindowFixtures() {
     return !exactTimestampMatch && !migratedDayMatch;
   });
 
-  return openWindows.length > 0 ? openWindows[0].fixtures : [];
-}
+  return openWindows.length > 0 ? openWindows[0].
 
 
-  // Migrated GW1/GW2 archive entries use date-only timestamps that do not
-  // match actual fixture kickoff times. Their fixture IDs are authoritative.
-  const archivedFixtureIds = new Set(
-    (archiveData?.windows || [])
-      .flatMap(w => w.results || [])
-      .map(r => String(r.fixture_id))
-  );
-
-  const openWindows = windows.filter(window => {
-    const exactDateMatch = archivedKeys.has(
-      `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
-    );
-
-    const everyFixtureArchived =
-      window.fixtures.length > 0 &&
-      window.fixtures.every(f =>
-        archivedFixtureIds.has(String(f.id))
-      );
-
-    return !exactDateMatch && !everyFixtureArchived;
-  });
-
-  return openWindows.length > 0 ? openWindows[0].fixtures : [];
-}
+  
 
 /* ============================================================
    SECTION 1 — OPENING STANDINGS
