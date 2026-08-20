@@ -957,8 +957,13 @@ async function archiveCurrentWindow(window) {
     };
   });
 
+  // Only truly played fixtures get an archived result — PPD fixtures have no
+  // score to record and must stay live in fixtures.json so they're picked up
+  // by a future window once TheSportsDB gives them a real date.
+  const PLAYED_ST = ['FT', 'AET', 'PEN'];
+
   const results = targetFixtures
-    .filter(f => COMPLETED.includes((liveMap[String(f.id)] || f).status || f.status || ''))
+    .filter(f => PLAYED_ST.includes((liveMap[String(f.id)] || f).status || f.status || ''))
     .map(f => {
       const live = liveMap[String(f.id)] || f;
       return {
@@ -971,13 +976,18 @@ async function archiveCurrentWindow(window) {
       };
     });
 
+  // Only snapshot predictions for fixtures that actually resolved — a
+  // prediction against a postponed fixture isn't "wrong" or "right" yet.
+  const resultFixtureIds = new Set(results.map(r => String(r.fixture_id)));
   const archivedPredictions = {};
   CONFIG.participants.forEach(p => {
-    archivedPredictions[p] = targetFixtures.map(f => {
-      const pred = getActivePrediction(p, f.id, f.kickoff, gwPreds[p] || []);
-      if (!pred) return null;
-      return { fixture_id: f.id, home_score: pred.home_score, away_score: pred.away_score };
-    }).filter(Boolean);
+    archivedPredictions[p] = targetFixtures
+      .filter(f => resultFixtureIds.has(String(f.id)))
+      .map(f => {
+        const pred = getActivePrediction(p, f.id, f.kickoff, gwPreds[p] || []);
+        if (!pred) return null;
+        return { fixture_id: f.id, home_score: pred.home_score, away_score: pred.away_score };
+      }).filter(Boolean);
   });
 
   const entry = {
