@@ -232,24 +232,6 @@ function getActiveWindowFixtures() {
   return openWindows.length > 0 ? openWindows[0].fixtures : [];
 }
 
-
-  const openWindows = windows.filter(window => {
-    const exactDateMatch = archivedKeys.has(
-      `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
-    );
-
-    const everyFixtureArchived =
-      window.fixtures.length > 0 &&
-      window.fixtures.every(f =>
-        archivedFixtureIds.has(String(f.id))
-      );
-
-    return !exactDateMatch && !everyFixtureArchived;
-  });
-
-  return openWindows.length > 0 ? openWindows[0].fixtures : [];
-}
-
 /* ============================================================
    SECTION 1 — OPENING STANDINGS
    ============================================================ */
