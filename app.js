@@ -499,7 +499,7 @@ async function submitPredictions() {
   if (CONFIG.pins[participant] !== pin) { showStatus(statusEl, 'Incorrect PIN.', 'error'); return; }
 
   const now      = new Date();
-  const fixtures = fixturesData.fixtures || [];
+  const fixtures = getActiveWindowFixtures();
 
   const byFixture = {};
   document.querySelectorAll('#pred-form-rows .pred-score-input').forEach(input => {
