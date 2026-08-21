@@ -495,96 +495,152 @@ async function submitPredictions() {
   const pin         = document.getElementById('pred-pin').value.trim();
   const statusEl    = document.getElementById('pred-status');
 
-  if (!participant) { showStatus(statusEl, 'Please select a participant.', 'error'); return; }
-  if (CONFIG.pins[participant] !== pin) { showStatus(statusEl, 'Incorrect PIN.', 'error'); return; }
+  if (!participant) {
+    showStatus(statusEl, 'Please select a participant.', 'error');
+    return;
+  }
 
-  const now      = new Date();
-  const fixtures = getActiveWindowFixtures();
+  if (CONFIG.pins[participant] !== pin) {
+    showStatus(statusEl, 'Incorrect PIN.', 'error');
+    return;
+  }
 
-  const byFixture = {};
-  document.querySelectorAll('#pred-form-rows .pred-score-input').forEach(input => {
-    const fid  = parseInt(input.dataset.fixtureId);
-    const side = input.dataset.side;
-    const gw   = input.dataset.gw;
-    if (!byFixture[fid]) byFixture[fid] = { gw };
-    byFixture[fid][side]         = input.value === '' ? 0 : parseInt(input.value) || 0;
-    byFixture[fid][side + 'Raw'] = input.value;
-  });
+  const now = new Date();
+
+  // Submit exactly the fixtures displayed in My Predictions.
+  const activeFixtures = getActiveWindowFixtures();
+  const fixturesById = new Map(
+    activeFixtures.map(fixture => [String(fixture.id), fixture])
+  );
+
+  // Keep fixture IDs as strings. Do not parse them into numbers.
+  const enteredByFixture = {};
+
+  document
+    .querySelectorAll('#pred-form-rows .pred-score-input')
+    .forEach(input => {
+      const fixtureId = String(input.dataset.fixtureId);
+      const side      = input.dataset.side;
+
+      if (!enteredByFixture[fixtureId]) {
+        enteredByFixture[fixtureId] = {};
+      }
+
+      enteredByFixture[fixtureId][side] = {
+        value: input.value === '' ? 0 : parseInt(input.value, 10) || 0,
+        raw: input.value,
+      };
+    });
 
   const submittedAt = new Date().toISOString();
   const newEntriesByGw = {};
 
-  for (const fixture of fixtures) {
+  for (const [fixtureId, entered] of Object.entries(enteredByFixture)) {
+    const fixture = fixturesById.get(fixtureId);
+
+    if (!fixture) continue;
     if (now >= new Date(fixture.kickoff)) continue;
-    const scores = byFixture[fixture.id];
-    if (!scores || scores.home === undefined || scores.away === undefined) continue;
+    if (!entered.home || !entered.away) continue;
 
     const gwKey = String(fixture.assigned_gameweek);
+
     if (!predictionsData.gameweeks[gwKey]) {
       predictionsData.gameweeks[gwKey] = { predictions: {} };
     }
+
     if (!predictionsData.gameweeks[gwKey].predictions[participant]) {
       predictionsData.gameweeks[gwKey].predictions[participant] = [];
     }
 
-    if (scores.homeRaw === '' && scores.awayRaw === '') {
+    const participantPreds =
+      predictionsData.gameweeks[gwKey].predictions[participant];
+
+    // Both score fields blank means deliberately remove this prediction.
+    if (entered.home.raw === '' && entered.away.raw === '') {
       predictionsData.gameweeks[gwKey].predictions[participant] =
-        predictionsData.gameweeks[gwKey].predictions[participant]
-          .filter(p => String(p.fixture_id) !== String(fixture.id));
+        participantPreds.filter(
+          prediction => String(prediction.fixture_id) !== fixtureId
+        );
       continue;
     }
 
-    const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
-      predictionsData.gameweeks[gwKey].predictions[participant] || []);
+    const existing = getActivePrediction(
+      participant,
+      fixture.id,
+      fixture.kickoff,
+      participantPreds
+    );
 
-    const unchanged = existing &&
-      existing.home_score === scores.home &&
-      existing.away_score === scores.away;
+    const unchanged =
+      existing &&
+      existing.home_score === entered.home.value &&
+      existing.away_score === entered.away.value;
 
-    if (!unchanged) {
-      if (!newEntriesByGw[gwKey]) newEntriesByGw[gwKey] = [];
-      newEntriesByGw[gwKey].push({
-        fixture_id:   fixture.id,
-        home_score:   scores.home,
-        away_score:   scores.away,
-        submitted_at: submittedAt,
-      });
+    if (unchanged) continue;
+
+    if (!newEntriesByGw[gwKey]) {
+      newEntriesByGw[gwKey] = [];
     }
+
+    newEntriesByGw[gwKey].push({
+      fixture_id: fixture.id,
+      home_score: entered.home.value,
+      away_score: entered.away.value,
+      submitted_at: submittedAt,
+    });
   }
 
-  const totalNew = Object.values(newEntriesByGw).reduce((sum, arr) => sum + arr.length, 0);
+  const totalNew = Object.values(newEntriesByGw)
+    .reduce((total, entries) => total + entries.length, 0);
+
   if (totalNew === 0) {
-    showStatus(statusEl, 'No changes to save.', 'info');
+    showStatus(
+      statusEl,
+      'No changes detected — enter or change at least one prediction.',
+      'info'
+    );
     return;
   }
 
   Object.entries(newEntriesByGw).forEach(([gwKey, entries]) => {
-    entries.forEach(e => predictionsData.gameweeks[gwKey].predictions[participant].push(e));
+    predictionsData.gameweeks[gwKey]
+      .predictions[participant]
+      .push(...entries);
   });
 
   showStatus(statusEl, 'Saving…', 'info');
   document.getElementById('pred-submit-btn').disabled = true;
-  const ok = await writeFileToGitHub('data/predictions.json', predictionsData);
+
+  const ok = await writeFileToGitHub(
+    'data/predictions.json',
+    predictionsData
+  );
+
   document.getElementById('pred-submit-btn').disabled = false;
 
   if (ok === true) {
     predFormDirty = false;
-    showStatus(statusEl, `Saved at ${formatTimeBST(submittedAt)} BST ✓`, 'success');
+    showStatus(
+      statusEl,
+      `Saved at ${formatTimeBST(submittedAt)} BST ✓`,
+      'success'
+    );
+
+    renderPredictionForm();
     renderFixturesTable();
     renderProjectedStandings();
   } else {
+    // Roll back only the entries added during this attempt.
     Object.entries(newEntriesByGw).forEach(([gwKey, entries]) => {
-      const arr = predictionsData.gameweeks[gwKey].predictions[participant];
+      const predictions =
+        predictionsData.gameweeks[gwKey].predictions[participant];
+
       predictionsData.gameweeks[gwKey].predictions[participant] =
-        arr.slice(0, arr.length - entries.length);
+        predictions.slice(0, predictions.length - entries.length);
     });
+
     showStatus(statusEl, 'Save failed — please try again.', 'error');
   }
-}
-
-function showStatus(el, msg, type) {
-  el.textContent = msg;
-  el.className   = 'pred-status status-' + type;
 }
 
 /* ============================================================
