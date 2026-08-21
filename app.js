@@ -502,7 +502,7 @@ async function submitPredictions() {
   const fixtures = fixturesData.fixtures || [];
 
   const byFixture = {};
-  document.querySelectorAll('.pred-score-input').forEach(input => {
+  document.querySelectorAll('#pred-form-rows .pred-score-input').forEach(input => {
     const fid  = parseInt(input.dataset.fixtureId);
     const side = input.dataset.side;
     const gw   = input.dataset.gw;
