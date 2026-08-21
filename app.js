@@ -643,6 +643,12 @@ async function submitPredictions() {
   }
 }
 
+function showStatus(el, msg, type) {
+  el.textContent = msg;
+  el.className   = 'pred-status status-' + type;
+}
+
+
 /* ============================================================
    LIVE SCORE UPDATE FORM (mirrors prediction form UX)
    ============================================================ */
