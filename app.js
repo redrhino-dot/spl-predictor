@@ -366,6 +366,16 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
 }
 
 function buildPredCell(participant, fixture, preds, live, started, isCompleted, isLive) {
+  const status = live.status || fixture.status || '';
+
+  // A postponed fixture must never reveal score predictions. Show only
+  // whether a prediction was submitted until it receives a revised KO.
+  if (status === 'PPD') {
+    const pred = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
+    return `<td class="pred-cell pred-hidden">${pred ? '✅' : '–'}</td>`;
+  }
+
+  // Before a normal fixture starts, retain the existing hidden-score behaviour.
   if (!started) {
     const pred = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
     return `<td class="pred-cell pred-hidden">${pred ? '✅' : '–'}</td>`;
