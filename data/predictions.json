@@ -368,6 +368,18 @@
             "home_score": 2,
             "away_score": 1,
             "submitted_at": "2026-08-13T15:18:16.697Z"
+          },
+          {
+            "fixture_id": "manual-9003",
+            "home_score": 1,
+            "away_score": 4,
+            "submitted_at": "2026-08-22T13:05:38.757Z"
+          },
+          {
+            "fixture_id": "manual-9001",
+            "home_score": 1,
+            "away_score": 2,
+            "submitted_at": "2026-08-22T13:05:38.757Z"
           }
         ],
         "Kris": [
