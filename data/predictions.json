@@ -385,6 +385,14 @@
             "away_score": 1,
             "submitted_at": "2026-08-21T09:52:51.571Z"
           }
+        ],
+        "Jon": [
+          {
+            "fixture_id": "manual-9001",
+            "home_score": 3,
+            "away_score": 1,
+            "submitted_at": "2026-08-22T11:16:43.700Z"
+          }
         ]
       }
     }
