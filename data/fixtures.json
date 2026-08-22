@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-22T17:48:58.111314+00:00",
+  "updated": "2026-08-22T18:25:38.617184+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -194,7 +194,7 @@
       "home_team": "Dundee United",
       "away_team": "Dundee",
       "home_score": 0,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
