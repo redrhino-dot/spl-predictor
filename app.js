@@ -201,32 +201,31 @@ function getActiveWindowFixtures() {
   const windows = computeWindows(fixtures);
   const archiveWindows = archiveData?.windows || [];
 
-  // New archive entries use actual kickoff timestamps.
+  // Normal post-migration archive entries use exact kickoff timestamps.
   const archivedKeys = new Set(
     archiveWindows.map(w => `${w.window_start}|${w.window_end}`)
   );
 
-  // GW1/GW2 were migrated with midnight date-only timestamps, so their
-  // start calendar day must be matched instead of exact kickoff timestamps.
-  const migratedStartDays = new Set(
+  // Migrated GW1/GW2 archive entries use date-only timestamps that do not
+  // match actual fixture kickoff times. Their fixture IDs are authoritative.
+  const archivedFixtureIds = new Set(
     archiveWindows
-      .filter(w =>
-        w.window_start?.endsWith('T00:00:00.000Z') &&
-        w.window_end?.endsWith('T00:00:00.000Z')
-      )
-      .map(w => w.window_start.slice(0, 10))
+      .flatMap(w => w.results || [])
+      .map(r => String(r.fixture_id))
   );
 
   const openWindows = windows.filter(window => {
-    const exactTimestampMatch = archivedKeys.has(
+    const exactDateMatch = archivedKeys.has(
       `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
     );
 
-    const migratedDayMatch = migratedStartDays.has(
-      window.startDate.toISOString().slice(0, 10)
-    );
+    const everyFixtureArchived =
+      window.fixtures.length > 0 &&
+      window.fixtures.every(f =>
+        archivedFixtureIds.has(String(f.id))
+      );
 
-    return !exactTimestampMatch && !migratedDayMatch;
+    return !exactDateMatch && !everyFixtureArchived;
   });
 
   return openWindows.length > 0 ? openWindows[0].fixtures : [];
@@ -368,14 +367,11 @@ function buildScoreCell(live, fixture, started, isLive, isCompleted) {
 function buildPredCell(participant, fixture, preds, live, started, isCompleted, isLive) {
   const status = live.status || fixture.status || '';
 
-  // A postponed fixture must never reveal score predictions. Show only
-  // whether a prediction was submitted until it receives a revised KO.
   if (status === 'PPD') {
     const pred = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
     return `<td class="pred-cell pred-hidden">${pred ? '✅' : '–'}</td>`;
   }
 
-  // Before a normal fixture starts, retain the existing hidden-score behaviour.
   if (!started) {
     const pred = getActivePrediction(participant, fixture.id, fixture.kickoff, preds);
     return `<td class="pred-cell pred-hidden">${pred ? '✅' : '–'}</td>`;
@@ -505,150 +501,89 @@ async function submitPredictions() {
   const pin         = document.getElementById('pred-pin').value.trim();
   const statusEl    = document.getElementById('pred-status');
 
-  if (!participant) {
-    showStatus(statusEl, 'Please select a participant.', 'error');
-    return;
-  }
+  if (!participant) { showStatus(statusEl, 'Please select a participant.', 'error'); return; }
+  if (CONFIG.pins[participant] !== pin) { showStatus(statusEl, 'Incorrect PIN.', 'error'); return; }
 
-  if (CONFIG.pins[participant] !== pin) {
-    showStatus(statusEl, 'Incorrect PIN.', 'error');
-    return;
-  }
+  const now      = new Date();
+  const fixtures = fixturesData.fixtures || [];
 
-  const now = new Date();
-
-  // Submit exactly the fixtures displayed in My Predictions.
-  const activeFixtures = getActiveWindowFixtures();
-  const fixturesById = new Map(
-    activeFixtures.map(fixture => [String(fixture.id), fixture])
-  );
-
-  // Keep fixture IDs as strings. Do not parse them into numbers.
-  const enteredByFixture = {};
-
-  document
-    .querySelectorAll('#pred-form-rows .pred-score-input')
-    .forEach(input => {
-      const fixtureId = String(input.dataset.fixtureId);
-      const side      = input.dataset.side;
-
-      if (!enteredByFixture[fixtureId]) {
-        enteredByFixture[fixtureId] = {};
-      }
-
-      enteredByFixture[fixtureId][side] = {
-        value: input.value === '' ? 0 : parseInt(input.value, 10) || 0,
-        raw: input.value,
-      };
-    });
+  const byFixture = {};
+  document.querySelectorAll('.pred-score-input').forEach(input => {
+    const fid  = parseInt(input.dataset.fixtureId);
+    const side = input.dataset.side;
+    const gw   = input.dataset.gw;
+    if (!byFixture[fid]) byFixture[fid] = { gw };
+    byFixture[fid][side]         = input.value === '' ? 0 : parseInt(input.value) || 0;
+    byFixture[fid][side + 'Raw'] = input.value;
+  });
 
   const submittedAt = new Date().toISOString();
   const newEntriesByGw = {};
 
-  for (const [fixtureId, entered] of Object.entries(enteredByFixture)) {
-    const fixture = fixturesById.get(fixtureId);
-
-    if (!fixture) continue;
+  for (const fixture of fixtures) {
     if (now >= new Date(fixture.kickoff)) continue;
-    if (!entered.home || !entered.away) continue;
+    const scores = byFixture[fixture.id];
+    if (!scores || scores.home === undefined || scores.away === undefined) continue;
 
     const gwKey = String(fixture.assigned_gameweek);
-
     if (!predictionsData.gameweeks[gwKey]) {
       predictionsData.gameweeks[gwKey] = { predictions: {} };
     }
-
     if (!predictionsData.gameweeks[gwKey].predictions[participant]) {
       predictionsData.gameweeks[gwKey].predictions[participant] = [];
     }
 
-    const participantPreds =
-      predictionsData.gameweeks[gwKey].predictions[participant];
-
-    // Both score fields blank means deliberately remove this prediction.
-    if (entered.home.raw === '' && entered.away.raw === '') {
+    if (scores.homeRaw === '' && scores.awayRaw === '') {
       predictionsData.gameweeks[gwKey].predictions[participant] =
-        participantPreds.filter(
-          prediction => String(prediction.fixture_id) !== fixtureId
-        );
+        predictionsData.gameweeks[gwKey].predictions[participant]
+          .filter(p => String(p.fixture_id) !== String(fixture.id));
       continue;
     }
 
-    const existing = getActivePrediction(
-      participant,
-      fixture.id,
-      fixture.kickoff,
-      participantPreds
-    );
+    const existing = getActivePrediction(participant, fixture.id, fixture.kickoff,
+      predictionsData.gameweeks[gwKey].predictions[participant] || []);
 
-    const unchanged =
-      existing &&
-      existing.home_score === entered.home.value &&
-      existing.away_score === entered.away.value;
+    const unchanged = existing &&
+      existing.home_score === scores.home &&
+      existing.away_score === scores.away;
 
-    if (unchanged) continue;
-
-    if (!newEntriesByGw[gwKey]) {
-      newEntriesByGw[gwKey] = [];
+    if (!unchanged) {
+      if (!newEntriesByGw[gwKey]) newEntriesByGw[gwKey] = [];
+      newEntriesByGw[gwKey].push({
+        fixture_id:   fixture.id,
+        home_score:   scores.home,
+        away_score:   scores.away,
+        submitted_at: submittedAt,
+      });
     }
-
-    newEntriesByGw[gwKey].push({
-      fixture_id: fixture.id,
-      home_score: entered.home.value,
-      away_score: entered.away.value,
-      submitted_at: submittedAt,
-    });
   }
 
-  const totalNew = Object.values(newEntriesByGw)
-    .reduce((total, entries) => total + entries.length, 0);
-
+  const totalNew = Object.values(newEntriesByGw).reduce((sum, arr) => sum + arr.length, 0);
   if (totalNew === 0) {
-    showStatus(
-      statusEl,
-      'No changes detected — enter or change at least one prediction.',
-      'info'
-    );
+    showStatus(statusEl, 'No changes to save.', 'info');
     return;
   }
 
   Object.entries(newEntriesByGw).forEach(([gwKey, entries]) => {
-    predictionsData.gameweeks[gwKey]
-      .predictions[participant]
-      .push(...entries);
+    entries.forEach(e => predictionsData.gameweeks[gwKey].predictions[participant].push(e));
   });
 
   showStatus(statusEl, 'Saving…', 'info');
   document.getElementById('pred-submit-btn').disabled = true;
-
-  const ok = await writeFileToGitHub(
-    'data/predictions.json',
-    predictionsData
-  );
-
+  const ok = await writeFileToGitHub('data/predictions.json', predictionsData);
   document.getElementById('pred-submit-btn').disabled = false;
 
   if (ok === true) {
     predFormDirty = false;
-    showStatus(
-      statusEl,
-      `Saved at ${formatTimeBST(submittedAt)} BST ✓`,
-      'success'
-    );
-
-    renderPredictionForm();
+    showStatus(statusEl, `Saved at ${formatTimeBST(submittedAt)} BST ✓`, 'success');
     renderFixturesTable();
     renderProjectedStandings();
   } else {
-    // Roll back only the entries added during this attempt.
     Object.entries(newEntriesByGw).forEach(([gwKey, entries]) => {
-      const predictions =
-        predictionsData.gameweeks[gwKey].predictions[participant];
-
+      const arr = predictionsData.gameweeks[gwKey].predictions[participant];
       predictionsData.gameweeks[gwKey].predictions[participant] =
-        predictions.slice(0, predictions.length - entries.length);
+        arr.slice(0, arr.length - entries.length);
     });
-
     showStatus(statusEl, 'Save failed — please try again.', 'error');
   }
 }
@@ -657,7 +592,6 @@ function showStatus(el, msg, type) {
   el.textContent = msg;
   el.className   = 'pred-status status-' + type;
 }
-
 
 /* ============================================================
    LIVE SCORE UPDATE FORM (mirrors prediction form UX)
@@ -802,8 +736,9 @@ function renderProjectedStandings() {
   const tbody = document.getElementById('projected-body');
   if (!tbody) return;
 
-  const liveMap   = buildLiveMap();
-  const gwNumbers = getDistinctGameweeksInFixtures();
+  const liveMap  = buildLiveMap();
+  const fixtures = getActiveWindowFixtures();
+  const gwNumbers = [...new Set(fixtures.map(f => f.assigned_gameweek))].sort((a, b) => a - b);
 
   const rows = CONFIG.participants.map(name => {
     const entry      = CONFIG.openingStandings.find(s => s.name === name) || {};
@@ -814,7 +749,7 @@ function renderProjectedStandings() {
 
     gwNumbers.forEach(gwNum => {
       const gwKey      = String(gwNum);
-      const gwFixtures = getFixturesForGameweek(gwNum);
+      const gwFixtures = fixtures.filter(f => f.assigned_gameweek === gwNum);
       const gwPreds    = predictionsData?.gameweeks?.[gwKey]?.predictions || {};
       const earned     = computeEarned(name, gwFixtures, gwPreds, liveMap);
       gwPoints += earned;
@@ -953,8 +888,8 @@ async function loadArchiveData() {
     const w = archiveData.windows.find(x => x.window_start === val);
     if (w) renderArchiveGW(w);
   });
-  
-    renderFixturesTable();
+
+  renderFixturesTable();
   renderPredictionForm();
   renderProjectedStandings();
   checkAndRenderBlockEnding();
@@ -1382,36 +1317,28 @@ async function rollToNextGW() {
 
   const btn = document.getElementById('roll-gw-btn');
 
-  // Use the in-memory archive first — it was just updated by archiveCurrentGW()
-  // and is guaranteed fresh. Falling back to a network fetch risks reading a
-  // stale/cached copy of archive.json immediately after writing to it.
-  const currentArchive = (archiveData && archiveData.gameweeks && archiveData.gameweeks.length > 0)
+  const currentArchive = (archiveData && archiveData.windows && archiveData.windows.length > 0)
     ? archiveData
     : await fetchJSON('data/archive.json');
 
-  if (!currentArchive || !currentArchive.gameweeks || currentArchive.gameweeks.length === 0) {
-    alert('No archived gameweeks found. Archive the current one first!');
+  if (!currentArchive || !currentArchive.windows || currentArchive.windows.length === 0) {
+    alert('No archived windows found. Archive the current one first!');
     return;
   }
 
-  // Pick the entry with the highest gameweek number, not the last array index —
-  // this avoids relying on insertion order.
-  const lastGW = currentArchive.gameweeks.reduce(
-    (max, gw) => (gw.gameweek > max.gameweek ? gw : max),
-    currentArchive.gameweeks[0]
+  const lastWindow = currentArchive.windows.reduce(
+    (max, w) => (new Date(w.window_start) > new Date(max.window_start) ? w : max),
+    currentArchive.windows[0]
   );
 
-  const nextGWNum = CONFIG.currentGameweek + 1;
-  const newOpeningStandings = [...lastGW.closingstandings]
+  const newOpeningStandings = [...lastWindow.closing_standings]
     .sort((a, b) => b.points - a.points)
     .map(s => ({ name: s.name, points: s.points }));
 
   const newConfigObj = {
     ...CONFIG,
-    currentGameweek: nextGWNum,
-    currentGwLabel: `GW${nextGWNum} — TBD`,
     openingStandings: newOpeningStandings,
-    seededPredictions: { gw: nextGWNum, submittedAt: new Date().toISOString(), byFixture: {} },
+    seededPredictions: { gw: CONFIG.currentGameweek + 1, submittedAt: new Date().toISOString(), byFixture: {} },
   };
 
   btn.disabled = true;
@@ -1441,7 +1368,7 @@ async function rollToNextGW() {
       console.warn('Could not trigger fixture fetch', e);
     }
 
-    alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
+    alert('Success! App will now reload.');
     window.location.reload();
   } else {
     alert('Failed to update config.js. Please try again.');
@@ -1562,7 +1489,6 @@ async function forceUpdate() {
 
   window.location.reload();
 }
-
 
 /* ============================================================
    DATE-WINDOW UTILITIES (added for multi-gameweek fixture congestion)
