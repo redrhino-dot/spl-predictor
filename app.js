@@ -171,22 +171,21 @@ async function seedPredictionsIfNeeded() {
 
 /* ============================================================
    GW LABEL
-   Uses the active window's own fixtures for the date, and the
-   composite completion label (e.g. "GW3 (GW2 1/6)") for the
-   headline text, so partially-completed prior gameweeks stay
-   visible in the heading until fully resolved.
+   Plain window date only — the composite completion label lives
+   on the closing table heading instead, since that's what actually
+   reflects gameweek progress (see buildGwCompositeLabel()).
    ============================================================ */
 function getGwLabel() {
   const activeFixtures = getActiveWindowFixtures();
-  if (activeFixtures.length === 0) return CONFIG.currentGwLabel;
-
-  const composite = buildGwCompositeLabel();
-  const firstKickoff = new Date(activeFixtures[0].kickoff);
-  const dateStr = firstKickoff.toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'short', year: 'numeric',
-    timeZone: 'Europe/London',
-  });
-  return `${composite} — ${dateStr}`;
+  if (activeFixtures.length > 0) {
+    const firstKickoff = new Date(activeFixtures[0].kickoff);
+    const dateStr = firstKickoff.toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric',
+      timeZone: 'Europe/London',
+    });
+    return `GW${CONFIG.currentGameweek} — ${dateStr}`;
+  }
+  return CONFIG.currentGwLabel;
 }
 
 /* ============================================================
@@ -898,6 +897,9 @@ function checkAndRenderBlockEnding() {
 
   projectedSection.style.display = 'none';
   section.style.display          = 'block';
+
+  const headingEl = document.getElementById('block-ending-heading');
+  if (headingEl) headingEl.textContent = `Closing Final Table (${buildGwCompositeLabel()})`;
 
   const windowPreds = getWindowPredictions(targetWindow.fixtures);
   renderBlockEnding(targetWindow.fixtures, liveMap, windowPreds);
@@ -1630,11 +1632,13 @@ function isWindowComplete(window, liveMap) {
   });
 }
 
-// Builds the composite standings-table header, e.g.:
-//   "GW10 (GW6 4/6, GW9 5/6, GW15 1/6)"
-// Headline = highest gameweek number where ALL of that gw's fixtures are complete.
-// Parenthetical = every other gameweek currently present with 1-5 of 6 fixtures complete.
+// Builds the composite gameweek-progress label, e.g. "GW2 + GW3 1/6".
+// A fixture only counts as "completed" here if it actually has a final
+// result (FT/AET/PEN) — postponed (PPD) fixtures are excluded from the
+// completed count, since they haven't returned a result yet, but they
+// still count toward the gameweek's total fixture count.
 function buildGwCompositeLabel() {
+  const PLAYED = ['FT', 'AET', 'PEN'];
   const gwNumbers = getDistinctGameweeksInFixtures();
   const liveMap   = buildLiveMap();
 
@@ -1643,24 +1647,26 @@ function buildGwCompositeLabel() {
     const total = gwFixtures.length;
     const completed = gwFixtures.filter(f => {
       const status = (liveMap[String(f.id)] || f).status || f.status || '';
-      return COMPLETED.includes(status);
+      return PLAYED.includes(status);
     }).length;
     return { gwNum, completed, total };
   });
 
   const fullyDone = gwStatus.filter(g => g.total > 0 && g.completed === g.total);
-  const partial   = gwStatus.filter(g => g.completed > 0 && g.completed < g.total);
+  const partial   = gwStatus.filter(g => g.total > 0 && g.completed < g.total);
 
-  const headlineGw = fullyDone.length > 0
-    ? Math.max(...fullyDone.map(g => g.gwNum))
-    : (gwNumbers.length > 0 ? Math.min(...gwNumbers) : CONFIG.currentGameweek);
+  const doneLabel = fullyDone.length > 0
+    ? fullyDone.sort((a, b) => a.gwNum - b.gwNum).map(g => `GW${g.gwNum}`).join(' + ')
+    : '';
 
-  if (partial.length === 0) return `GW${headlineGw}`;
+  if (partial.length === 0) {
+    return doneLabel || (gwNumbers.length > 0 ? `GW${Math.min(...gwNumbers)}` : `GW${CONFIG.currentGameweek}`);
+  }
 
-  const parenthetical = partial
+  const partialLabel = partial
     .sort((a, b) => a.gwNum - b.gwNum)
     .map(g => `GW${g.gwNum} ${g.completed}/${g.total}`)
     .join(', ');
 
-  return `GW${headlineGw} (${parenthetical})`;
+  return doneLabel ? `${doneLabel} + ${partialLabel}` : partialLabel;
 }
