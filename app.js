@@ -1633,10 +1633,13 @@ function isWindowComplete(window, liveMap) {
 }
 
 // Builds the composite gameweek-progress label, e.g. "GW2 + GW3 1/6".
-// A fixture only counts as "completed" here if it actually has a final
-// result (FT/AET/PEN) — postponed (PPD) fixtures are excluded from the
-// completed count, since they haven't returned a result yet, but they
-// still count toward the gameweek's total fixture count.
+// Headline = the single most recent gameweek that's fully resolved (all
+// its fixtures are FT/AET/PEN). Any other gameweek currently present with
+// at least one, but not all, of its fixtures resolved gets appended as
+// "GWx completed/total". Gameweeks with zero resolved fixtures (i.e. not
+// yet started — future rounds already buffered by fetch_scores.py) are
+// excluded entirely, since they haven't begun. PPD fixtures never count
+// toward the "completed" numerator, only toward the total.
 function buildGwCompositeLabel() {
   const PLAYED = ['FT', 'AET', 'PEN'];
   const gwNumbers = getDistinctGameweeksInFixtures();
@@ -1653,20 +1656,18 @@ function buildGwCompositeLabel() {
   });
 
   const fullyDone = gwStatus.filter(g => g.total > 0 && g.completed === g.total);
-  const partial   = gwStatus.filter(g => g.total > 0 && g.completed < g.total);
+  const partial   = gwStatus.filter(g => g.completed > 0 && g.completed < g.total);
 
-  const doneLabel = fullyDone.length > 0
-    ? fullyDone.sort((a, b) => a.gwNum - b.gwNum).map(g => `GW${g.gwNum}`).join(' + ')
-    : '';
+  const headlineGw = fullyDone.length > 0
+    ? Math.max(...fullyDone.map(g => g.gwNum))
+    : (gwNumbers.length > 0 ? Math.min(...gwNumbers) : CONFIG.currentGameweek);
 
-  if (partial.length === 0) {
-    return doneLabel || (gwNumbers.length > 0 ? `GW${Math.min(...gwNumbers)}` : `GW${CONFIG.currentGameweek}`);
-  }
+  if (partial.length === 0) return `GW${headlineGw}`;
 
   const partialLabel = partial
     .sort((a, b) => a.gwNum - b.gwNum)
     .map(g => `GW${g.gwNum} ${g.completed}/${g.total}`)
     .join(', ');
 
-  return doneLabel ? `${doneLabel} + ${partialLabel}` : partialLabel;
+  return `GW${headlineGw} + ${partialLabel}`;
 }
