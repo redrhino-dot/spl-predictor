@@ -171,10 +171,15 @@ async function seedPredictionsIfNeeded() {
 
 /* ============================================================
    GW LABEL
+   Uses the active window's own fixtures (not the raw, unfiltered
+   fixtures.json history) so the date shown always reflects the
+   window currently on screen, not whichever fixture happens to sit
+   first in the accumulated fixtures array.
    ============================================================ */
 function getGwLabel() {
-  if (fixturesData && fixturesData.fixtures && fixturesData.fixtures.length > 0) {
-    const firstKickoff = new Date(fixturesData.fixtures[0].kickoff);
+  const activeFixtures = getActiveWindowFixtures();
+  if (activeFixtures.length > 0) {
+    const firstKickoff = new Date(activeFixtures[0].kickoff);
     const dateStr = firstKickoff.toLocaleDateString('en-GB', {
       day: 'numeric', month: 'short', year: 'numeric',
       timeZone: 'Europe/London',
@@ -182,6 +187,53 @@ function getGwLabel() {
     return `GW${CONFIG.currentGameweek} — ${dateStr}`;
   }
   return CONFIG.currentGwLabel;
+}
+
+/* ============================================================
+   ARCHIVE MATCHING (shared)
+   A single source of truth for "is this computed window already
+   archived?", used by both getActiveWindowFixtures() and
+   checkAndRenderBlockEnding(). Three layers, most to least strict:
+     1. Exact kickoff timestamp match (normal case).
+     2. Migrated GW1/GW2 entries stored as midnight date-only
+        timestamps — match on calendar day instead.
+     3. Fixture-ID fallback — if every fixture in the window already
+        has an archived result recorded, treat it as archived even
+        if the timestamps don't line up (e.g. after a refetch changed
+        fixture IDs).
+   ============================================================ */
+function isWindowArchived(window, archive) {
+  const archiveWindows = archive?.windows || [];
+
+  const archivedKeys = new Set(
+    archiveWindows.map(w => `${w.window_start}|${w.window_end}`)
+  );
+  const exactTimestampMatch = archivedKeys.has(
+    `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
+  );
+  if (exactTimestampMatch) return true;
+
+  const migratedStartDays = new Set(
+    archiveWindows
+      .filter(w =>
+        w.window_start?.endsWith('T00:00:00.000Z') &&
+        w.window_end?.endsWith('T00:00:00.000Z')
+      )
+      .map(w => w.window_start.slice(0, 10))
+  );
+  const migratedDayMatch = migratedStartDays.has(
+    window.startDate.toISOString().slice(0, 10)
+  );
+  if (migratedDayMatch) return true;
+
+  const archivedFixtureIds = new Set(
+    archiveWindows.flatMap(w => w.results || []).map(r => String(r.fixture_id))
+  );
+  const everyFixtureArchived =
+    window.fixtures.length > 0 &&
+    window.fixtures.every(f => archivedFixtureIds.has(String(f.id)));
+
+  return everyFixtureArchived;
 }
 
 /* ============================================================
@@ -199,35 +251,7 @@ function getActiveWindowFixtures() {
   if (fixtures.length === 0) return [];
 
   const windows = computeWindows(fixtures);
-  const archiveWindows = archiveData?.windows || [];
-
-  // New archive entries use actual kickoff timestamps.
-  const archivedKeys = new Set(
-    archiveWindows.map(w => `${w.window_start}|${w.window_end}`)
-  );
-
-  // GW1/GW2 were migrated with midnight date-only timestamps, so their
-  // start calendar day must be matched instead of exact kickoff timestamps.
-  const migratedStartDays = new Set(
-    archiveWindows
-      .filter(w =>
-        w.window_start?.endsWith('T00:00:00.000Z') &&
-        w.window_end?.endsWith('T00:00:00.000Z')
-      )
-      .map(w => w.window_start.slice(0, 10))
-  );
-
-  const openWindows = windows.filter(window => {
-    const exactTimestampMatch = archivedKeys.has(
-      `${window.startDate.toISOString()}|${window.endDate.toISOString()}`
-    );
-
-    const migratedDayMatch = migratedStartDays.has(
-      window.startDate.toISOString().slice(0, 10)
-    );
-
-    return !exactTimestampMatch && !migratedDayMatch;
-  });
+  const openWindows = windows.filter(w => !isWindowArchived(w, archiveData));
 
   return openWindows.length > 0 ? openWindows[0].fixtures : [];
 }
@@ -855,13 +879,7 @@ function checkAndRenderBlockEnding() {
   const liveMap = buildLiveMap();
   const windows = computeWindows(fixtures);
 
-  const archivedKeys = new Set(
-    (archiveData?.windows || []).map(w => `${w.window_start}|${w.window_end}`)
-  );
-
-  const openWindows = windows.filter(
-    w => !archivedKeys.has(`${w.startDate.toISOString()}|${w.endDate.toISOString()}`)
-  );
+  const openWindows = windows.filter(w => !isWindowArchived(w, archiveData));
 
   if (openWindows.length === 0) {
     section.style.display          = 'none';
