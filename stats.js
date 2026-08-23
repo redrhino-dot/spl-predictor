@@ -53,9 +53,16 @@ async function renderStatsTab() {
     return;
   }
 
-  const gameweeks = archive.gameweeks || [];
+  // Schema note: archive.json stores completed periods under "windows",
+  // not "gameweeks" — a window may span more than one gameweek (e.g. a
+  // rescheduled fixture landing alongside the current round). Window
+  // entries have no numeric "gameweek" field — use the pre-built "label"
+  // string (e.g. "08 Aug 2026") instead. All other fields inside each
+  // entry (opening_standings, closing_standings, points_breakdown, etc.)
+  // remain snake_case, unchanged from the pre-windows schema.
+  const gameweeks = archive.windows || [];
   if (!gameweeks.length) {
-    container.innerHTML = '<div class="stats-error">No archived gameweeks yet.</div>';
+    container.innerHTML = '<div class="stats-error">No archived windows yet.</div>';
     return;
   }
 
@@ -70,7 +77,7 @@ async function renderStatsTab() {
   players.forEach(p => { points[p] = []; positions[p] = []; });
 
   gameweeks.forEach(gw => {
-    labels.push('GW' + gw.gameweek);
+    labels.push(gw.label);
     const closing = {};
     gw.closing_standings.forEach(s => closing[s.name] = s.points);
     players.forEach(p => points[p].push(closing[p] ?? 0));
@@ -83,9 +90,8 @@ async function renderStatsTab() {
     players.forEach(p => positions[p].push(pos[p] ?? players.length));
   });
 
-
   /* ── Compute extended stats ─────────────────────────────── */
-  const gwEarned = {};   // per-GW points earned
+  const gwEarned = {};   // per-window points earned
   players.forEach(p => {
     gwEarned[p] = gameweeks.map((gw, i) => {
       const open  = (gw.opening_standings.find(s => s.name === p) || {}).points || 0;
@@ -94,14 +100,14 @@ async function renderStatsTab() {
     });
   });
 
-  // GW winner(s) each week
+  // Window winner(s) each period
   const gwWinners = gameweeks.map((gw, i) => {
     const scores = players.map(p => gwEarned[p][i]);
     const max = Math.max(...scores);
     return players.filter((p, pi) => scores[pi] === max);
   });
 
-  // GW last(s) each week
+  // Window last(s) each period
   const gwLasts = gameweeks.map((gw, i) => {
     const scores = players.map(p => gwEarned[p][i]);
     const min = Math.min(...scores);
@@ -136,13 +142,13 @@ async function renderStatsTab() {
       if (!gwWinners[i].includes(p)) curNoWinActive++; else break;
     }
 
-    // Weeks in 1st
+    // Windows in 1st
     const weeksIn1st = gameweeks.filter((gw, i) => {
       const maxCum = Math.max(...players.map(pl => points[pl][i]));
       return points[p][i] === maxCum;
     }).length;
 
-    // First GW in OUTRIGHT lead (sole leader only)
+    // First window in OUTRIGHT lead (sole leader only)
     let firstLead = null;
     for (let i = 0; i < gameweeks.length; i++) {
       const maxCum  = Math.max(...players.map(pl => points[pl][i]));
@@ -199,11 +205,11 @@ async function renderStatsTab() {
 
   container.innerHTML = `
     <section class="card">
-      <h2>Current Standings — GW${lastGW.gameweek}</h2>
+      <h2>Current Standings — ${lastGW.label}</h2>
       <div id="stats-standings"></div>
     </section>
     <section class="card">
-      <h2>Cumulative Points by Gameweek</h2>
+      <h2>Cumulative Points by Window</h2>
       <div class="stats-chart-hint">Pinch to zoom · Drag to pan</div>
       <div class="stats-chart-wrap"><canvas id="statsPointsChart"></canvas></div>
       <div class="stats-chart-controls">
@@ -212,12 +218,12 @@ async function renderStatsTab() {
       <div class="stats-legend" id="stats-legend-points"></div>
     </section>
     <section class="card">
-      <h2>League Position by Gameweek</h2>
+      <h2>League Position by Window</h2>
       <div class="stats-chart-wrap"><canvas id="statsPositionChart"></canvas></div>
       <div class="stats-legend" id="stats-legend-position"></div>
     </section>
     <section class="card">
-      <h2>Gameweek Performance</h2>
+      <h2>Window Performance</h2>
       <div id="stats-gw-perf"></div>
     </section>
     <section class="card">
@@ -304,7 +310,7 @@ function _buildDynamicLegend(containerId, players, dataMap, defaultIdx, suffix, 
     }).join('');
   };
 
-  // Default: show last GW values
+  // Default: show last window's values
   renderLegend(defaultIdx);
 
   // Return the update function so the chart can call it
@@ -488,16 +494,16 @@ function _buildGWPerf(players, stats) {
   const medals = ['🥇','🥈','🥉',''];
 
   const rows = [
-    { label: 'Outright GW Wins',      key: 'outrightWins',   suffix: ' GWs', desc: true },
-    { label: 'GW Wins (inc. shared)',  key: 'wins',           suffix: ' GWs', desc: true },
-    { label: 'Best Win Streak',     key: 'bestWinStreak',  suffix: ' GWs', desc: true },
-    { label: 'Longest No-Win Run',  key: 'bestNoWinStreak',suffix: ' GWs', desc: false },
-    { label: 'Current No-Win Run',  key: 'curNoWinActive', suffix: ' GWs', desc: false },
-    { label: 'Highest GW Score',    key: 'maxPts',         suffix: ' pts', desc: true, sub: p => `GW${stats[p].maxGW}` },
-    { label: 'Lowest GW Score',     key: 'minPts',         suffix: ' pts', desc: false, sub: p => `GW${stats[p].minGW}` },
-    { label: 'Avg Points / GW',     key: 'avg',            suffix: ' pts', desc: true, fmt: v => v.toFixed(1) },
-    { label: 'Outright Wooden Spoons', key: 'outrightSpoons', suffix: ' GWs', desc: false },
-    { label: 'Wooden Spoon GWs (inc. shared)', key: 'spoons', suffix: ' GWs', desc: false },
+    { label: 'Outright Window Wins',      key: 'outrightWins',   suffix: ' wins', desc: true },
+    { label: 'Window Wins (inc. shared)',  key: 'wins',           suffix: ' wins', desc: true },
+    { label: 'Best Win Streak',     key: 'bestWinStreak',  suffix: ' wins', desc: true },
+    { label: 'Longest No-Win Run',  key: 'bestNoWinStreak',suffix: ' windows', desc: false },
+    { label: 'Current No-Win Run',  key: 'curNoWinActive', suffix: ' windows', desc: false },
+    { label: 'Highest Window Score',    key: 'maxPts',         suffix: ' pts', desc: true, sub: p => `#${stats[p].maxGW}` },
+    { label: 'Lowest Window Score',     key: 'minPts',         suffix: ' pts', desc: false, sub: p => `#${stats[p].minGW}` },
+    { label: 'Avg Points / Window',     key: 'avg',            suffix: ' pts', desc: true, fmt: v => v.toFixed(1) },
+    { label: 'Outright Wooden Spoons', key: 'outrightSpoons', suffix: ' windows', desc: false },
+    { label: 'Wooden Spoon Windows (inc. shared)', key: 'spoons', suffix: ' windows', desc: false },
   ];
 
   el.innerHTML = rows.map(row => {
@@ -535,10 +541,9 @@ function _buildOverall(players, stats) {
 
   const sortedFirst = [...players].sort((a,b) => (stats[a].firstLead||999) - (stats[b].firstLead||999));
 
-
   el.innerHTML = `
     <div class="stat-row-group">
-      <div class="stat-row-label">Weeks in 1st Place</div>
+      <div class="stat-row-label">Windows in 1st Place</div>
       ${sortedWeeks.map((p, i) => {
         const val   = stats[p].weeksIn1st;
         const color = PLAYER_COLORS[p] || '#94a3b8';
@@ -547,12 +552,12 @@ function _buildOverall(players, stats) {
           <span class="stat-medal">${medals[i]||''}</span>
           <span class="stat-name" style="color:${color}">${p}</span>
           <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.max(pct,8)}%;background:${color}"></div></div>
-          <span class="stat-val" style="color:${color}">${val} GWs</span>
+          <span class="stat-val" style="color:${color}">${val} windows</span>
         </div>`;
       }).join('')}
     </div>
     <div class="stat-row-group">
-      <div class="stat-row-label">First GW in Outright Lead</div>
+      <div class="stat-row-label">First Window in Outright Lead</div>
       ${sortedFirst.map((p, i) => {
         const val   = stats[p].firstLead;
         const color = PLAYER_COLORS[p] || '#94a3b8';
@@ -560,7 +565,7 @@ function _buildOverall(players, stats) {
           <span class="stat-medal">${medals[i]||''}</span>
           <span class="stat-name" style="color:${color}">${p}</span>
           <div class="stat-bar-wrap stat-bar-wrap--empty"></div>
-          <span class="stat-val" style="color:${color}">${val ? 'GW' + val : 'Never'}</span>
+          <span class="stat-val" style="color:${color}">${val ? '#' + val : 'Never'}</span>
         </div>`;
       }).join('')}
   `;
