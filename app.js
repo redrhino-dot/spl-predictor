@@ -171,22 +171,22 @@ async function seedPredictionsIfNeeded() {
 
 /* ============================================================
    GW LABEL
-   Uses the active window's own fixtures (not the raw, unfiltered
-   fixtures.json history) so the date shown always reflects the
-   window currently on screen, not whichever fixture happens to sit
-   first in the accumulated fixtures array.
+   Uses the active window's own fixtures for the date, and the
+   composite completion label (e.g. "GW3 (GW2 1/6)") for the
+   headline text, so partially-completed prior gameweeks stay
+   visible in the heading until fully resolved.
    ============================================================ */
 function getGwLabel() {
   const activeFixtures = getActiveWindowFixtures();
-  if (activeFixtures.length > 0) {
-    const firstKickoff = new Date(activeFixtures[0].kickoff);
-    const dateStr = firstKickoff.toLocaleDateString('en-GB', {
-      day: 'numeric', month: 'short', year: 'numeric',
-      timeZone: 'Europe/London',
-    });
-    return `GW${CONFIG.currentGameweek} — ${dateStr}`;
-  }
-  return CONFIG.currentGwLabel;
+  if (activeFixtures.length === 0) return CONFIG.currentGwLabel;
+
+  const composite = buildGwCompositeLabel();
+  const firstKickoff = new Date(activeFixtures[0].kickoff);
+  const dateStr = firstKickoff.toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric',
+    timeZone: 'Europe/London',
+  });
+  return `${composite} — ${dateStr}`;
 }
 
 /* ============================================================
@@ -1415,10 +1415,14 @@ async function rollToNextGW() {
     .sort((a, b) => b.points - a.points)
     .map(s => ({ name: s.name, points: s.points }));
 
+  const nextGWNum = CONFIG.currentGameweek + 1;
+
   const newConfigObj = {
     ...CONFIG,
+    currentGameweek: nextGWNum,
+    currentGwLabel: `GW${nextGWNum} — TBD`,
     openingStandings: newOpeningStandings,
-    seededPredictions: { gw: CONFIG.currentGameweek + 1, submittedAt: new Date().toISOString(), byFixture: {} },
+    seededPredictions: { gw: nextGWNum, submittedAt: new Date().toISOString(), byFixture: {} },
   };
 
   btn.disabled = true;
@@ -1448,7 +1452,7 @@ async function rollToNextGW() {
       console.warn('Could not trigger fixture fetch', e);
     }
 
-    alert('Success! App will now reload.');
+    alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
     window.location.reload();
   } else {
     alert('Failed to update config.js. Please try again.');
