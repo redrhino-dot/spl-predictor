@@ -5,62 +5,232 @@
       "window_end": "2026-07-31T00:00:00.000Z",
       "label": "31 Jul 2026",
       "opening_standings": [
-        {"name": "Graham", "points": 0},
-        {"name": "Jon", "points": 0},
-        {"name": "Kris", "points": 0},
-        {"name": "Doug", "points": 0}
+        {
+          "name": "Graham",
+          "points": 0
+        },
+        {
+          "name": "Jon",
+          "points": 0
+        },
+        {
+          "name": "Kris",
+          "points": 0
+        },
+        {
+          "name": "Doug",
+          "points": 0
+        }
       ],
       "closing_standings": [
-        {"name": "Graham", "points": 2},
-        {"name": "Jon", "points": 5},
-        {"name": "Kris", "points": 2},
-        {"name": "Doug", "points": 6}
+        {
+          "name": "Graham",
+          "points": 2
+        },
+        {
+          "name": "Jon",
+          "points": 5
+        },
+        {
+          "name": "Kris",
+          "points": 2
+        },
+        {
+          "name": "Doug",
+          "points": 6
+        }
       ],
       "points_breakdown": {
-        "Graham": {"points": 2, "notation": "Dons, Celtic"},
-        "Jon": {"points": 5, "notation": "St M, Dons 3, Celtic"},
-        "Kris": {"points": 2, "notation": "St J, Celtic"},
-        "Doug": {"points": 6, "notation": "Yinited/Huns, St J, Well 3, Celtic"}
+        "Graham": {
+          "points": 2,
+          "notation": "Dons, Celtic"
+        },
+        "Jon": {
+          "points": 5,
+          "notation": "St M, Dons 3, Celtic"
+        },
+        "Kris": {
+          "points": 2,
+          "notation": "St J, Celtic"
+        },
+        "Doug": {
+          "points": 6,
+          "notation": "Yinited/Huns, St J, Well 3, Celtic"
+        }
       },
       "results": [
-        {"fixture_id": "401878416", "home_team": "Dundee United", "away_team": "Rangers", "home_score": 1, "away_score": 1, "assigned_gameweek": 1},
-        {"fixture_id": "401878415", "home_team": "Falkirk", "away_team": "St Mirren", "home_score": 0, "away_score": 2, "assigned_gameweek": 1},
-        {"fixture_id": "401878414", "home_team": "Aberdeen", "away_team": "Heart of Midlothian", "home_score": 2, "away_score": 1, "assigned_gameweek": 1},
-        {"fixture_id": "401878413", "home_team": "St Johnstone", "away_team": "Kilmarnock", "home_score": 4, "away_score": 3, "assigned_gameweek": 1},
-        {"fixture_id": "401878412", "home_team": "Hibernian", "away_team": "Motherwell", "home_score": 1, "away_score": 2, "assigned_gameweek": 1},
-        {"fixture_id": "401878411", "home_team": "Celtic", "away_team": "Dundee", "home_score": 1, "away_score": 0, "assigned_gameweek": 1}
+        {
+          "fixture_id": "401878416",
+          "home_team": "Dundee United",
+          "away_team": "Rangers",
+          "home_score": 1,
+          "away_score": 1,
+          "assigned_gameweek": 1
+        },
+        {
+          "fixture_id": "401878415",
+          "home_team": "Falkirk",
+          "away_team": "St Mirren",
+          "home_score": 0,
+          "away_score": 2,
+          "assigned_gameweek": 1
+        },
+        {
+          "fixture_id": "401878414",
+          "home_team": "Aberdeen",
+          "away_team": "Heart of Midlothian",
+          "home_score": 2,
+          "away_score": 1,
+          "assigned_gameweek": 1
+        },
+        {
+          "fixture_id": "401878413",
+          "home_team": "St Johnstone",
+          "away_team": "Kilmarnock",
+          "home_score": 4,
+          "away_score": 3,
+          "assigned_gameweek": 1
+        },
+        {
+          "fixture_id": "401878412",
+          "home_team": "Hibernian",
+          "away_team": "Motherwell",
+          "home_score": 1,
+          "away_score": 2,
+          "assigned_gameweek": 1
+        },
+        {
+          "fixture_id": "401878411",
+          "home_team": "Celtic",
+          "away_team": "Dundee",
+          "home_score": 1,
+          "away_score": 0,
+          "assigned_gameweek": 1
+        }
       ],
       "predictions": {
         "Graham": [
-          {"fixture_id": "401878416", "home_score": 0, "away_score": 2},
-          {"fixture_id": "401878415", "home_score": 1, "away_score": 0},
-          {"fixture_id": "401878414", "home_score": 1, "away_score": 0},
-          {"fixture_id": "401878413", "home_score": 0, "away_score": 1},
-          {"fixture_id": "401878412", "home_score": 2, "away_score": 1},
-          {"fixture_id": "401878411", "home_score": 2, "away_score": 0}
+          {
+            "fixture_id": "401878416",
+            "home_score": 0,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "401878415",
+            "home_score": 1,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "401878414",
+            "home_score": 1,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "401878413",
+            "home_score": 0,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878412",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878411",
+            "home_score": 2,
+            "away_score": 0
+          }
         ],
         "Jon": [
-          {"fixture_id": "401878416", "home_score": 1, "away_score": 3},
-          {"fixture_id": "401878415", "home_score": 1, "away_score": 2},
-          {"fixture_id": "401878414", "home_score": 2, "away_score": 1},
-          {"fixture_id": "401878413", "home_score": 1, "away_score": 3},
-          {"fixture_id": "401878412", "home_score": 2, "away_score": 0},
-          {"fixture_id": "401878411", "home_score": 4, "away_score": 0}
+          {
+            "fixture_id": "401878416",
+            "home_score": 1,
+            "away_score": 3
+          },
+          {
+            "fixture_id": "401878415",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "401878414",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878413",
+            "home_score": 1,
+            "away_score": 3
+          },
+          {
+            "fixture_id": "401878412",
+            "home_score": 2,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "401878411",
+            "home_score": 4,
+            "away_score": 0
+          }
         ],
         "Kris": [
-          {"fixture_id": "401878416", "home_score": 0, "away_score": 2},
-          {"fixture_id": "401878415", "home_score": 2, "away_score": 1},
-          {"fixture_id": "401878414", "home_score": 1, "away_score": 1},
-          {"fixture_id": "401878413", "home_score": 1, "away_score": 0},
-          {"fixture_id": "401878412", "home_score": 2, "away_score": 1},
-          {"fixture_id": "401878411", "home_score": 3, "away_score": 0}
+          {
+            "fixture_id": "401878416",
+            "home_score": 0,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "401878415",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878414",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878413",
+            "home_score": 1,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "401878412",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878411",
+            "home_score": 3,
+            "away_score": 0
+          }
         ],
         "Doug": [
-          {"fixture_id": "401878415", "home_score": 2, "away_score": 1},
-          {"fixture_id": "401878414", "home_score": 1, "away_score": 1},
-          {"fixture_id": "401878413", "home_score": 2, "away_score": 0},
-          {"fixture_id": "401878412", "home_score": 1, "away_score": 2},
-          {"fixture_id": "401878411", "home_score": 3, "away_score": 0}
+          {
+            "fixture_id": "401878415",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878414",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "401878413",
+            "home_score": 2,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "401878412",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "401878411",
+            "home_score": 3,
+            "away_score": 0
+          }
         ]
       }
     },
@@ -69,63 +239,336 @@
       "window_end": "2026-08-08T00:00:00.000Z",
       "label": "08 Aug 2026",
       "opening_standings": [
-        {"name": "Doug", "points": 6},
-        {"name": "Jon", "points": 5},
-        {"name": "Graham", "points": 2},
-        {"name": "Kris", "points": 2}
+        {
+          "name": "Doug",
+          "points": 6
+        },
+        {
+          "name": "Jon",
+          "points": 5
+        },
+        {
+          "name": "Graham",
+          "points": 2
+        },
+        {
+          "name": "Kris",
+          "points": 2
+        }
       ],
       "closing_standings": [
-        {"name": "Doug", "points": 8},
-        {"name": "Jon", "points": 7},
-        {"name": "Graham", "points": 7},
-        {"name": "Kris", "points": 3}
+        {
+          "name": "Doug",
+          "points": 8
+        },
+        {
+          "name": "Jon",
+          "points": 7
+        },
+        {
+          "name": "Graham",
+          "points": 7
+        },
+        {
+          "name": "Kris",
+          "points": 3
+        }
       ],
       "points_breakdown": {
-        "Graham": {"points": 5, "notation": "St M 3, Celtic, Hearts"},
-        "Jon": {"points": 2, "notation": "St M, Celtic"},
-        "Kris": {"points": 1, "notation": "Celtic"},
-        "Doug": {"points": 2, "notation": "Dundee, Celtic"}
+        "Graham": {
+          "points": 5,
+          "notation": "St M 3, Celtic, Hearts"
+        },
+        "Jon": {
+          "points": 2,
+          "notation": "St M, Celtic"
+        },
+        "Kris": {
+          "points": 1,
+          "notation": "Celtic"
+        },
+        "Doug": {
+          "points": 2,
+          "notation": "Dundee, Celtic"
+        }
       },
       "results": [
-        {"fixture_id": "2001", "home_team": "Dundee", "away_team": "Aberdeen", "home_score": 2, "away_score": 0, "assigned_gameweek": 2},
-        {"fixture_id": "2002", "home_team": "St Mirren", "away_team": "St Johnstone", "home_score": 1, "away_score": 0, "assigned_gameweek": 2},
-        {"fixture_id": "2003", "home_team": "Kilmarnock", "away_team": "Celtic", "home_score": 1, "away_score": 5, "assigned_gameweek": 2},
-        {"fixture_id": "2004", "home_team": "Hearts", "away_team": "Dundee United", "home_score": 4, "away_score": 0, "assigned_gameweek": 2},
-        {"fixture_id": "2005", "home_team": "Motherwell", "away_team": "Falkirk", "home_score": 0, "away_score": 0, "assigned_gameweek": 2},
-        {"fixture_id": "2006", "home_team": "Rangers", "away_team": "Hibernian", "home_score": 1, "away_score": 2, "assigned_gameweek": 2}
+        {
+          "fixture_id": "2001",
+          "home_team": "Dundee",
+          "away_team": "Aberdeen",
+          "home_score": 2,
+          "away_score": 0,
+          "assigned_gameweek": 2
+        },
+        {
+          "fixture_id": "2002",
+          "home_team": "St Mirren",
+          "away_team": "St Johnstone",
+          "home_score": 1,
+          "away_score": 0,
+          "assigned_gameweek": 2
+        },
+        {
+          "fixture_id": "2003",
+          "home_team": "Kilmarnock",
+          "away_team": "Celtic",
+          "home_score": 1,
+          "away_score": 5,
+          "assigned_gameweek": 2
+        },
+        {
+          "fixture_id": "2004",
+          "home_team": "Hearts",
+          "away_team": "Dundee United",
+          "home_score": 4,
+          "away_score": 0,
+          "assigned_gameweek": 2
+        },
+        {
+          "fixture_id": "2005",
+          "home_team": "Motherwell",
+          "away_team": "Falkirk",
+          "home_score": 0,
+          "away_score": 0,
+          "assigned_gameweek": 2
+        },
+        {
+          "fixture_id": "2006",
+          "home_team": "Rangers",
+          "away_team": "Hibernian",
+          "home_score": 1,
+          "away_score": 2,
+          "assigned_gameweek": 2
+        }
       ],
       "predictions": {
         "Graham": [
-          {"fixture_id": "2001", "home_score": 1, "away_score": 2},
-          {"fixture_id": "2002", "home_score": 1, "away_score": 0},
-          {"fixture_id": "2003", "home_score": 0, "away_score": 2},
-          {"fixture_id": "2004", "home_score": 1, "away_score": 0},
-          {"fixture_id": "2005", "home_score": 2, "away_score": 0},
-          {"fixture_id": "2006", "home_score": 2, "away_score": 0}
+          {
+            "fixture_id": "2001",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2002",
+            "home_score": 1,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2003",
+            "home_score": 0,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2004",
+            "home_score": 1,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2005",
+            "home_score": 2,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2006",
+            "home_score": 2,
+            "away_score": 0
+          }
         ],
         "Jon": [
-          {"fixture_id": "2001", "home_score": 1, "away_score": 1},
-          {"fixture_id": "2002", "home_score": 2, "away_score": 1},
-          {"fixture_id": "2003", "home_score": 1, "away_score": 2},
-          {"fixture_id": "2004", "home_score": 1, "away_score": 3},
-          {"fixture_id": "2005", "home_score": 3, "away_score": 0},
-          {"fixture_id": "2006", "home_score": 2, "away_score": 1}
+          {
+            "fixture_id": "2001",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2002",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2003",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2004",
+            "home_score": 1,
+            "away_score": 3
+          },
+          {
+            "fixture_id": "2005",
+            "home_score": 3,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2006",
+            "home_score": 2,
+            "away_score": 1
+          }
         ],
         "Kris": [
-          {"fixture_id": "2001", "home_score": 2, "away_score": 2},
-          {"fixture_id": "2002", "home_score": 2, "away_score": 2},
-          {"fixture_id": "2003", "home_score": 0, "away_score": 2},
-          {"fixture_id": "2004", "home_score": 1, "away_score": 1},
-          {"fixture_id": "2005", "home_score": 2, "away_score": 0},
-          {"fixture_id": "2006", "home_score": 2, "away_score": 1}
+          {
+            "fixture_id": "2001",
+            "home_score": 2,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2002",
+            "home_score": 2,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2003",
+            "home_score": 0,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2004",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2005",
+            "home_score": 2,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2006",
+            "home_score": 2,
+            "away_score": 1
+          }
         ],
         "Doug": [
-          {"fixture_id": "2001", "home_score": 2, "away_score": 1},
-          {"fixture_id": "2002", "home_score": 1, "away_score": 1},
-          {"fixture_id": "2003", "home_score": 1, "away_score": 3},
-          {"fixture_id": "2004", "home_score": 1, "away_score": 2},
-          {"fixture_id": "2005", "home_score": 2, "away_score": 0},
-          {"fixture_id": "2006", "home_score": 2, "away_score": 1}
+          {
+            "fixture_id": "2001",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2002",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2003",
+            "home_score": 1,
+            "away_score": 3
+          },
+          {
+            "fixture_id": "2004",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2005",
+            "home_score": 2,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2006",
+            "home_score": 2,
+            "away_score": 1
+          }
+        ]
+      }
+    },
+    {
+      "window_start": "2026-08-22T14:00:00.000Z",
+      "window_end": "2026-08-22T16:45:00.000Z",
+      "label": "22 Aug 2026",
+      "opening_standings": [
+        {
+          "name": "Doug",
+          "points": 8
+        },
+        {
+          "name": "Jon",
+          "points": 7
+        },
+        {
+          "name": "Graham",
+          "points": 7
+        },
+        {
+          "name": "Kris",
+          "points": 3
+        }
+      ],
+      "closing_standings": [
+        {
+          "name": "Doug",
+          "points": 9
+        },
+        {
+          "name": "Jon",
+          "points": 7
+        },
+        {
+          "name": "Graham",
+          "points": 7
+        },
+        {
+          "name": "Kris",
+          "points": 3
+        }
+      ],
+      "points_breakdown": {
+        "Graham": {
+          "points": 0,
+          "notation": "–"
+        },
+        "Jon": {
+          "points": 0,
+          "notation": "–"
+        },
+        "Kris": {
+          "points": 0,
+          "notation": "–"
+        },
+        "Doug": {
+          "points": 1,
+          "notation": "Dundee"
+        }
+      },
+      "results": [
+        {
+          "fixture_id": "manual-9001",
+          "home_team": "Dundee United",
+          "away_team": "Dundee",
+          "home_score": 0,
+          "away_score": 2,
+          "assigned_gameweek": 3
+        }
+      ],
+      "predictions": {
+        "Graham": [
+          {
+            "fixture_id": "manual-9001",
+            "home_score": 2,
+            "away_score": 1
+          }
+        ],
+        "Jon": [
+          {
+            "fixture_id": "manual-9001",
+            "home_score": 3,
+            "away_score": 1
+          }
+        ],
+        "Kris": [
+          {
+            "fixture_id": "manual-9001",
+            "home_score": 2,
+            "away_score": 2
+          }
+        ],
+        "Doug": [
+          {
+            "fixture_id": "manual-9001",
+            "home_score": 1,
+            "away_score": 2
+          }
         ]
       }
     }
