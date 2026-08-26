@@ -865,6 +865,8 @@ function renderProjectedStandings() {
    BLOCK ENDING TABLE
    ============================================================ */
 function checkAndRenderBlockEnding() {
+  updatePendingRollNotice();
+
   const fixtures         = fixturesData.fixtures || [];
   const section          = document.getElementById('block-ending-section');
   const projectedSection = document.getElementById('projected-section');
@@ -905,8 +907,7 @@ function checkAndRenderBlockEnding() {
   renderBlockEnding(targetWindow.fixtures, liveMap, windowPreds);
 
   document.getElementById('archive-btn-container').style.display = 'block';
-  document.getElementById('archive-gw-btn').onclick = () => archiveCurrentWindow(targetWindow);
-  document.getElementById('roll-gw-btn').onclick = rollToNextGW;
+  document.getElementById('archive-roll-btn').onclick = () => archiveAndRoll(targetWindow);
 }
 
 // Merges each participant's predictions from every gameweeks[gw] bucket
@@ -1083,12 +1084,21 @@ function buildArchiveBlockEnding(gw) {
   return wrap;
 }
 
-async function archiveCurrentWindow(window) {
-  const pin = prompt("Enter Kris's admin PIN to archive this window:");
-  if (pin === null) return;
-  if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
-
-  const targetFixtures = window.fixtures;
+/* ============================================================
+   ARCHIVE + ROLL (merged)
+   The previous UI split "Archive Current GW" and "Roll to Next
+   Gameweek" into two separate buttons that both lived inside
+   #block-ending-section — a section that hides itself the moment
+   the active window changes (e.g. archiving succeeds, or a new
+   fixture round gets auto-fetched before you click Roll). That left
+   Roll completely unreachable from the UI if you didn't click it
+   within the same render pass as Archive. These two are now merged
+   into one PIN-gated action, and a separate always-visible
+   pending-roll notice (see below) catches any case where a window
+   was archived but the app hasn't been rolled forward yet.
+   ============================================================ */
+async function performArchive(activeWindow) {
+  const targetFixtures = activeWindow.fixtures;
   const liveMap = buildLiveMap();
   const gwPreds = getWindowPredictions(targetFixtures);
 
@@ -1139,9 +1149,9 @@ async function archiveCurrentWindow(window) {
   });
 
   const entry = {
-    window_start:      window.startDate.toISOString(),
-    window_end:        window.endDate.toISOString(),
-    label:             window.label,
+    window_start:      activeWindow.startDate.toISOString(),
+    window_end:        activeWindow.endDate.toISOString(),
+    label:             activeWindow.label,
     opening_standings: [...CONFIG.openingStandings],
     closing_standings: closingStandings,
     points_breakdown:  pointsBreakdown,
@@ -1156,7 +1166,6 @@ async function archiveCurrentWindow(window) {
     w => w.window_start === entry.window_start && w.window_end === entry.window_end
   );
   if (existIdx >= 0) {
-    if (!confirm(`Window ${window.label} is already archived. Overwrite?`)) return;
     currentArchive.windows[existIdx] = entry;
   } else {
     currentArchive.windows.push(entry);
@@ -1164,12 +1173,148 @@ async function archiveCurrentWindow(window) {
 
   const ok = await writeFileToGitHub('data/archive.json', currentArchive);
   if (ok) {
-    alert(`Window ${window.label} archived successfully!`);
     archiveData = currentArchive;
-    await loadArchiveData();
-  } else {
-    alert('Archive failed — please try again.');
+    return true;
   }
+  return false;
+}
+
+async function performRoll() {
+  const currentArchive = (archiveData && archiveData.windows && archiveData.windows.length > 0)
+    ? archiveData
+    : await fetchJSON('data/archive.json');
+
+  if (!currentArchive || !currentArchive.windows || currentArchive.windows.length === 0) {
+    return false;
+  }
+
+  const lastWindow = currentArchive.windows.reduce(
+    (max, w) => (new Date(w.window_start) > new Date(max.window_start) ? w : max),
+    currentArchive.windows[0]
+  );
+
+  const newOpeningStandings = [...lastWindow.closing_standings]
+    .sort((a, b) => b.points - a.points)
+    .map(s => ({ name: s.name, points: s.points }));
+
+  const nextGWNum = CONFIG.currentGameweek + 1;
+
+  const newConfigObj = {
+    ...CONFIG,
+    currentGameweek: nextGWNum,
+    currentGwLabel: `GW${nextGWNum} — TBD`,
+    openingStandings: newOpeningStandings,
+    seededPredictions: { gw: nextGWNum, submittedAt: new Date().toISOString(), byFixture: {} },
+  };
+
+  const ok = await saveSafeConfig(newConfigObj);
+  if (ok !== true) return false;
+
+  const emptyFixtures = { updated: new Date().toISOString(), round: '', fixtures: [] };
+  const emptyLivescores = { updated: new Date().toISOString(), livescores: [] };
+  await writeFileToGitHub('data/fixtures.json', emptyFixtures);
+  await writeFileToGitHub('data/livescores.json', emptyLivescores);
+
+  try {
+    await fetch(`https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${CONFIG.githubPAT}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ref: 'main', inputs: { force_run: 'true' } }),
+    });
+    await new Promise(r => setTimeout(r, 35000));
+  } catch (e) {
+    console.warn('Could not trigger fixture fetch', e);
+  }
+
+  return true;
+}
+
+async function archiveAndRoll(activeWindow) {
+  const pin = prompt("Enter Kris's admin PIN to archive this gameweek and roll forward:");
+  if (pin === null) return;
+  if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
+
+  const btn = document.getElementById('archive-roll-btn');
+  btn.disabled = true;
+  btn.textContent = 'Archiving…';
+
+  const archiveOk = await performArchive(activeWindow);
+  if (!archiveOk) {
+    alert('Archive failed — please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Archive & Roll to Next Gameweek';
+    return;
+  }
+
+  await loadArchiveData();
+
+  btn.textContent = 'Rolling…';
+  const rollOk = await performRoll();
+
+  if (rollOk) {
+    alert('Gameweek archived and rolled forward! App will now reload.');
+    window.location.reload();
+  } else {
+    alert('Archived successfully, but rolling to the next gameweek failed. A "Roll to Next Gameweek" button will appear below — use that to retry.');
+    btn.disabled = false;
+    btn.textContent = 'Archive & Roll to Next Gameweek';
+    checkAndRenderBlockEnding();
+  }
+}
+
+/* ============================================================
+   PENDING ROLL NOTICE
+   Detects a window that's already archived but whose
+   closing_standings were never carried into CONFIG.openingStandings
+   (i.e. Roll to Next Gameweek was never run, or failed). Shown
+   independently of whatever the current active window is doing,
+   so it stays reachable even after new fixtures have been fetched.
+   ============================================================ */
+function hasPendingRoll() {
+  if (!archiveData?.windows?.length) return false;
+
+  const lastWindow = archiveData.windows.reduce(
+    (max, w) => (new Date(w.window_start) > new Date(max.window_start) ? w : max),
+    archiveData.windows[0]
+  );
+
+  const currentByName = new Map(CONFIG.openingStandings.map(s => [s.name, s.points]));
+  return lastWindow.closing_standings.some(s => currentByName.get(s.name) !== s.points);
+}
+
+function updatePendingRollNotice() {
+  const el  = document.getElementById('pending-roll-section');
+  const btn = document.getElementById('pending-roll-btn');
+  if (!el || !btn) return;
+
+  if (!hasPendingRoll()) {
+    el.style.display = 'none';
+    return;
+  }
+
+  el.style.display = 'block';
+  btn.onclick = async () => {
+    const pin = prompt("Enter Kris's admin PIN to roll to the next gameweek:");
+    if (pin === null) return;
+    if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Rolling…';
+
+    const ok = await performRoll();
+    if (ok) {
+      alert('Rolled to next gameweek! App will now reload.');
+      window.location.reload();
+    } else {
+      alert('Failed to roll. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Roll to Next Gameweek';
+    }
+  };
 }
 
 /* ============================================================
@@ -1387,80 +1532,6 @@ async function doPut(apiBase, newContent, sha) {
   });
   if (res.status === 409) return 409;
   return res.ok;
-}
-
-/* ============================================================
-   ROLL TO NEXT GAMEWEEK
-   ============================================================ */
-async function rollToNextGW() {
-  const pin = prompt("Enter Kris's admin PIN to roll to the next gameweek:");
-  if (pin === null) return;
-  if (CONFIG.pins['Kris'] !== pin) { alert('Incorrect PIN.'); return; }
-
-  const btn = document.getElementById('roll-gw-btn');
-
-  const currentArchive = (archiveData && archiveData.windows && archiveData.windows.length > 0)
-    ? archiveData
-    : await fetchJSON('data/archive.json');
-
-  if (!currentArchive || !currentArchive.windows || currentArchive.windows.length === 0) {
-    alert('No archived windows found. Archive the current one first!');
-    return;
-  }
-
-  const lastWindow = currentArchive.windows.reduce(
-    (max, w) => (new Date(w.window_start) > new Date(max.window_start) ? w : max),
-    currentArchive.windows[0]
-  );
-
-  const newOpeningStandings = [...lastWindow.closing_standings]
-    .sort((a, b) => b.points - a.points)
-    .map(s => ({ name: s.name, points: s.points }));
-
-  const nextGWNum = CONFIG.currentGameweek + 1;
-
-  const newConfigObj = {
-    ...CONFIG,
-    currentGameweek: nextGWNum,
-    currentGwLabel: `GW${nextGWNum} — TBD`,
-    openingStandings: newOpeningStandings,
-    seededPredictions: { gw: nextGWNum, submittedAt: new Date().toISOString(), byFixture: {} },
-  };
-
-  btn.disabled = true;
-  btn.textContent = 'Rolling…';
-
-  const ok = await saveSafeConfig(newConfigObj);
-
-  if (ok === true) {
-    const emptyFixtures = { updated: new Date().toISOString(), round: '', fixtures: [] };
-    const emptyLivescores = { updated: new Date().toISOString(), livescores: [] };
-    await writeFileToGitHub('data/fixtures.json', emptyFixtures);
-    await writeFileToGitHub('data/livescores.json', emptyLivescores);
-
-    try {
-      await fetch(`https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`, {
-        method: 'POST',
-        headers: {
-          Authorization: `token ${CONFIG.githubPAT}`,
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ref: 'main', inputs: { force_run: 'true' } }),
-      });
-      btn.textContent = 'Fetching fixtures…';
-      await new Promise(r => setTimeout(r, 35000));
-    } catch (e) {
-      console.warn('Could not trigger fixture fetch', e);
-    }
-
-    alert(`Success! Rolled over to GW${nextGWNum}. App will now reload.`);
-    window.location.reload();
-  } else {
-    alert('Failed to update config.js. Please try again.');
-    btn.disabled = false;
-    btn.textContent = 'Roll to Next Gameweek';
-  }
 }
 
 /* ============================================================
