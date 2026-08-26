@@ -94,9 +94,15 @@
             </table>
           </div>
           <div id="archive-btn-container" style="display:none; text-align:center; margin-top:20px;">
-            <button id="archive-gw-btn" class="btn">Archive Current GW</button>
-            <button id="roll-gw-btn" class="btn" style="background-color:#ff9800; color:#121e2d; margin-top:10px;">Roll to Next Gameweek</button>
+            <button id="archive-roll-btn" class="btn" style="background-color:#ff9800; color:#121e2d;">Archive &amp; Roll to Next Gameweek</button>
           </div>
+        </section>
+
+        <section class="card" id="pending-roll-section" style="display:none;">
+          <p style="color:#f59e0b; margin-bottom:12px;">
+            A gameweek was archived but never rolled forward — the opening standings above are out of date.
+          </p>
+          <button id="pending-roll-btn" class="btn" style="background-color:#ff9800; color:#121e2d;">Roll to Next Gameweek</button>
         </section>
 
       </div><!-- end #subtab-results -->
