@@ -246,7 +246,7 @@ function isWindowArchived(window, archive) {
    share the same playing window.
    ============================================================ */
 function getActiveWindowFixtures() {
-  const fixtures = fixturesData.fixtures || [];
+  const fixtures = getActiveWindowFixtures();
   if (fixtures.length === 0) return [];
 
   const windows = computeWindows(fixtures);
@@ -704,7 +704,7 @@ function populateScoreParticipantDropdown() {
 function renderScoreForm() {
   const container = document.getElementById('score-form-rows');
   if (!container) return;
-  const fixtures = fixturesData.fixtures || [];
+  const fixtures = getActiveWindowFixtures();
   container.innerHTML = '';
 
   if (fixtures.length === 0) {
