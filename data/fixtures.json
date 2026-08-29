@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-29T14:51:58.628Z",
+  "updated": "2026-08-29T14:52:10.858420+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -14,8 +14,7 @@
       "home_score": 1,
       "away_score": 1,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 1
+      "elapsed_extra": null
     },
     {
       "id": "2494411",
@@ -28,8 +27,7 @@
       "home_score": 0,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 1
+      "elapsed_extra": null
     },
     {
       "id": "2494412",
@@ -42,8 +40,7 @@
       "home_score": 2,
       "away_score": 1,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 1
+      "elapsed_extra": null
     },
     {
       "id": "2494413",
@@ -56,8 +53,7 @@
       "home_score": 4,
       "away_score": 3,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 1
+      "elapsed_extra": null
     },
     {
       "id": "2494414",
@@ -70,8 +66,7 @@
       "home_score": 1,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 1
+      "elapsed_extra": null
     },
     {
       "id": "2494415",
@@ -84,8 +79,7 @@
       "home_score": 1,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 1
+      "elapsed_extra": null
     },
     {
       "id": "2494416",
@@ -98,8 +92,7 @@
       "home_score": 1,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 2
+      "elapsed_extra": null
     },
     {
       "id": "2494417",
@@ -112,8 +105,7 @@
       "home_score": 2,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 2
+      "elapsed_extra": null
     },
     {
       "id": "2494420",
@@ -126,8 +118,7 @@
       "home_score": 1,
       "away_score": 5,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 2
+      "elapsed_extra": null
     },
     {
       "id": "2494418",
@@ -140,8 +131,7 @@
       "home_score": 4,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 2
+      "elapsed_extra": null
     },
     {
       "id": "2494419",
@@ -154,8 +144,7 @@
       "home_score": 0,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 2
+      "elapsed_extra": null
     },
     {
       "id": "2494421",
@@ -168,8 +157,7 @@
       "home_score": 1,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 2
+      "elapsed_extra": null
     },
     {
       "id": "2494424",
@@ -182,8 +170,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 3
+      "elapsed_extra": null
     },
     {
       "id": "2494425",
@@ -196,8 +183,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 3
+      "elapsed_extra": null
     },
     {
       "id": "2494426",
@@ -210,50 +196,46 @@
       "home_score": 0,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 3
+      "elapsed_extra": null
     },
     {
       "id": "2494428",
       "round": "Round 4",
       "week_number": 4,
       "kickoff": "2026-08-29T14:00:00Z",
-      "status": "HT",
+      "status": "FT",
       "home_team": "Celtic",
       "away_team": "Falkirk",
       "home_score": 2,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 4
+      "elapsed_extra": null
     },
     {
       "id": "2494429",
       "round": "Round 4",
       "week_number": 4,
       "kickoff": "2026-08-29T14:00:00Z",
-      "status": "HT",
+      "status": "FT",
       "home_team": "Kilmarnock",
       "away_team": "Dundee United",
       "home_score": 0,
       "away_score": 3,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 4
+      "elapsed_extra": null
     },
     {
       "id": "2494433",
       "round": "Round 4",
       "week_number": 4,
       "kickoff": "2026-08-29T14:00:00Z",
-      "status": "HT",
+      "status": "FT",
       "home_team": "Heart of Midlothian",
       "away_team": "St Johnstone",
       "home_score": 2,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 4
+      "elapsed_extra": null
     },
     {
       "id": "2494431",
@@ -266,8 +248,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 4
+      "elapsed_extra": null
     },
     {
       "id": "2494430",
@@ -280,8 +261,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 4
+      "elapsed_extra": null
     },
     {
       "id": "2494432",
@@ -294,8 +274,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 4
+      "elapsed_extra": null
     },
     {
       "id": "2494434",
@@ -308,8 +287,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 5
+      "elapsed_extra": null
     },
     {
       "id": "2494436",
@@ -322,8 +300,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 5
+      "elapsed_extra": null
     },
     {
       "id": "2494437",
@@ -336,8 +313,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 5
+      "elapsed_extra": null
     },
     {
       "id": "2494438",
@@ -350,8 +326,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 5
+      "elapsed_extra": null
     },
     {
       "id": "2494439",
@@ -364,8 +339,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 5
+      "elapsed_extra": null
     },
     {
       "id": "2494435",
@@ -378,8 +352,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 5
+      "elapsed_extra": null
     },
     {
       "id": "2494441",
@@ -392,8 +365,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 6
+      "elapsed_extra": null
     },
     {
       "id": "2494443",
@@ -406,8 +378,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 6
+      "elapsed_extra": null
     },
     {
       "id": "2494445",
@@ -420,8 +391,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 6
+      "elapsed_extra": null
     },
     {
       "id": "2494440",
@@ -434,8 +404,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 6
+      "elapsed_extra": null
     },
     {
       "id": "2494442",
@@ -448,8 +417,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 6
+      "elapsed_extra": null
     },
     {
       "id": "2494444",
@@ -462,8 +430,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 6
+      "elapsed_extra": null
     },
     {
       "id": "2494422",
@@ -476,8 +443,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 3
+      "elapsed_extra": null
     },
     {
       "id": "2494423",
@@ -490,8 +456,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 3
+      "elapsed_extra": null
     },
     {
       "id": "2494427",
@@ -504,8 +469,7 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null,
-      "assigned_gameweek": 3
+      "elapsed_extra": null
     }
   ]
 }
