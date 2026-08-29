@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-29T08:21:55.562290+00:00",
+  "updated": "2026-08-29T14:51:58.628Z",
   "livescores": [
     {
       "id": "2494410",
@@ -12,7 +12,8 @@
       "home_score": 1,
       "away_score": 1,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 1
     },
     {
       "id": "2494411",
@@ -25,7 +26,8 @@
       "home_score": 0,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 1
     },
     {
       "id": "2494412",
@@ -38,7 +40,8 @@
       "home_score": 2,
       "away_score": 1,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 1
     },
     {
       "id": "2494413",
@@ -51,7 +54,8 @@
       "home_score": 4,
       "away_score": 3,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 1
     },
     {
       "id": "2494414",
@@ -64,7 +68,8 @@
       "home_score": 1,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 1
     },
     {
       "id": "2494415",
@@ -77,7 +82,8 @@
       "home_score": 1,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 1
     },
     {
       "id": "2494416",
@@ -90,7 +96,8 @@
       "home_score": 1,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2494417",
@@ -103,7 +110,8 @@
       "home_score": 2,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2494420",
@@ -116,7 +124,8 @@
       "home_score": 1,
       "away_score": 5,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2494418",
@@ -129,7 +138,8 @@
       "home_score": 4,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2494419",
@@ -142,7 +152,8 @@
       "home_score": 0,
       "away_score": 0,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2494421",
@@ -155,7 +166,8 @@
       "home_score": 1,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 2
     },
     {
       "id": "2494424",
@@ -168,7 +180,8 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 3
     },
     {
       "id": "2494425",
@@ -181,7 +194,8 @@
       "home_score": null,
       "away_score": null,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 3
     },
     {
       "id": "2494426",
@@ -194,7 +208,51 @@
       "home_score": 0,
       "away_score": 2,
       "elapsed": null,
-      "elapsed_extra": null
+      "elapsed_extra": null,
+      "assigned_gameweek": 3
+    },
+    {
+      "id": "2494428",
+      "round": "Round 4",
+      "week_number": 4,
+      "kickoff": "2026-08-29T14:00:00Z",
+      "status": "HT",
+      "home_team": "Celtic",
+      "away_team": "Falkirk",
+      "home_score": 2,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null,
+      "assigned_gameweek": 4
+    },
+    {
+      "id": "2494429",
+      "round": "Round 4",
+      "week_number": 4,
+      "kickoff": "2026-08-29T14:00:00Z",
+      "status": "HT",
+      "home_team": "Kilmarnock",
+      "away_team": "Dundee United",
+      "home_score": 0,
+      "away_score": 3,
+      "elapsed": null,
+      "elapsed_extra": null,
+      "assigned_gameweek": 4
+    },
+    {
+      "id": "2494433",
+      "round": "Round 4",
+      "week_number": 4,
+      "kickoff": "2026-08-29T14:00:00Z",
+      "status": "HT",
+      "home_team": "Heart of Midlothian",
+      "away_team": "St Johnstone",
+      "home_score": 2,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null,
+      "assigned_gameweek": 4
     }
-  ]
+  ],
+  "last_updated_by": "Kris"
 }
