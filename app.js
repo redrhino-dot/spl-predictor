@@ -246,7 +246,7 @@ function isWindowArchived(window, archive) {
    share the same playing window.
    ============================================================ */
 function getActiveWindowFixtures() {
-  const fixtures = getActiveWindowFixtures();
+  const fixtures = fixturesData.fixtures || [];
   if (fixtures.length === 0) return [];
 
   const windows = computeWindows(fixtures);
