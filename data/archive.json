@@ -1,7 +1,7 @@
 {
   "windows": [
     {
-      "window_start": "2026-07-31T00:00:00.000Z",
+      "window_start": "2026-07-01T00:00:00.000Z",
       "window_end": "2026-07-31T00:00:00.000Z",
       "label": "31 Jul 2026",
       "opening_standings": [
@@ -235,7 +235,7 @@
       }
     },
     {
-      "window_start": "2026-08-08T00:00:00.000Z",
+      "window_start": "2026-08-01T00:00:00.000Z",
       "window_end": "2026-08-08T00:00:00.000Z",
       "label": "08 Aug 2026",
       "opening_standings": [
@@ -516,15 +516,15 @@
       "points_breakdown": {
         "Graham": {
           "points": 0,
-          "notation": "–"
+          "notation": "\u2013"
         },
         "Jon": {
           "points": 0,
-          "notation": "–"
+          "notation": "\u2013"
         },
         "Kris": {
           "points": 0,
-          "notation": "–"
+          "notation": "\u2013"
         },
         "Doug": {
           "points": 1,
@@ -533,7 +533,7 @@
       },
       "results": [
         {
-          "fixture_id": "manual-9001",
+          "fixture_id": "2494426",
           "home_team": "Dundee United",
           "away_team": "Dundee",
           "home_score": 0,
@@ -544,28 +544,28 @@
       "predictions": {
         "Graham": [
           {
-            "fixture_id": "manual-9001",
+            "fixture_id": "2494426",
             "home_score": 2,
             "away_score": 1
           }
         ],
         "Jon": [
           {
-            "fixture_id": "manual-9001",
+            "fixture_id": "2494426",
             "home_score": 3,
             "away_score": 1
           }
         ],
         "Kris": [
           {
-            "fixture_id": "manual-9001",
+            "fixture_id": "2494426",
             "home_score": 2,
             "away_score": 2
           }
         ],
         "Doug": [
           {
-            "fixture_id": "manual-9001",
+            "fixture_id": "2494426",
             "home_score": 1,
             "away_score": 2
           }
