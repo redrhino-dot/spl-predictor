@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-30T12:05:24.841840+00:00",
+  "updated": "2026-08-30T15:21:24.551887+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -220,7 +220,7 @@
       "home_team": "Aberdeen",
       "away_team": "Rangers",
       "home_score": 0,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -229,11 +229,11 @@
       "round": "Round 4",
       "week_number": 4,
       "kickoff": "2026-08-30T14:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "St Mirren",
       "away_team": "Motherwell",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 3,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -242,11 +242,11 @@
       "round": "Round 4",
       "week_number": 4,
       "kickoff": "2026-08-30T14:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Dundee",
       "away_team": "Hibernian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },

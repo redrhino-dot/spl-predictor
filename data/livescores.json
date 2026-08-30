@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-30T12:05:24.841840+00:00",
+  "updated": "2026-08-30T15:21:24.551887+00:00",
   "livescores": [
     {
       "id": "2494410",
@@ -218,7 +218,33 @@
       "home_team": "Aberdeen",
       "away_team": "Rangers",
       "home_score": 0,
-      "away_score": 0,
+      "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494430",
+      "round": "Round 4",
+      "week_number": 4,
+      "kickoff": "2026-08-30T14:00:00Z",
+      "status": "FT",
+      "home_team": "St Mirren",
+      "away_team": "Motherwell",
+      "home_score": 3,
+      "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494432",
+      "round": "Round 4",
+      "week_number": 4,
+      "kickoff": "2026-08-30T14:00:00Z",
+      "status": "FT",
+      "home_team": "Dundee",
+      "away_team": "Hibernian",
+      "home_score": 0,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     }
