@@ -6,8 +6,8 @@ const CONFIG = {
   "githubRepo": "spl-predictor",
   "leagueId": 179,
   "season": 2026,
-  "currentGameweek": 4,
-  "currentGwLabel": "GW4 — TBD",
+  "currentGameweek": 5,
+  "currentGwLabel": "GW5 — TBD",
   "participants": [
     "Graham",
     "Jon",
@@ -53,8 +53,8 @@ const CONFIG = {
     "St J": "St Johnstone"
   },
   "seededPredictions": {
-    "gw": 4,
-    "submittedAt": "2026-08-26T21:39:17.715Z",
+    "gw": 5,
+    "submittedAt": "2026-08-31T13:56:23.073Z",
     "byFixture": {}
   },
   "honours": [
