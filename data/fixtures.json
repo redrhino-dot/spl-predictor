@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-02T19:58:44.649383+00:00",
+  "updated": "2026-09-02T21:04:10.024876+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -284,8 +284,8 @@
       "status": "FT",
       "home_team": "Dundee",
       "away_team": "St Johnstone",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 1,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -297,7 +297,7 @@
       "status": "FT",
       "home_team": "Motherwell",
       "away_team": "Dundee United",
-      "home_score": 1,
+      "home_score": 3,
       "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
@@ -311,7 +311,7 @@
       "home_team": "Falkirk",
       "away_team": "Rangers",
       "home_score": 1,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
