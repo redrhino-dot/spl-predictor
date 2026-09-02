@@ -704,7 +704,7 @@ function populateScoreParticipantDropdown() {
 function renderScoreForm() {
   const container = document.getElementById('score-form-rows');
   if (!container) return;
-  const fixtures = getActiveWindowFixtures();
+  const fixtures = fixturesData.fixtures || [];
   container.innerHTML = '';
 
   if (fixtures.length === 0) {
@@ -1209,11 +1209,6 @@ async function performRoll() {
 
   const ok = await saveSafeConfig(newConfigObj);
   if (ok !== true) return false;
-
-  const emptyFixtures = { updated: new Date().toISOString(), round: '', fixtures: [] };
-  const emptyLivescores = { updated: new Date().toISOString(), livescores: [] };
-  await writeFileToGitHub('data/fixtures.json', emptyFixtures);
-  await writeFileToGitHub('data/livescores.json', emptyLivescores);
 
   try {
     await fetch(`https://api.github.com/repos/${CONFIG.githubOwner}/${CONFIG.githubRepo}/actions/workflows/update-scores.yml/dispatches`, {
