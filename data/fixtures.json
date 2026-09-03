@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-02T21:04:10.024876+00:00",
+  "updated": "2026-09-03T20:28:51.191098+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -320,11 +320,11 @@
       "round": "Round 5",
       "week_number": 5,
       "kickoff": "2026-09-03T18:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Heart of Midlothian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 3,
       "elapsed": null,
       "elapsed_extra": null
     },
