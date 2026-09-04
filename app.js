@@ -1245,8 +1245,6 @@ async function archiveAndRoll(activeWindow) {
     return;
   }
 
-  await loadArchiveData();
-
   btn.textContent = 'Rolling…';
   const rollOk = await performRoll();
 
