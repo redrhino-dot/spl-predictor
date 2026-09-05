@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-05T19:14:00.247764+00:00",
+  "updated": "2026-09-05T20:55:01.977083+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -375,8 +375,8 @@
       "status": "FT",
       "home_team": "St Mirren",
       "away_team": "Celtic",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
