@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-15T11:54:27.853150+00:00",
+  "updated": "2026-09-15T19:30:16.986173+00:00",
   "round": "Round 3",
   "week_number": 3,
   "fixtures": [
@@ -437,11 +437,11 @@
       "round": "Round 3",
       "week_number": 3,
       "kickoff": "2026-09-15T18:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Kilmarnock",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -450,11 +450,11 @@
       "round": "Round 3",
       "week_number": 3,
       "kickoff": "2026-09-15T18:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Motherwell",
       "away_team": "Aberdeen",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -463,11 +463,11 @@
       "round": "Round 3",
       "week_number": 3,
       "kickoff": "2026-09-15T18:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Falkirk",
       "away_team": "Heart of Midlothian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     }
