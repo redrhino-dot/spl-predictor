@@ -927,6 +927,48 @@
           }
         ]
       }
+    },
+    "7": {
+      "predictions": {
+        "Graham": [
+          {
+            "fixture_id": "2494446",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-09-15T21:11:25.843Z"
+          },
+          {
+            "fixture_id": "2494447",
+            "home_score": 1,
+            "away_score": 2,
+            "submitted_at": "2026-09-15T21:11:25.843Z"
+          },
+          {
+            "fixture_id": "2494448",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-09-15T21:11:25.843Z"
+          },
+          {
+            "fixture_id": "2494449",
+            "home_score": 1,
+            "away_score": 0,
+            "submitted_at": "2026-09-15T21:11:25.843Z"
+          },
+          {
+            "fixture_id": "2494450",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-09-15T21:11:25.843Z"
+          },
+          {
+            "fixture_id": "2494451",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-09-15T21:11:25.843Z"
+          }
+        ]
+      }
     }
   }
 }
