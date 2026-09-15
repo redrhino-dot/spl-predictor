@@ -418,6 +418,24 @@
             "home_score": 0,
             "away_score": 3,
             "submitted_at": "2026-09-09T18:07:46.158Z"
+          },
+          {
+            "fixture_id": "2494422",
+            "home_score": 1,
+            "away_score": 0,
+            "submitted_at": "2026-09-15T16:20:37.068Z"
+          },
+          {
+            "fixture_id": "2494423",
+            "home_score": 1,
+            "away_score": 0,
+            "submitted_at": "2026-09-15T16:20:37.068Z"
+          },
+          {
+            "fixture_id": "2494427",
+            "home_score": 0,
+            "away_score": 2,
+            "submitted_at": "2026-09-15T16:20:37.068Z"
           }
         ],
         "Graham": [
