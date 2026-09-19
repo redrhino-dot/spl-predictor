@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-19T14:11:47.369197+00:00",
+  "updated": "2026-09-19T15:13:20.166481+00:00",
   "round": "Round 7",
   "week_number": 7,
   "fixtures": [
@@ -168,7 +168,7 @@
       "home_team": "Hibernian",
       "away_team": "Aberdeen",
       "home_score": 0,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -181,7 +181,7 @@
       "home_team": "St Mirren",
       "away_team": "Dundee United",
       "home_score": 0,
-      "away_score": 1,
+      "away_score": 3,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -193,8 +193,8 @@
       "status": "FT",
       "home_team": "Dundee",
       "away_team": "Motherwell",
-      "home_score": 0,
-      "away_score": 0,
+      "home_score": 2,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
