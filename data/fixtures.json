@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-19T15:51:34.812452+00:00",
+  "updated": "2026-09-19T16:00:41.594314+00:00",
   "round": "Round 7",
   "week_number": 7,
   "fixtures": [
@@ -206,7 +206,7 @@
       "status": "FT",
       "home_team": "St Johnstone",
       "away_team": "Falkirk",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
