@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-19T16:29:30.112849+00:00",
+  "updated": "2026-09-20T07:15:45.849680+00:00",
   "round": "Round 7",
   "week_number": 7,
   "fixtures": [
@@ -216,11 +216,11 @@
       "round": "Round 7",
       "week_number": 7,
       "kickoff": "2026-09-19T16:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Kilmarnock",
       "away_team": "Heart of Midlothian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
