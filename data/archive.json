@@ -516,15 +516,15 @@
       "points_breakdown": {
         "Graham": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Jon": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Kris": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Doug": {
           "points": 1,
@@ -575,7 +575,7 @@
     {
       "window_start": "2026-08-29T14:00:00.000Z",
       "window_end": "2026-08-30T14:00:00.000Z",
-      "label": "29 Aug\u201330 Aug 2026",
+      "label": "29 Aug–30 Aug 2026",
       "opening_standings": [
         {
           "name": "Doug",
@@ -814,7 +814,7 @@
     {
       "window_start": "2026-09-02T18:45:00.000Z",
       "window_end": "2026-09-03T18:45:00.000Z",
-      "label": "2 Sep\u20133 Sep 2026",
+      "label": "2 Sep–3 Sep 2026",
       "opening_standings": [
         {
           "name": "Doug",
@@ -1022,7 +1022,7 @@
     {
       "window_start": "2026-09-05T14:00:00.000Z",
       "window_end": "2026-09-06T14:00:00.000Z",
-      "label": "5 Sep\u20136 Sep 2026",
+      "label": "5 Sep–6 Sep 2026",
       "opening_standings": [
         {
           "name": "Doug",
@@ -1305,7 +1305,7 @@
         },
         "Jon": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Kris": {
           "points": 2,
@@ -1417,19 +1417,19 @@
       "points_breakdown": {
         "Graham": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Kris": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Doug": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         },
         "Jon": {
           "points": 0,
-          "notation": "\u2013"
+          "notation": "–"
         }
       },
       "results": [
@@ -1525,6 +1525,245 @@
             "fixture_id": "2494427",
             "home_score": 0,
             "away_score": 0
+          }
+        ]
+      }
+    },
+    {
+      "window_start": "2026-09-19T14:00:00.000Z",
+      "window_end": "2026-09-20T11:00:00.000Z",
+      "label": "19 Sep–20 Sep 2026",
+      "opening_standings": [
+        {
+          "name": "Doug",
+          "points": 28
+        },
+        {
+          "name": "Kris",
+          "points": 21
+        },
+        {
+          "name": "Graham",
+          "points": 18
+        },
+        {
+          "name": "Jon",
+          "points": 13
+        }
+      ],
+      "closing_standings": [
+        {
+          "name": "Doug",
+          "points": 32
+        },
+        {
+          "name": "Kris",
+          "points": 27
+        },
+        {
+          "name": "Graham",
+          "points": 25
+        },
+        {
+          "name": "Jon",
+          "points": 15
+        }
+      ],
+      "points_breakdown": {
+        "Graham": {
+          "points": 7,
+          "notation": "Hibs/Dons 3, Dundee, St J/Falkirk 3"
+        },
+        "Jon": {
+          "points": 2,
+          "notation": "Yinited, Huns"
+        },
+        "Kris": {
+          "points": 6,
+          "notation": "Hibs/Dons 3, St J/Falkirk 3"
+        },
+        "Doug": {
+          "points": 4,
+          "notation": "Hibs/Dons 3, Yinited"
+        }
+      },
+      "results": [
+        {
+          "fixture_id": "2494446",
+          "home_team": "Hibernian",
+          "away_team": "Aberdeen",
+          "home_score": 1,
+          "away_score": 1,
+          "assigned_gameweek": 7
+        },
+        {
+          "fixture_id": "2494448",
+          "home_team": "St Mirren",
+          "away_team": "Dundee United",
+          "home_score": 0,
+          "away_score": 3,
+          "assigned_gameweek": 7
+        },
+        {
+          "fixture_id": "2494449",
+          "home_team": "Dundee",
+          "away_team": "Motherwell",
+          "home_score": 2,
+          "away_score": 1,
+          "assigned_gameweek": 7
+        },
+        {
+          "fixture_id": "2494450",
+          "home_team": "St Johnstone",
+          "away_team": "Falkirk",
+          "home_score": 1,
+          "away_score": 1,
+          "assigned_gameweek": 7
+        },
+        {
+          "fixture_id": "2494447",
+          "home_team": "Kilmarnock",
+          "away_team": "Heart of Midlothian",
+          "home_score": 1,
+          "away_score": 1,
+          "assigned_gameweek": 7
+        },
+        {
+          "fixture_id": "2494451",
+          "home_team": "Celtic",
+          "away_team": "Rangers",
+          "home_score": 0,
+          "away_score": 1,
+          "assigned_gameweek": 7
+        }
+      ],
+      "predictions": {
+        "Graham": [
+          {
+            "fixture_id": "2494446",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494448",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494449",
+            "home_score": 1,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2494450",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494447",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494451",
+            "home_score": 1,
+            "away_score": 1
+          }
+        ],
+        "Jon": [
+          {
+            "fixture_id": "2494446",
+            "home_score": 2,
+            "away_score": 3
+          },
+          {
+            "fixture_id": "2494448",
+            "home_score": 1,
+            "away_score": 3
+          },
+          {
+            "fixture_id": "2494449",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494450",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494447",
+            "home_score": 0,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494451",
+            "home_score": 1,
+            "away_score": 2
+          }
+        ],
+        "Kris": [
+          {
+            "fixture_id": "2494446",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494448",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494449",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494450",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494447",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494451",
+            "home_score": 2,
+            "away_score": 2
+          }
+        ],
+        "Doug": [
+          {
+            "fixture_id": "2494446",
+            "home_score": 1,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494448",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494449",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494450",
+            "home_score": 2,
+            "away_score": 0
+          },
+          {
+            "fixture_id": "2494447",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494451",
+            "home_score": 2,
+            "away_score": 2
           }
         ]
       }
