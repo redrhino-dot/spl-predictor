@@ -1135,6 +1135,44 @@
             "away_score": 1,
             "submitted_at": "2026-10-05T04:52:39.957Z"
           }
+        ],
+        "Kris": [
+          {
+            "fixture_id": "2494452",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-10-08T08:11:38.742Z"
+          },
+          {
+            "fixture_id": "2494453",
+            "home_score": 2,
+            "away_score": 0,
+            "submitted_at": "2026-10-08T08:11:38.742Z"
+          },
+          {
+            "fixture_id": "2494454",
+            "home_score": 1,
+            "away_score": 3,
+            "submitted_at": "2026-10-08T08:11:38.742Z"
+          },
+          {
+            "fixture_id": "2494455",
+            "home_score": 2,
+            "away_score": 0,
+            "submitted_at": "2026-10-08T08:11:38.742Z"
+          },
+          {
+            "fixture_id": "2494456",
+            "home_score": 0,
+            "away_score": 1,
+            "submitted_at": "2026-10-08T08:11:38.742Z"
+          },
+          {
+            "fixture_id": "2494457",
+            "home_score": 0,
+            "away_score": 1,
+            "submitted_at": "2026-10-08T08:11:38.742Z"
+          }
         ]
       }
     }
