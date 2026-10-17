@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-17T15:20:15.547210+00:00",
+  "updated": "2026-10-17T15:32:27.617563+00:00",
   "round": "Round 9",
   "week_number": 9,
   "fixtures": [
@@ -180,7 +180,7 @@
       "status": "FT",
       "home_team": "Kilmarnock",
       "away_team": "Motherwell",
-      "home_score": 1,
+      "home_score": 3,
       "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
@@ -193,7 +193,7 @@
       "status": "FT",
       "home_team": "Aberdeen",
       "away_team": "St Mirren",
-      "home_score": 2,
+      "home_score": 3,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
