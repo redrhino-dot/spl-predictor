@@ -1367,6 +1367,44 @@
             "away_score": 2,
             "submitted_at": "2026-10-17T13:15:17.281Z"
           }
+        ],
+        "Doug": [
+          {
+            "fixture_id": "2494458",
+            "home_score": 1,
+            "away_score": 2,
+            "submitted_at": "2026-10-17T13:18:49.777Z"
+          },
+          {
+            "fixture_id": "2494459",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-10-17T13:18:49.777Z"
+          },
+          {
+            "fixture_id": "2494460",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-10-17T13:18:49.777Z"
+          },
+          {
+            "fixture_id": "2494461",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-10-17T13:18:49.777Z"
+          },
+          {
+            "fixture_id": "2494462",
+            "home_score": 1,
+            "away_score": 3,
+            "submitted_at": "2026-10-17T13:18:49.777Z"
+          },
+          {
+            "fixture_id": "2494463",
+            "home_score": 1,
+            "away_score": 2,
+            "submitted_at": "2026-10-17T13:18:49.777Z"
+          }
         ]
       }
     }
