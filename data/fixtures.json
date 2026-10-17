@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-17T18:43:27.704824+00:00",
+  "updated": "2026-10-17T20:24:39.940693+00:00",
   "round": "Round 9",
   "week_number": 9,
   "fixtures": [
@@ -216,11 +216,11 @@
       "round": "Round 9",
       "week_number": 9,
       "kickoff": "2026-10-17T19:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Dundee",
       "away_team": "Rangers",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -433,19 +433,6 @@
       "elapsed_extra": null
     },
     {
-      "id": "2494479",
-      "round": "Round 12",
-      "week_number": 12,
-      "kickoff": "2026-10-31T15:00:00Z",
-      "status": "NS",
-      "home_team": "Rangers",
-      "away_team": "Aberdeen",
-      "home_score": null,
-      "away_score": null,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
       "id": "2494480",
       "round": "Round 12",
       "week_number": 12,
@@ -466,6 +453,19 @@
       "status": "NS",
       "home_team": "Falkirk",
       "away_team": "Celtic",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494479",
+      "round": "Round 12",
+      "week_number": 12,
+      "kickoff": "2026-10-31T17:30:00Z",
+      "status": "NS",
+      "home_team": "Rangers",
+      "away_team": "Aberdeen",
       "home_score": null,
       "away_score": null,
       "elapsed": null,
