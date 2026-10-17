@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-17T20:24:39.940693+00:00",
+  "updated": "2026-10-17T21:46:04.943471+00:00",
   "livescores": [
     {
       "id": "2494446",
@@ -161,7 +161,7 @@
       "id": "2494459",
       "round": "Round 9",
       "week_number": 9,
-      "kickoff": "2026-10-17T14:00Z",
+      "kickoff": "2026-10-17T14:00:00Z",
       "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Falkirk",
@@ -174,7 +174,7 @@
       "id": "2494460",
       "round": "Round 9",
       "week_number": 9,
-      "kickoff": "2026-10-17T14:00Z",
+      "kickoff": "2026-10-17T14:00:00Z",
       "status": "FT",
       "home_team": "Kilmarnock",
       "away_team": "Motherwell",
@@ -187,7 +187,7 @@
       "id": "2494461",
       "round": "Round 9",
       "week_number": 9,
-      "kickoff": "2026-10-17T14:00Z",
+      "kickoff": "2026-10-17T14:00:00Z",
       "status": "FT",
       "home_team": "Aberdeen",
       "away_team": "St Mirren",
@@ -200,7 +200,7 @@
       "id": "2494463",
       "round": "Round 9",
       "week_number": 9,
-      "kickoff": "2026-10-17T14:00Z",
+      "kickoff": "2026-10-17T14:00:00Z",
       "status": "FT",
       "home_team": "St Johnstone",
       "away_team": "Dundee United",
@@ -217,7 +217,7 @@
       "status": "FT",
       "home_team": "Dundee",
       "away_team": "Rangers",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
