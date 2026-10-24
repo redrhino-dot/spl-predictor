@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-24T14:27:45.668809+00:00",
+  "updated": "2026-10-24T14:30:42.096656+00:00",
   "round": "Round 10",
   "week_number": 10,
   "fixtures": [
@@ -193,7 +193,7 @@
       "status": "FT",
       "home_team": "Dundee United",
       "away_team": "Aberdeen",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
