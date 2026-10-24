@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-24T14:30:42.096656+00:00",
+  "updated": "2026-10-24T14:50:19.439796+00:00",
   "round": "Round 10",
   "week_number": 10,
   "fixtures": [
@@ -180,7 +180,7 @@
       "status": "FT",
       "home_team": "Rangers",
       "away_team": "St Johnstone",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
@@ -206,7 +206,7 @@
       "status": "FT",
       "home_team": "Falkirk",
       "away_team": "Kilmarnock",
-      "home_score": 0,
+      "home_score": 2,
       "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
