@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-19T20:43:20.044261+00:00",
+  "updated": "2026-10-24T12:18:11.177991+00:00",
   "round": "Round 10",
   "week_number": 10,
   "fixtures": [
@@ -355,11 +355,24 @@
       "elapsed_extra": null
     },
     {
-      "id": "2494480",
+      "id": "2494479",
       "round": "Round 12",
       "week_number": 12,
       "kickoff": "2026-10-31T15:00:00Z",
       "status": "NS",
+      "home_team": "Rangers",
+      "away_team": "Aberdeen",
+      "home_score": null,
+      "away_score": null,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494480",
+      "round": "Round 12",
+      "week_number": 12,
+      "kickoff": "2026-10-31T15:00:00Z",
+      "status": "PPD",
       "home_team": "Dundee United",
       "away_team": "Heart of Midlothian",
       "home_score": null,
@@ -375,19 +388,6 @@
       "status": "NS",
       "home_team": "Falkirk",
       "away_team": "Celtic",
-      "home_score": null,
-      "away_score": null,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
-      "id": "2494479",
-      "round": "Round 12",
-      "week_number": 12,
-      "kickoff": "2026-10-31T17:30:00Z",
-      "status": "NS",
-      "home_team": "Rangers",
-      "away_team": "Aberdeen",
       "home_score": null,
       "away_score": null,
       "elapsed": null,

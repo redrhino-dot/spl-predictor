@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-19T20:43:20.044261+00:00",
+  "updated": "2026-10-24T12:18:11.177991+00:00",
   "livescores": [
     {
       "id": "2494453",
@@ -154,6 +154,19 @@
       "away_team": "Heart of Midlothian",
       "home_score": 7,
       "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494480",
+      "round": "Round 12",
+      "week_number": 12,
+      "kickoff": "2026-10-31T15:00:00Z",
+      "status": "PPD",
+      "home_team": "Dundee United",
+      "away_team": "Heart of Midlothian",
+      "home_score": null,
+      "away_score": null,
       "elapsed": null,
       "elapsed_extra": null
     }
