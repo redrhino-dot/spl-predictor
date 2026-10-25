@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-25T11:59:54.501415+00:00",
+  "updated": "2026-10-25T12:47:48.584440+00:00",
   "round": "Round 10",
   "week_number": 10,
   "fixtures": [
@@ -216,11 +216,11 @@
       "round": "Round 10",
       "week_number": 10,
       "kickoff": "2026-10-25T12:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Celtic",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
