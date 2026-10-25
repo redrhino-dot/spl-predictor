@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-25T13:56:31.037966+00:00",
+  "updated": "2026-10-25T15:51:02.615758+00:00",
   "livescores": [
     {
       "id": "2494453",
@@ -218,6 +218,19 @@
       "home_team": "Hibernian",
       "away_team": "Celtic",
       "home_score": 1,
+      "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494466",
+      "round": "Round 10",
+      "week_number": 10,
+      "kickoff": "2026-10-25T14:00:00Z",
+      "status": "FT",
+      "home_team": "Motherwell",
+      "away_team": "Heart of Midlothian",
+      "home_score": 0,
       "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-25T13:56:31.037966+00:00",
+  "updated": "2026-10-25T15:51:02.615758+00:00",
   "round": "Round 10",
   "week_number": 10,
   "fixtures": [
@@ -229,11 +229,11 @@
       "round": "Round 10",
       "week_number": 10,
       "kickoff": "2026-10-25T14:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Motherwell",
       "away_team": "Heart of Midlothian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
