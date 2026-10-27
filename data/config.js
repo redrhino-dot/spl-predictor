@@ -6,8 +6,8 @@ const CONFIG = {
   "githubRepo": "spl-predictor",
   "leagueId": 179,
   "season": 2026,
-  "currentGameweek": 11,
-  "currentGwLabel": "GW11 — TBD",
+  "currentGameweek": 12,
+  "currentGwLabel": "GW12 — TBD",
   "participants": [
     "Graham",
     "Jon",
@@ -23,19 +23,19 @@ const CONFIG = {
   "openingStandings": [
     {
       "name": "Doug",
-      "points": 38
-    },
-    {
-      "name": "Kris",
-      "points": 34
+      "points": 46
     },
     {
       "name": "Graham",
-      "points": 34
+      "points": 39
+    },
+    {
+      "name": "Kris",
+      "points": 38
     },
     {
       "name": "Jon",
-      "points": 21
+      "points": 25
     }
   ],
   "teamAliases": {
@@ -53,8 +53,8 @@ const CONFIG = {
     "St J": "St Johnstone"
   },
   "seededPredictions": {
-    "gw": 11,
-    "submittedAt": "2026-10-19T20:43:07.550Z",
+    "gw": 12,
+    "submittedAt": "2026-10-27T01:24:26.885Z",
     "byFixture": {}
   },
   "honours": [
