@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T20:49:41.143002+00:00",
+  "updated": "2026-10-28T21:10:21.375181+00:00",
   "livescores": [
     {
       "id": "2494465",
@@ -140,7 +140,7 @@
       "home_team": "St Johnstone",
       "away_team": "Motherwell",
       "home_score": 1,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
