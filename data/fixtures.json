@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T21:16:37.734347+00:00",
+  "updated": "2026-10-28T21:24:40.716516+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -103,7 +103,7 @@
       "home_team": "St Mirren",
       "away_team": "Hibernian",
       "home_score": 0,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -116,7 +116,7 @@
       "home_team": "Aberdeen",
       "away_team": "Falkirk",
       "home_score": 0,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -128,8 +128,8 @@
       "status": "FT",
       "home_team": "Dundee",
       "away_team": "Kilmarnock",
-      "home_score": 1,
-      "away_score": 0,
+      "home_score": 2,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -154,7 +154,7 @@
       "status": "FT",
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
