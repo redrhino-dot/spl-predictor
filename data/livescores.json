@@ -1,84 +1,6 @@
 {
-  "updated": "2026-10-28T20:14:50.444994+00:00",
+  "updated": "2026-10-28T20:34:56.727459+00:00",
   "livescores": [
-    {
-      "id": "2494459",
-      "round": "Round 9",
-      "week_number": 9,
-      "kickoff": "2026-10-17T14:00:00Z",
-      "status": "FT",
-      "home_team": "Hibernian",
-      "away_team": "Falkirk",
-      "home_score": 1,
-      "away_score": 2,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
-      "id": "2494460",
-      "round": "Round 9",
-      "week_number": 9,
-      "kickoff": "2026-10-17T14:00:00Z",
-      "status": "FT",
-      "home_team": "Kilmarnock",
-      "away_team": "Motherwell",
-      "home_score": 3,
-      "away_score": 2,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
-      "id": "2494461",
-      "round": "Round 9",
-      "week_number": 9,
-      "kickoff": "2026-10-17T14:00:00Z",
-      "status": "FT",
-      "home_team": "Aberdeen",
-      "away_team": "St Mirren",
-      "home_score": 3,
-      "away_score": 1,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
-      "id": "2494463",
-      "round": "Round 9",
-      "week_number": 9,
-      "kickoff": "2026-10-17T14:00:00Z",
-      "status": "FT",
-      "home_team": "St Johnstone",
-      "away_team": "Dundee United",
-      "home_score": 1,
-      "away_score": 1,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
-      "id": "2494462",
-      "round": "Round 9",
-      "week_number": 9,
-      "kickoff": "2026-10-17T19:00:00Z",
-      "status": "FT",
-      "home_team": "Dundee",
-      "away_team": "Rangers",
-      "home_score": 2,
-      "away_score": 2,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
-    {
-      "id": "2494458",
-      "round": "Round 9",
-      "week_number": 9,
-      "kickoff": "2026-10-18T14:00:00Z",
-      "status": "FT",
-      "home_team": "Celtic",
-      "away_team": "Heart of Midlothian",
-      "home_score": 7,
-      "away_score": 1,
-      "elapsed": null,
-      "elapsed_extra": null
-    },
     {
       "id": "2494465",
       "round": "Round 10",
@@ -166,7 +88,7 @@
       "home_team": "Celtic",
       "away_team": "Dundee United",
       "home_score": 1,
-      "away_score": 0,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -204,7 +126,7 @@
       "status": "FT",
       "home_team": "Dundee",
       "away_team": "Kilmarnock",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
@@ -218,7 +140,7 @@
       "home_team": "St Johnstone",
       "away_team": "Motherwell",
       "home_score": 1,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -231,7 +153,7 @@
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
       "home_score": 0,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
