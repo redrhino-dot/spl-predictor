@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T21:46:41.441697+00:00",
+  "updated": "2026-10-28T21:54:01.678723+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -155,7 +155,7 @@
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
       "home_score": 2,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
