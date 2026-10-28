@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T21:10:21.375181+00:00",
+  "updated": "2026-10-28T21:16:37.734347+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -89,7 +89,7 @@
       "status": "FT",
       "home_team": "Celtic",
       "away_team": "Dundee United",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
@@ -154,7 +154,7 @@
       "status": "FT",
       "home_team": "Heart of Midlothian",
       "away_team": "Rangers",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
