@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T21:24:40.716516+00:00",
+  "updated": "2026-10-28T21:33:35.030598+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -102,7 +102,7 @@
       "status": "FT",
       "home_team": "St Mirren",
       "away_team": "Hibernian",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
