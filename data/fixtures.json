@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T15:52:48.752059+00:00",
+  "updated": "2026-10-31T16:29:31.432438+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -168,7 +168,7 @@
       "home_team": "Kilmarnock",
       "away_team": "St Johnstone",
       "home_score": 2,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
