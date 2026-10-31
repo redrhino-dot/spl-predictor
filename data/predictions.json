@@ -1723,6 +1723,32 @@
             "away_score": 3,
             "submitted_at": "2026-10-31T00:12:06.764Z"
           }
+        ],
+        "Doug": [
+          {
+            "fixture_id": "2494477",
+            "home_score": 1,
+            "away_score": 1,
+            "submitted_at": "2026-10-31T11:40:17.781Z"
+          },
+          {
+            "fixture_id": "2494478",
+            "home_score": 0,
+            "away_score": 1,
+            "submitted_at": "2026-10-31T11:40:17.781Z"
+          },
+          {
+            "fixture_id": "2494480",
+            "home_score": 2,
+            "away_score": 3,
+            "submitted_at": "2026-10-31T11:40:17.781Z"
+          },
+          {
+            "fixture_id": "2494481",
+            "home_score": 1,
+            "away_score": 2,
+            "submitted_at": "2026-10-31T11:40:17.781Z"
+          }
         ]
       }
     }
