@@ -1703,6 +1703,26 @@
             "away_score": 3,
             "submitted_at": "2026-10-29T10:54:53.110Z"
           }
+        ],
+        "Kris": [
+          {
+            "fixture_id": "2494477",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-10-31T00:12:06.764Z"
+          },
+          {
+            "fixture_id": "2494478",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-10-31T00:12:06.764Z"
+          },
+          {
+            "fixture_id": "2494481",
+            "home_score": 1,
+            "away_score": 3,
+            "submitted_at": "2026-10-31T00:12:06.764Z"
+          }
         ]
       }
     }
