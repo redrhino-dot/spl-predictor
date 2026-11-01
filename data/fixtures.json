@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T16:49:52.736841+00:00",
+  "updated": "2026-11-01T21:52:34.249656+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -203,11 +203,11 @@
       "round": "Round 12",
       "week_number": 12,
       "kickoff": "2026-11-01T13:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Falkirk",
       "away_team": "Celtic",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 2,
+      "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
     },
