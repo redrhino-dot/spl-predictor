@@ -1759,6 +1759,48 @@
           }
         ]
       }
+    },
+    "13": {
+      "predictions": {
+        "Jon": [
+          {
+            "fixture_id": "2494482",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-11-03T19:16:16.904Z"
+          },
+          {
+            "fixture_id": "2494483",
+            "home_score": 1,
+            "away_score": 3,
+            "submitted_at": "2026-11-03T19:16:16.904Z"
+          },
+          {
+            "fixture_id": "2494484",
+            "home_score": 2,
+            "away_score": 2,
+            "submitted_at": "2026-11-03T19:16:16.904Z"
+          },
+          {
+            "fixture_id": "2494485",
+            "home_score": 2,
+            "away_score": 1,
+            "submitted_at": "2026-11-03T19:16:16.904Z"
+          },
+          {
+            "fixture_id": "2494486",
+            "home_score": 3,
+            "away_score": 0,
+            "submitted_at": "2026-11-03T19:16:16.904Z"
+          },
+          {
+            "fixture_id": "2494487",
+            "home_score": 4,
+            "away_score": 2,
+            "submitted_at": "2026-11-03T19:16:16.904Z"
+          }
+        ]
+      }
     }
   }
 }
