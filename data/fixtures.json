@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T20:46:46.099977+00:00",
+  "updated": "2026-11-07T21:48:37.929171+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -259,7 +259,7 @@
       "home_team": "St Mirren",
       "away_team": "Rangers",
       "home_score": 0,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
