@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T23:57:17.844013+00:00",
+  "updated": "2026-11-07T15:07:01.528236+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -216,11 +216,11 @@
       "round": "Round 13",
       "week_number": 13,
       "kickoff": "2026-11-07T15:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "St Johnstone",
       "away_team": "Dundee",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -229,11 +229,11 @@
       "round": "Round 13",
       "week_number": 13,
       "kickoff": "2026-11-07T15:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Dundee United",
       "away_team": "Motherwell",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
     },
