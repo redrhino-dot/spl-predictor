@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T21:48:37.929171+00:00",
+  "updated": "2026-11-08T15:20:40.418097+00:00",
   "livescores": [
     {
       "id": "2494465",
@@ -258,6 +258,19 @@
       "away_team": "Rangers",
       "home_score": 0,
       "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494487",
+      "round": "Round 13",
+      "week_number": 13,
+      "kickoff": "2026-11-08T15:00:00Z",
+      "status": "FT",
+      "home_team": "Heart of Midlothian",
+      "away_team": "Falkirk",
+      "home_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     }
