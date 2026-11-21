@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T21:09:54.361184+00:00",
+  "updated": "2026-11-21T22:05:48.900725+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -363,7 +363,7 @@
       "home_team": "Motherwell",
       "away_team": "Rangers",
       "home_score": 1,
-      "away_score": 1,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
