@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T16:31:46.904065+00:00",
+  "updated": "2026-11-21T16:41:31.067750+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -298,7 +298,7 @@
       "home_team": "Celtic",
       "away_team": "St Mirren",
       "home_score": 4,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -337,7 +337,7 @@
       "home_team": "Falkirk",
       "away_team": "St Johnstone",
       "home_score": 2,
-      "away_score": 0,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
