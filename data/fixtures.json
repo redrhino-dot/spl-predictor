@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T17:14:55.162757+00:00",
+  "updated": "2026-11-21T18:20:07.354566+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -346,11 +346,11 @@
       "round": "Round 14",
       "week_number": 14,
       "kickoff": "2026-11-21T17:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Dundee",
       "away_team": "Heart of Midlothian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 0,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },

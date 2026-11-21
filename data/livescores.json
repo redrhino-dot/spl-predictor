@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T17:14:55.162757+00:00",
+  "updated": "2026-11-21T18:20:07.354566+00:00",
   "livescores": [
     {
       "id": "2494465",
@@ -336,6 +336,19 @@
       "away_team": "St Johnstone",
       "home_score": 2,
       "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494491",
+      "round": "Round 14",
+      "week_number": 14,
+      "kickoff": "2026-11-21T17:45:00Z",
+      "status": "FT",
+      "home_team": "Dundee",
+      "away_team": "Heart of Midlothian",
+      "home_score": 0,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     }
