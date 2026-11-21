@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T18:20:07.354566+00:00",
+  "updated": "2026-11-21T21:09:54.361184+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -350,7 +350,7 @@
       "home_team": "Dundee",
       "away_team": "Heart of Midlothian",
       "home_score": 0,
-      "away_score": 2,
+      "away_score": 8,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -359,11 +359,11 @@
       "round": "Round 14",
       "week_number": 14,
       "kickoff": "2026-11-21T20:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Motherwell",
       "away_team": "Rangers",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
