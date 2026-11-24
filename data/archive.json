@@ -3315,6 +3315,122 @@
           }
         ]
       }
+    },
+    {
+      "window_start": "2026-11-24T19:45:00.000Z",
+      "window_end": "2026-11-24T20:00:00.000Z",
+      "label": "24 Nov 2026",
+      "opening_standings": [
+        {
+          "name": "Doug",
+          "points": 63
+        },
+        {
+          "name": "Graham",
+          "points": 54
+        },
+        {
+          "name": "Kris",
+          "points": 54
+        },
+        {
+          "name": "Jon",
+          "points": 39
+        }
+      ],
+      "closing_standings": [
+        {
+          "name": "Doug",
+          "points": 63
+        },
+        {
+          "name": "Graham",
+          "points": 58
+        },
+        {
+          "name": "Kris",
+          "points": 55
+        },
+        {
+          "name": "Jon",
+          "points": 40
+        }
+      ],
+      "points_breakdown": {
+        "Graham": {
+          "points": 4,
+          "notation": "Hibs 3, Huns"
+        },
+        "Jon": {
+          "points": 1,
+          "notation": "Huns"
+        },
+        "Kris": {
+          "points": 1,
+          "notation": "Huns"
+        },
+        "Doug": {
+          "points": 0,
+          "notation": "–"
+        }
+      },
+      "results": [
+        {
+          "fixture_id": "2494476",
+          "home_team": "Hibernian",
+          "away_team": "Dundee",
+          "home_score": 2,
+          "away_score": 1,
+          "assigned_gameweek": 12
+        },
+        {
+          "fixture_id": "2494479",
+          "home_team": "Rangers",
+          "away_team": "Aberdeen",
+          "home_score": 3,
+          "away_score": 2,
+          "assigned_gameweek": 12
+        }
+      ],
+      "predictions": {
+        "Graham": [
+          {
+            "fixture_id": "2494476",
+            "home_score": 2,
+            "away_score": 1
+          },
+          {
+            "fixture_id": "2494479",
+            "home_score": 3,
+            "away_score": 1
+          }
+        ],
+        "Jon": [
+          {
+            "fixture_id": "2494476",
+            "home_score": 1,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494479",
+            "home_score": 2,
+            "away_score": 1
+          }
+        ],
+        "Kris": [
+          {
+            "fixture_id": "2494476",
+            "home_score": 2,
+            "away_score": 2
+          },
+          {
+            "fixture_id": "2494479",
+            "home_score": 2,
+            "away_score": 1
+          }
+        ],
+        "Doug": []
+      }
     }
   ]
 }
