@@ -15,6 +15,36 @@ WINDOW_POST_MINS = 120
 ROUND_LOOKBACK  = 2
 ROUND_LOOKAHEAD = 3
 
+def load_archived_fixture_ids(path='data/archive.json'):
+    try:
+        with open(path) as fh:
+            archive = json.load(fh)
+
+        windows = archive['windows']
+        if not isinstance(windows, list):
+            raise ValueError('archive windows must be a list')
+
+        archived_ids = set()
+        for window in windows:
+            results = window.get('results', [])
+            if not isinstance(results, list):
+                raise ValueError('archive results must be a list')
+
+            for result in results:
+                fixture_id = result.get('fixture_id')
+                if fixture_id is None or not str(fixture_id).strip():
+                    raise ValueError('archive result missing fixture_id')
+                archived_ids.add(str(fixture_id).strip())
+
+        return archived_ids
+
+    except Exception as e:
+        print(
+            f'WARNING: Cannot safely read archive: {e}. '
+            'Keeping all not-refetched fixtures this run.',
+            file=sys.stderr
+        )
+        return set()
 
 def current_season_str(now):
     if now.month >= 7:
@@ -202,24 +232,37 @@ for key, new_fx in new_map.items():
         merged.append(new_fx)
     seen_keys.add(key)
 
-# Only retain a not-refetched fixture if it's still within the active
-# round window or not yet resolved. Fully-played/postponed fixtures whose
-# round has scrolled outside round_range are dropped here — they're either
-# already safely archived, or (if postponed) will reappear once TheSportsDB
-# assigns them a round back inside range. Without this, fixtures.json grows
-# forever since nothing else ever prunes it.
+# Prune only out-of-range, completed fixtures confirmed in the archive.
+# Unarchived results and postponed fixtures must remain available.
+archived_fixture_ids = load_archived_fixture_ids()
+
 retained = 0
 dropped = 0
 for key, existing_fx in existing_map.items():
     if key in seen_keys:
         continue
+
     wn = existing_fx.get('week_number')
-    is_resolved = existing_fx.get('status') in DONE_ST
-    if wn is None or wn in round_range or not is_resolved:
+    is_completed = existing_fx.get('status') in {'FT', 'AET', 'PEN'}
+    is_archived = (
+        str(existing_fx.get('id', '')).strip() in archived_fixture_ids
+    )
+
+    if (
+        wn is None
+        or wn in round_range
+        or not is_completed
+        or not is_archived
+    ):
         merged.append(existing_fx)
         retained += 1
     else:
         dropped += 1
+        print(
+            f"Pruning archived fixture {existing_fx.get('id')}: "
+            f"{existing_fx.get('home_team')} v "
+            f"{existing_fx.get('away_team')}"
+        )
 
 fixtures = merged
 fixtures.sort(key=lambda x: x['kickoff'])
