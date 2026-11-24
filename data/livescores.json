@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T14:21:00.708554+00:00",
+  "updated": "2026-11-24T21:31:56.629899+00:00",
   "livescores": [
     {
       "id": "2494465",
@@ -361,6 +361,32 @@
       "home_team": "Motherwell",
       "away_team": "Rangers",
       "home_score": 1,
+      "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494476",
+      "round": "Round 12",
+      "week_number": 12,
+      "kickoff": "2026-11-24T19:45:00Z",
+      "status": "FT",
+      "home_team": "Hibernian",
+      "away_team": "Dundee",
+      "home_score": 2,
+      "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494479",
+      "round": "Round 12",
+      "week_number": 12,
+      "kickoff": "2026-11-24T20:00:00Z",
+      "status": "FT",
+      "home_team": "Rangers",
+      "away_team": "Aberdeen",
+      "home_score": 3,
       "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null

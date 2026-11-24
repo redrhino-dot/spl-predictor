@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T14:21:00.708554+00:00",
+  "updated": "2026-11-24T21:31:56.629899+00:00",
   "round": "Round 12",
   "week_number": 12,
   "fixtures": [
@@ -372,11 +372,11 @@
       "round": "Round 12",
       "week_number": 12,
       "kickoff": "2026-11-24T19:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Hibernian",
       "away_team": "Dundee",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 2,
+      "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
     },
@@ -385,11 +385,11 @@
       "round": "Round 12",
       "week_number": 12,
       "kickoff": "2026-11-24T20:00:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Rangers",
       "away_team": "Aberdeen",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 3,
+      "away_score": 2,
       "elapsed": null,
       "elapsed_extra": null
     },
