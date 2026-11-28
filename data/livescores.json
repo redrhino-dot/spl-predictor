@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T20:41:39.075883+00:00",
+  "updated": "2026-11-28T16:38:44.780789+00:00",
   "livescores": [
     {
       "id": "2494485",
@@ -154,6 +154,58 @@
       "away_team": "Rangers",
       "home_score": 1,
       "away_score": 2,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494494",
+      "round": "Round 15",
+      "week_number": 15,
+      "kickoff": "2026-11-28T15:00:00Z",
+      "status": "FT",
+      "home_team": "St Mirren",
+      "away_team": "Kilmarnock",
+      "home_score": 1,
+      "away_score": 4,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494495",
+      "round": "Round 15",
+      "week_number": 15,
+      "kickoff": "2026-11-28T15:00:00Z",
+      "status": "FT",
+      "home_team": "Aberdeen",
+      "away_team": "Dundee",
+      "home_score": 2,
+      "away_score": 0,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494498",
+      "round": "Round 15",
+      "week_number": 15,
+      "kickoff": "2026-11-28T15:00:00Z",
+      "status": "FT",
+      "home_team": "Rangers",
+      "away_team": "Falkirk",
+      "home_score": 0,
+      "away_score": 1,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494499",
+      "round": "Round 15",
+      "week_number": 15,
+      "kickoff": "2026-11-28T15:00:00Z",
+      "status": "FT",
+      "home_team": "Dundee United",
+      "away_team": "St Johnstone",
+      "home_score": 2,
+      "away_score": 6,
       "elapsed": null,
       "elapsed_extra": null
     }
