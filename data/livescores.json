@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T16:38:44.780789+00:00",
+  "updated": "2026-11-28T16:56:10.994573+00:00",
   "livescores": [
     {
       "id": "2494485",
@@ -191,7 +191,7 @@
       "status": "FT",
       "home_team": "Rangers",
       "away_team": "Falkirk",
-      "home_score": 0,
+      "home_score": 1,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
@@ -205,7 +205,7 @@
       "home_team": "Dundee United",
       "away_team": "St Johnstone",
       "home_score": 2,
-      "away_score": 6,
+      "away_score": 7,
       "elapsed": null,
       "elapsed_extra": null
     }
