@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T17:00:50.885115+00:00",
+  "updated": "2026-11-28T17:03:33.614035+00:00",
   "round": "Round 15",
   "week_number": 15,
   "fixtures": [
@@ -193,7 +193,7 @@
       "status": "FT",
       "home_team": "Rangers",
       "away_team": "Falkirk",
-      "home_score": 1,
+      "home_score": 2,
       "away_score": 1,
       "elapsed": null,
       "elapsed_extra": null
