@@ -30,6 +30,9 @@ const CLUB_ALIASES = {
 };
 function _normClub(name) { return CLUB_ALIASES[name.trim()] || name.trim(); }
 
+// Placeholders the archive writes when a player scored nothing in a window
+const NO_CLUB = new Set(['–', '-', '—', '']);
+
 let _pointsChart   = null;
 let _positionChart = null;
 
@@ -170,7 +173,7 @@ async function renderStatsTab() {
         const clubStr = entry.replace(/\s*3$/, '').replace(/!!$/, '').trim();
         clubStr.split('/').forEach(raw => {
           const club = _normClub(raw);
-          if (club) clubPts[club] = (clubPts[club] || 0) + pts3;
+          if (club && !NO_CLUB.has(club)) clubPts[club] = (clubPts[club] || 0) + pts3;
         });
       });
     });
@@ -194,7 +197,7 @@ async function renderStatsTab() {
         const clubStr = entry.replace(/\s*3$/, '').replace(/!!$/, '').trim();
         clubStr.split('/').forEach(raw => {
           const club = _normClub(raw);
-          if (club) allClubPts[club] = (allClubPts[club] || 0) + pts3;
+          if (club && !NO_CLUB.has(club)) allClubPts[club] = (allClubPts[club] || 0) + pts3;
         });
       });
     });
