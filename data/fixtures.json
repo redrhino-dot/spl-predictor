@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T17:03:33.614035+00:00",
+  "updated": "2026-11-28T18:42:42.093655+00:00",
   "round": "Round 15",
   "week_number": 15,
   "fixtures": [
@@ -216,11 +216,11 @@
       "round": "Round 15",
       "week_number": 15,
       "kickoff": "2026-11-28T17:45:00Z",
-      "status": "NS",
+      "status": "FT",
       "home_team": "Motherwell",
       "away_team": "Hibernian",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 2,
+      "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
     },

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T17:03:33.614035+00:00",
+  "updated": "2026-11-28T18:42:42.093655+00:00",
   "livescores": [
     {
       "id": "2494485",
@@ -206,6 +206,19 @@
       "away_team": "St Johnstone",
       "home_score": 2,
       "away_score": 7,
+      "elapsed": null,
+      "elapsed_extra": null
+    },
+    {
+      "id": "2494497",
+      "round": "Round 15",
+      "week_number": 15,
+      "kickoff": "2026-11-28T17:45:00Z",
+      "status": "FT",
+      "home_team": "Motherwell",
+      "away_team": "Hibernian",
+      "home_score": 2,
+      "away_score": 0,
       "elapsed": null,
       "elapsed_extra": null
     }
